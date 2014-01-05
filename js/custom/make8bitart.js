@@ -504,9 +504,9 @@ $(function(){
 		}
 	});
 
-  // alias to ctrl+z
-  key('ctrl+z', triggerClickForEnabled(DOM.$undo));
-	
+  // alias to ctrl+z, macs aliased to cmd+z
+  key('ctrl+z, ⌘+z', triggerClickForEnabled(DOM.$undo));
+
 	// redo
 	DOM.$redo.click(function(){
 		historyPointer++;
@@ -518,9 +518,9 @@ $(function(){
 		}
 	});
 
-  // alias to ctrl+y
-  key('ctrl+y', triggerClickForEnabled(DOM.$redo));
-	
+  // alias to ctrl+y and mac aliased cmd+shift+z
+  key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
+
 	/* colors */
 	
 	// choose color
