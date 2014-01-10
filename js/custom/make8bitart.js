@@ -208,14 +208,34 @@ $(function(){
 			hoverRGB = 'rgb(' + hoverData[0] + ', ' + hoverData[1] + ', ' + hoverData[2] + ', ' + hoverData[3] + ')';
 		}
 		
-		if ( rgbToHex(hoverRGB) != rgbToHex(pixel.color) || 
-				( hoverRGB == 'rgb(0, 0, 0, 0)' && ( pixel.color == 'rgb(0, 0, 0)' || pixel.color == '#000000') ) || 
-				( (hoverRGB == 'rgb(0, 0, 0)' || hoverRGB == '#000000') && pixel.color == 'rgb(0, 0, 0, 0)' ) ) {
+		if ( !areColorsEqual( hoverRGB, pixel.color) ) {
 			drawPixel(e.pageX, e.pageY, pixel.color);
 			pushToHistory(action.draw, e.pageX, e.pageY, hoverRGB, pixel.color);
 		}
 	
 	}
+	
+	var fill = function( origColor, newColor, x, y ) {
+		
+		var thisPixelData = ctx.getImageData( x, y, 1, 1).data;
+		var thisColor = 'rgb(' + thisPixelData[0] + ', ' + thisPixelData[1] + ', ' + thisPixelData[2] + ')';
+		if ( thisPixelData[3] == 0 ) {
+			thisColor = 'rgb(' + thisPixelData[0] + ', ' + thisPixelData[1] + ', ' + thisPixelData[2] + ', ' + thisPixelData[3] + ')';
+		}
+		// todo too much recursion - try only painting in pieces
+		// todo history ugh
+		if ( !areColorsEqual(thisColor, origColor) ) {
+			return;
+		}
+		else {
+			drawPixel(x, y, newColor);
+		
+			fill(origColor, newColor, x-pixel.size, y);
+			fill(origColor, newColor, x+pixel.size, y);
+			fill(origColor, newColor, x, y+pixel.size);
+			fill(origColor, newColor, x, y-pixel.size);
+		}
+	};
 
 	var canStorage = function() {
 		try {
@@ -364,7 +384,16 @@ $(function(){
 		DOM.$draggydivs.css('box-shadow','5px 5px 0 ' + newColor);
 	};
 	
-	
+	var areColorsEqual = function( alpha, beta ) {
+		if ( rgbToHex(alpha) != rgbToHex(beta) || 
+			( alpha == 'rgb(0, 0, 0, 0)' && ( beta == 'rgb(0, 0, 0)' || beta == '#000000') ) || 
+			( (alpha == 'rgb(0, 0, 0)' || alpha == '#000000') && beta == 'rgb(0, 0, 0, 0)' ) ) {
+			return false;
+		}
+		else { 
+			return true;
+		}
+	};
 	
 	/*** EVENTS OH MAN ***/
 	
@@ -388,22 +417,31 @@ $(function(){
 			DOM.$dropper.removeClass('current').removeAttr('style');
 		}
 		else if ( !mode.save ) {
-			
-			mode.drawing = true;
-			
+		
 			// reset history
 			history = history.slice(0, historyPointer+1);
 			DOM.$redo.attr('disabled','disabled');
-
-			drawPixel(e.pageX, e.pageY, pixel.color);
-			if ( origRGB != pixel.color ) {
-				pushToHistory(action.draw, e.pageX, e.pageY, origRGB, pixel.color);			
+	
+			if ( mode.fill ) {
+				// fill it up fill it up
+				fill( origRGB, pixel.color, e.pageX, e.pageY);
+			}
+			else {
+				// draw mode
+				mode.drawing = true;
+			
+				
+				drawPixel(e.pageX, e.pageY, pixel.color);
+				if ( origRGB != pixel.color ) {
+					pushToHistory(action.draw, e.pageX, e.pageY, origRGB, pixel.color);			
+				}
+				
+				DOM.$canvas.on('mousemove', drawOnMove);
+				
+				// touch
+				DOM.$canvas[0].addEventListener('touchmove', drawOnMove, false);
 			}
 			
-			DOM.$canvas.on('mousemove', drawOnMove);
-			
-			// touch
-			DOM.$canvas[0].addEventListener('touchmove', drawOnMove, false);
 		}
 		else {
 			// overlay stuff
@@ -480,18 +518,18 @@ $(function(){
 		}
 	});
 
-  // ensure elements are enabled before triggering a click event
-  var triggerClickForEnabled = function(elem) {
-    return function() {
-      // no-op if there is nothing to undo
-      if (elem.is(":disabled")) {
-        return;
-      }
-
-      // trigger the click
-      elem.trigger('click');
-    };
-  };
+	// ensure elements are enabled before triggering a click event
+	var triggerClickForEnabled = function(elem) {
+		return function() {
+			// no-op if there is nothing to undo
+			if (elem.is(":disabled")) {
+				return;
+			}
+			
+			// trigger the click
+			elem.trigger('click');
+		};
+	};
 	
 	// undo
 	DOM.$undo.click(function(){
@@ -504,8 +542,8 @@ $(function(){
 		}
 	});
 
-  // alias to ctrl+z, macs aliased to cmd+z
-  key('ctrl+z, ⌘+z', triggerClickForEnabled(DOM.$undo));
+    // alias to ctrl+z, macs aliased to cmd+z
+    key('ctrl+z, ⌘+z', triggerClickForEnabled(DOM.$undo));
 
 	// redo
 	DOM.$redo.click(function(){
@@ -518,8 +556,8 @@ $(function(){
 		}
 	});
 
-  // alias to ctrl+y and mac aliased cmd+shift+z
-  key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
+    // alias to ctrl+y and mac aliased cmd+shift+z
+    key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
 
 	/* colors */
 	
