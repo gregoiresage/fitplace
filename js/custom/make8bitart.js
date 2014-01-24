@@ -306,10 +306,7 @@ $(function(){
 			DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
 			DOM.$canvas.removeClass(classes.dropperMode);
 			mode.dropper = false;
-			
-			// todo - make erase bg shown when original color is erase
-			console.log(pixel.color);
-			
+						
 			if ( pixel.color = 'rgb(0, 0, 0, 0)' ) {
 				backgroundIMG = windowCanvas.background;
 			}
