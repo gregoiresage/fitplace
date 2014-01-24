@@ -49,6 +49,9 @@ h2 a { color: blue; font-size: 1.2em;}
 /* canvas tools box */
 #toolbox { width: 145px; }
 #toolbox h3 { margin: 5px 0; }
+#instruments { margin: 15px 0; }
+#paint, #pencil { border: 1px solid transparent; padding: 5px; vertical-align: middle; }
+#paint.current-tool, #pencil.current-tool { border-color: #000; }
 #size { margin: 20px 0; }
 #pixel-size { width: 75%; }
 #pixel-size-demo { background: black; margin:3px; }
@@ -84,8 +87,8 @@ ul.instructions { padding: 0 0 0 20px; }
 #colorpicker p { font-size: 1.5em; margin: 0 0 10px; }
 #hex-color { width: 50%; margin-left: 5px; }
 #hex-color.current { border: 4px solid #000; }
-#color-dropper { border: 1px solid transparent; width: 25px; padding: 5px; vertical-align: middle; }
-#color-dropper.current { border-color: #000; }
+#color-dropper { border: 1px solid transparent; padding: 5px; vertical-align: middle; }
+#color-dropper.current-tool { border-color: #000; }
 
 /* mobile */
 

@@ -22,6 +22,9 @@ $(function(){
 		$colorPickerDemo : $('.color-demo'),
 		$hex : $('#hex-color'),
 		$dropper : $('#color-dropper'),
+		
+		$pencil : $('#pencil'),
+		$paint : $('#paint'),
 
 		$buttonNewCanvas : $('#new-canvas'),
 		$buttonSaveFull : $('#save-full'),
@@ -50,6 +53,7 @@ $(function(){
 	var action = {
 		draw : "draw",
 		fill : "fill",
+		index : 0
 	}
 
 	var windowCanvas = {
@@ -65,7 +69,10 @@ $(function(){
 	};
 	
 	var classes = {
-		selectionCanvas : 'selectionCanvas'
+		selectionCanvas : 'selectionCanvas',
+		current: 'current',
+		currentTool: 'current-tool',
+		dropperMode: 'dropper-mode'
 	};
 	
 	var pixel = {
@@ -210,7 +217,7 @@ $(function(){
 		
 		if ( !areColorsEqual( hoverRGB, pixel.color) ) {
 			drawPixel(e.pageX, e.pageY, pixel.color);
-			pushToHistory(action.draw, e.pageX, e.pageY, hoverRGB, pixel.color);
+			pushToHistory(action.index, action.draw, e.pageX, e.pageY, hoverRGB, pixel.color);
 		}
 	
 	}
@@ -222,14 +229,15 @@ $(function(){
 		if ( thisPixelData[3] == 0 ) {
 			thisColor = 'rgb(' + thisPixelData[0] + ', ' + thisPixelData[1] + ', ' + thisPixelData[2] + ', ' + thisPixelData[3] + ')';
 		}
-		// todo too much recursion - try only painting in pieces
+		
 		// todo history ugh
-		if ( !areColorsEqual(thisColor, origColor) ) {
+		if ( !areColorsEqual(thisColor, origColor) || x < 0 || y < 0 || x > windowCanvas.width || y > windowCanvas.height) {
 			return;
 		}
 		else {
 			drawPixel(x, y, newColor);
-		
+			pushToHistory(action.index, action.fill, x, y, thisColor, newColor);
+
 			fill(origColor, newColor, x-pixel.size, y);
 			fill(origColor, newColor, x+pixel.size, y);
 			fill(origColor, newColor, x, y+pixel.size);
@@ -257,9 +265,10 @@ $(function(){
 		}	
 	};
 	
-	var pushToHistory = function( actionType, x, y, rgbOriginal, rgbNew) {
+	var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew) {
 		// push to history
 		history.push({
+			index : actionIndex,
 			action : actionType,
 			xPos : x,
 			yPos : y,
@@ -271,15 +280,57 @@ $(function(){
 	};
 
 	var undoRedo = function(pointer, undoFlag) {
-
 		if ( undoFlag ) {
 		    var undoRedoColor = history[pointer].originalColor;
+		    var nextPointer = pointer - 1;
 		}
 		else {
 			var undoRedoColor = history[pointer].newColor;
+			var nextPointer = pointer + 1;
 		}
 		drawPixel(history[pointer].xPos, history[pointer].yPos, undoRedoColor);
+		
+		if ( history[pointer].action == action.fill && history[pointer].index == history[nextPointer].index ) {
+			if ( undoFlag ) { 
+				historyPointer--;
+			}
+			else {
+				historyPointer++;
+			}
+			undoRedo(historyPointer, undoFlag);
+		}
 	};
+	
+	var resetModes = function() {
+		if ( mode.dropper ) {
+			DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
+			DOM.$canvas.removeClass(classes.dropperMode);
+			mode.dropper = false;
+			
+			// todo - make erase bg shown when original color is erase
+			console.log(pixel.color);
+			
+			if ( pixel.color = 'rgb(0, 0, 0, 0)' ) {
+				backgroundIMG = windowCanvas.background;
+			}
+			else {
+				backgroundIMG = 'none';
+			}
+			
+			DOM.$pixelSizeDemoDiv.css('background-image', backgroundIMG);
+			DOM.$colorPickerDemo.css({
+				'background-image' : backgroundIMG,
+				'background-color' : pixel.color
+			});
+			DOM.$hex.val(rgbToHex(pixel.color));
+		}
+		else if ( mode.save ) {
+			DOM.$buttonSaveSelection.click();
+		}
+		mode.fill = false;
+		DOM.$paint.removeClass(classes.currentTool);
+		DOM.$pencil.removeClass(classes.currentTool);
+	}
 
 	
 	/* saving */
@@ -344,6 +395,8 @@ $(function(){
 		}
 	};
 	
+
+	
 	
 	/* colors */
 	
@@ -376,8 +429,8 @@ $(function(){
 	
 	var hexColorChosen = function() {
 		var newColor = '#' + DOM.$hex.val();
-		$('.current').removeClass('current');
-		DOM.$hex.addClass('current');
+		$('.current').removeClass(classes.current);
+		DOM.$hex.addClass(classes.current);
 		
 		pixel.color = newColor;
 		DOM.$colorPickerDemo.css('background-color', newColor);
@@ -413,8 +466,8 @@ $(function(){
 		if ( mode.dropper ) {
 			mode.dropper = false;
 			setDropperColor( origRGB )
-			DOM.$canvas.removeClass('dropper-mode');
-			DOM.$dropper.removeClass('current').removeAttr('style');
+			DOM.$canvas.removeClass(classes.dropperMode);
+			DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
 		}
 		else if ( !mode.save ) {
 		
@@ -423,17 +476,18 @@ $(function(){
 			DOM.$redo.attr('disabled','disabled');
 	
 			if ( mode.fill ) {
-				// fill it up fill it up
+				// fill it up fill it up fill it up
+				action.index++;
 				fill( origRGB, pixel.color, e.pageX, e.pageY);
 			}
 			else {
 				// draw mode
 				mode.drawing = true;
 			
-				
+				action.index++;
 				drawPixel(e.pageX, e.pageY, pixel.color);
 				if ( origRGB != pixel.color ) {
-					pushToHistory(action.draw, e.pageX, e.pageY, origRGB, pixel.color);			
+					pushToHistory(action.index, action.draw, e.pageX, e.pageY, origRGB, pixel.color);			
 				}
 				
 				DOM.$canvas.on('mousemove', drawOnMove);
@@ -476,6 +530,21 @@ $(function(){
 	
 	
 	/* tools */
+	
+	// draw clicked
+	DOM.$pencil.click(function(e){
+		e.preventDefault();
+		resetModes();
+		$(this).addClass(classes.currentTool);
+	});
+	
+	// paint clicked
+	DOM.$paint.click(function(e){
+		e.preventDefault();
+		resetModes();
+		$(this).addClass(classes.currentTool);
+		mode.fill = true;
+	});
 	
 	// pixel size slider changed
 	DOM.$pixelSizeInput.change(function(){
@@ -541,10 +610,7 @@ $(function(){
 			DOM.$undo.attr('disabled', 'disabled');
 		}
 	});
-
-    // alias to ctrl+z, macs aliased to cmd+z
-    key('ctrl+z, ⌘+z', triggerClickForEnabled(DOM.$undo));
-
+   
 	// redo
 	DOM.$redo.click(function(){
 		historyPointer++;
@@ -555,9 +621,13 @@ $(function(){
 		    DOM.$redo.attr('disabled', 'disabled');
 		}
 	});
+   
+    // undo alias to ctrl+z, macs aliased to cmd+z
+    key('ctrl+z, ⌘+z', triggerClickForEnabled(DOM.$undo));
 
-    // alias to ctrl+y and mac aliased cmd+shift+z
+    // redo alias to ctrl+y and mac aliased cmd+shift+z
     key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
+
 
 	/* colors */
 	
@@ -573,8 +643,8 @@ $(function(){
 			var newColorLabel = $newColor.attr('data-color');
 		}
 		
-		$('.current').removeClass('current');
-		$newColor.addClass('current');
+		$('.current').removeClass(classes.current);
+		$newColor.addClass(classes.current);
 		pixel.color = newColorLabel;
 
 		if ( pixel.color != 'rgb(0, 0, 0, 0)' ) {
@@ -583,8 +653,8 @@ $(function(){
 			DOM.$colorPickerDemo.css('background-image', 'none');
 		}
 		else {
-			DOM.$pixelSizeDemoDiv.css('background-image', 'url(assets/bg.png)');
-			DOM.$colorPickerDemo.css('background-image', 'url(assets/bg.png)');
+			DOM.$pixelSizeDemoDiv.css('background-image', windowCanvas.background);
+			DOM.$colorPickerDemo.css('background-image', windowCanvas.background);
 			DOM.$hex.val('');
 		} 
 		DOM.$pixelSizeDemoDiv.css('background-color', demoColor);
@@ -616,8 +686,8 @@ $(function(){
 	// custom color chosen
 	DOM.$colorPickerPixels.click(function(){
 		var newColor = $(this).css('background-color');
-		$('.current').removeClass('current');
-		DOM.$colorCustom.addClass('current');
+		$('.current').removeClass(classes.current);
+		DOM.$colorCustom.addClass(classes.current);
 		
 		pixel.color = newColor;
 		DOM.$colorPickerDemo.css('background-color', newColor);
@@ -632,15 +702,14 @@ $(function(){
 	DOM.$dropper.click(function(e){
 		e.preventDefault();
 		
-		if ( DOM.$dropper.hasClass('current') ) {
-			DOM.$dropper.removeClass('current').removeAttr('style');
-			DOM.$canvas.removeClass('dropper-mode');
-			mode.dropper = false;
+		if ( DOM.$dropper.hasClass(classes.currentTool) ) {
+			resetModes();
 		}
 		else {
+			resetModes();
 			mode.dropper = true;
-			DOM.$dropper.addClass('current');
-			DOM.$canvas.addClass('dropper-mode');
+			DOM.$dropper.addClass(classes.currentTool);
+			DOM.$canvas.addClass(classes.dropperMode);
 			
 			DOM.$canvas.mousemove(function(e){
 				var hoverData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
@@ -648,8 +717,10 @@ $(function(){
 				DOM.$dropper.css('background-color', hoverRGB);
 
 				DOM.$pixelSizeDemoDiv.css('background-image', 'none');
-				DOM.$colorPickerDemo.css('background-image', 'none');
-				DOM.$colorPickerDemo.css('background-color', hoverRGB);
+				DOM.$colorPickerDemo.css({
+					'background-image' : 'none',
+					'background-color' : hoverRGB
+				});
 				DOM.$hex.val(rgbToHex(hoverRGB));
 
 			});

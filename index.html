@@ -74,7 +74,6 @@
 		<div id="minimized-tools-list"></div>
 		
 	</div>
-
 	
 <!-- 
                        _..--+~/@-~--.
@@ -89,8 +88,7 @@
         ___=       \ ___ __     __..-...__           ___/__/__
            :        =_     _.-~~          ~~--.__
       _____ \         ~-+-~                   ___~=_______
-           ~@#~~ == ...______ __ ___ _--~~--_                  CREDITS & SOCIAL LINKS -->
-           
+           ~@#~~ == ...______ __ ___ _--~~--_                  CREDITS & SOCIAL LINKS -->       
 	
 	<div id="credits" class="draggy" title="tell the world!">
 	
@@ -111,9 +109,7 @@
 		</div>
 	
 	</div>
-	
-	
-	
+		
 	<!--
                                  .       .
                                 / `.   .' \
@@ -130,8 +126,7 @@
                         / \   =/  ~~--~~{    ./|    ~-.     `-..__\\_//_.-'
                        {   \  +\         \  =\ (        ~ - . _ _ _..---~
                        |  | {   }         \   \_\
-                      '---.o___,'       .o___,      TOOLBOX -->
-                  
+                      '---.o___,'       .o___,      TOOLBOX -->                 
               
 	<div id="toolbox" class="draggy" title="tools">
 
@@ -140,8 +135,14 @@
 			<img class="ui-hider" src="assets/draggybits/hider2.png">	
 		</div>
 		
-		<div id="clear" class="inner">
+		<div id="tools" class="inner">
 			<h3>canvas tools</h3>
+			
+			<div id="instruments">
+				<a href="#" title="draw"><img class="current-tool" id="pencil" src="assets/pencil.png" alt="draw" /></a>
+				<a href="#" title="paint"><img id="paint" src="assets/paint.png" alt="paint" /></a> 
+				<div class="tip"> ? <span class="tip-text">pencil to draw, paint to fill <p>**note: paint is an alpha feature, the larger the area you paint, the more likely it will fail. if "undo" doesn't work, refresh the page.</p></span></div>
+			</div>
 			
 			<p>
 				<input type="submit" id="undo" title="ctrl+z" value="undo" disabled="disabled" />
@@ -175,9 +176,7 @@
 		</div>
 			
 	</div>
-	
-	
-	
+		
 	<!-- 
                                <\              _                
                                 \\          _/{                  
@@ -235,7 +234,7 @@
 <script src="js/libs/jquery.min.js"></script>
 <script src="js/libs/draggybits.js"></script>
 <script src="js/libs/pixeldiv.js"></script>
-<script src="js/libs/keymaster.js"></script>
+<script src="js/libs/keymaster.js"></script> 
 <script src="js/custom/make8bitart.js"></script>
 
 <script src="//pmetrics.performancing.com/js" type="text/javascript"></script>
