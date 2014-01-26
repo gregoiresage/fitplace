@@ -431,14 +431,7 @@ $(function(){
 	/* colors */
 	
 	var getRGBColor = function(imageData) {
-		
-		if ( imageData[3] == 0 ) {
-			return 'rgb(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ', ' + imageData[3] + ')';
-		}
-		else {
-		    return 'rgb(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ')';
-		}
-
+		return 'rgb(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ', ' + imageData[3] + ')';
 	}
 	
 	var rgbToHex = function( rgb ) {
