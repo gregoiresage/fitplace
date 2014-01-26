@@ -272,9 +272,6 @@ $(function(){
 			if (stack.length) {
 				setTimeout(fill, 10);
 			}
-			else {
-				console.log(historyPointer);
-			}
 		}
 		// fill it up fill it up fill it up
 		fill();
@@ -335,8 +332,6 @@ $(function(){
 			}
 			undoRedo(historyPointer, undoFlag);
 		}
-		
-		console.log(historyPointer);
 	};
 	
 	var resetModes = function() {
