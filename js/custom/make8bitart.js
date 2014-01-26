@@ -15,6 +15,7 @@ $(function(){
 		$toolbox : $('#toolbox'),
 		$savebox : $('#savebox'),
 		$colorbox : $('#colorbox'),
+		$waiting : $('#wait'),
 		
 		$color : $('.color').not('.custom'),
 		$colorCustom : $('.color.custom'),
@@ -46,7 +47,7 @@ $(function(){
 		dropper : false,
 		drawing : false,
 		save : false,
-		fill : false,
+		paint : false,
 		trill : true
 	};
 	
@@ -72,7 +73,8 @@ $(function(){
 		selectionCanvas : 'selectionCanvas',
 		current: 'current',
 		currentTool: 'current-tool',
-		dropperMode: 'dropper-mode'
+		dropperMode: 'dropper-mode',
+		wait: 'wait'
 	};
 	
 	var pixel = {
@@ -210,10 +212,7 @@ $(function(){
 	
 	var drawOnMove = function(e) {
 		var hoverData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
-		var hoverRGB = 'rgb(' + hoverData[0] + ', ' + hoverData[1] + ', ' + hoverData[2] + ')';
-		if ( hoverData[3] == 0 ) {
-			hoverRGB = 'rgb(' + hoverData[0] + ', ' + hoverData[1] + ', ' + hoverData[2] + ', ' + hoverData[3] + ')';
-		}
+		var hoverRGB = getRGBColor(hoverData);	
 		
 		if ( !areColorsEqual( hoverRGB, pixel.color) ) {
 			drawPixel(e.pageX, e.pageY, pixel.color);
@@ -222,28 +221,64 @@ $(function(){
 	
 	}
 	
-	var fill = function( origColor, newColor, x, y ) {
+	var paint = function( initColor, paintColor, x, y ) {
+
+		// bless u sweet prince @potch
+		var position = [x, y];
+		
+		var viewed = {};
+		var stack = [];
 		
 		var thisPixelData = ctx.getImageData( x, y, 1, 1).data;
-		var thisColor = 'rgb(' + thisPixelData[0] + ', ' + thisPixelData[1] + ', ' + thisPixelData[2] + ')';
-		if ( thisPixelData[3] == 0 ) {
-			thisColor = 'rgb(' + thisPixelData[0] + ', ' + thisPixelData[1] + ', ' + thisPixelData[2] + ', ' + thisPixelData[3] + ')';
-		}
+		var initColor = getRGBColor(thisPixelData);
+			
+		stack.push(position);
 		
-		// todo history ugh
-		if ( !areColorsEqual(thisColor, origColor) || x < 0 || y < 0 || x > windowCanvas.width || y > windowCanvas.height) {
-			return;
-		}
-		else {
-			drawPixel(x, y, newColor);
-			pushToHistory(action.index, action.fill, x, y, thisColor, newColor);
+		function fill() {
+			var iterations = 0;
+	 
+			while (stack.length && iterations < 10000) {
+				
+				iterations++;
+				var current = stack.pop();
+				var x = current[0];
+				var y = current[1];
+			 
+				viewed[current] = true;
+				 
+				var currentPixelData = ctx.getImageData( x, y, 1, 1).data;
+				var currentColor = getRGBColor(currentPixelData);
+				
+				if ( areColorsEqual(initColor, currentColor) ) {
+					
+					drawPixel(x, y, paintColor);
+					pushToHistory(action.index, action.fill, x, y, initColor, paintColor);
+					
+					if ( (x - pixel.size) >= 0 && !viewed[ [x - pixel.size, y] ] ) {
+						stack.push([x-pixel.size, y]);
+					}
+					if ( (x + pixel.size) < windowCanvas.width && !viewed[ [x + pixel.size, y] ]) {
+						stack.push([x+pixel.size, y]);
+					}
+					if ( (y - pixel.size) >= 0 && !viewed[ [x, y - pixel.size] ] ) {
+						stack.push([x, y-pixel.size]);
+					}
+					if ( (y + pixel.size) < windowCanvas.height && !viewed[ [x, y + pixel.size] ]) {
+						stack.push([x, y+pixel.size]);
+					}
 
-			fill(origColor, newColor, x-pixel.size, y);
-			fill(origColor, newColor, x+pixel.size, y);
-			fill(origColor, newColor, x, y+pixel.size);
-			fill(origColor, newColor, x, y-pixel.size);
+				}
+			}
+			if (stack.length) {
+				setTimeout(fill, 10);
+			}
+			else {
+				console.log(historyPointer);
+			}
 		}
-	};
+		// fill it up fill it up fill it up
+		fill();
+	}
 
 	var canStorage = function() {
 		try {
@@ -288,9 +323,10 @@ $(function(){
 			var undoRedoColor = history[pointer].newColor;
 			var nextPointer = pointer + 1;
 		}
+		
 		drawPixel(history[pointer].xPos, history[pointer].yPos, undoRedoColor);
 		
-		if ( history[pointer].action == action.fill && history[pointer].index == history[nextPointer].index ) {
+		if ( history[pointer].action == action.fill && history[nextPointer] && history[pointer].index == history[nextPointer].index ) {
 			if ( undoFlag ) { 
 				historyPointer--;
 			}
@@ -299,6 +335,8 @@ $(function(){
 			}
 			undoRedo(historyPointer, undoFlag);
 		}
+		
+		console.log(historyPointer);
 	};
 	
 	var resetModes = function() {
@@ -324,7 +362,7 @@ $(function(){
 		else if ( mode.save ) {
 			DOM.$buttonSaveSelection.click();
 		}
-		mode.fill = false;
+		mode.paint = false;
 		DOM.$paint.removeClass(classes.currentTool);
 		DOM.$pencil.removeClass(classes.currentTool);
 	}
@@ -397,6 +435,17 @@ $(function(){
 	
 	/* colors */
 	
+	var getRGBColor = function(imageData) {
+		
+		if ( imageData[3] == 0 ) {
+			return 'rgb(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ', ' + imageData[3] + ')';
+		}
+		else {
+		    return 'rgb(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ')';
+		}
+
+	}
+	
 	var rgbToHex = function( rgb ) {
 		if ( rgb.charAt(0) == '#' ) {
 			return rgb.slice(1,7); 
@@ -445,6 +494,8 @@ $(function(){
 		}
 	};
 	
+	
+	
 	/*** EVENTS OH MAN ***/
 	
 	/* general */
@@ -453,12 +504,7 @@ $(function(){
 		e.preventDefault();
 		
 		var origData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
-		var origRGB = 'rgb(' + origData[0] + ', ' + origData[1] + ', ' + origData[2] + ')';
-		
-		if ( origData[3] == 0 ) {
-			origRGB = 'rgb(' + origData[0] + ', ' + origData[1] + ', ' + origData[2] + ', ' + origData[3] + ')';
-		}
-		
+		var origRGB = getRGBColor(origData);		
 			
 		if ( mode.dropper ) {
 			mode.dropper = false;
@@ -471,11 +517,10 @@ $(function(){
 			// reset history
 			history = history.slice(0, historyPointer+1);
 			DOM.$redo.attr('disabled','disabled');
-	
-			if ( mode.fill ) {
-				// fill it up fill it up fill it up
-				action.index++;
-				fill( origRGB, pixel.color, e.pageX, e.pageY);
+
+			if ( mode.paint && origRGB != pixel.color ) {
+				action.index++;			
+				paint( origRGB, pixel.color, e.pageX, e.pageY);
 			}
 			else {
 				// draw mode
@@ -540,7 +585,7 @@ $(function(){
 		e.preventDefault();
 		resetModes();
 		$(this).addClass(classes.currentTool);
-		mode.fill = true;
+		mode.paint = true;
 	});
 	
 	// pixel size slider changed
@@ -602,7 +647,8 @@ $(function(){
 		undoRedo(historyPointer, true);
 		historyPointer--;
 		
-		DOM.$redo.removeAttr('disabled');		
+		DOM.$redo.removeAttr('disabled');	
+			
 		if ( historyPointer < 0 ) {
 			DOM.$undo.attr('disabled', 'disabled');
 		}
@@ -710,7 +756,7 @@ $(function(){
 			
 			DOM.$canvas.mousemove(function(e){
 				var hoverData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
-				var hoverRGB = 'rgb(' + hoverData[0] + ',' + hoverData[1] + ',' + hoverData[2] + ')';
+				var hoverRGB = getRGBColor(hoverData);
 				DOM.$dropper.css('background-color', hoverRGB);
 
 				DOM.$pixelSizeDemoDiv.css('background-image', 'none');
