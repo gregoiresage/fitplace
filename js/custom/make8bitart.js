@@ -250,7 +250,6 @@ $(function(){
 				var currentColor = getRGBColor(currentPixelData);
 				
 				if ( areColorsEqual(initColor, currentColor) ) {
-					
 					drawPixel(x, y, paintColor);
 					pushToHistory(action.index, action.fill, x, y, initColor, paintColor);
 					
@@ -273,6 +272,7 @@ $(function(){
 				setTimeout(fill, 10);
 			}
 		}
+		
 		// fill it up fill it up fill it up
 		fill();
 	}
@@ -472,27 +472,26 @@ $(function(){
 	};
 	
 	var areColorsEqual = function( alpha, beta ) {
-		if ( rgbToHex(alpha) != rgbToHex(beta) || 
-			( alpha == 'rgb(0, 0, 0, 0)' && ( beta == 'rgb(0, 0, 0)' || beta == '#000000') ) || 
-			( (alpha == 'rgb(0, 0, 0)' || alpha == '#000000') && beta == 'rgb(0, 0, 0, 0)' ) ) {
+
+		if ( ( alpha == 'rgb(0, 0, 0, 0)' && ( beta == 'rgb(0, 0, 0)' || beta == '#000000' || beta == 'rgb(0, 0, 0, 255)' ) ) || 
+			( ( alpha == 'rgb(0, 0, 0)' || alpha == '#000000' || alpha == 'rgb(0, 0, 0, 255)' ) && beta == 'rgb(0, 0, 0, 0)' )  || 
+			 rgbToHex(alpha) != rgbToHex(beta) ) {
 			return false;
 		}
 		else { 
 			return true;
 		}
 	};
-	
-	
-	
+		
 	/*** EVENTS OH MAN ***/
 	
 	/* general */
 	
 	var onMouseDown = function(e) {
 		e.preventDefault();
-		
+				
 		var origData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
-		var origRGB = getRGBColor(origData);		
+		var origRGB = getRGBColor(origData);	
 			
 		if ( mode.dropper ) {
 			mode.dropper = false;
@@ -505,8 +504,8 @@ $(function(){
 			// reset history
 			history = history.slice(0, historyPointer+1);
 			DOM.$redo.attr('disabled','disabled');
-
-			if ( mode.paint && origRGB != pixel.color ) {
+				
+			if ( mode.paint && !areColorsEqual( origRGB, pixel.color ) ) {
 				action.index++;			
 				paint( origRGB, pixel.color, e.pageX, e.pageY);
 			}
@@ -516,7 +515,7 @@ $(function(){
 			
 				action.index++;
 				drawPixel(e.pageX, e.pageY, pixel.color);
-				if ( origRGB != pixel.color ) {
+				if ( !areColorsEqual( origRGB, pixel.color) ) {
 					pushToHistory(action.index, action.draw, e.pageX, e.pageY, origRGB, pixel.color);			
 				}
 				
