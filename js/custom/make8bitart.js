@@ -654,10 +654,10 @@ $(function(){
 	});
    
     // undo alias to ctrl+z, macs aliased to cmd+z
-    key('ctrl+z, âŒ˜+z', triggerClickForEnabled(DOM.$undo));
+    key('ctrl+z, ⌘+z', triggerClickForEnabled(DOM.$undo));
 
     // redo alias to ctrl+y and mac aliased cmd+shift+z
-    key('ctrl+y, âŒ˜+shift+z', triggerClickForEnabled(DOM.$redo));
+    key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
 
 
 	/* colors */
