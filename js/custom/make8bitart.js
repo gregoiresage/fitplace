@@ -2,9 +2,8 @@ $(function(){
 
 	/*** VARIABULLS ***/
 
-	var colorJennsPick = $('.button.color.favorite').css('background-color');
 	var ctx, leftSide, topSide, xPos, yPos, resetSelectStart, saveSelection, rect, historyPointer;
-	var history = [];
+	var drawHistory = [];
 
 	var DOM = {
 		$window : $(window),
@@ -78,7 +77,7 @@ $(function(){
 	};
 	
 	var pixel = {
-		color: 'rgb(0, 0, 0)',
+		color: 'rgba(0, 0, 0, 255)',
 	};
 
 	
@@ -101,12 +100,12 @@ $(function(){
 		DOM.$canvas.off('mousemove');
 	});
 	
-	DOM.$colorPicker.children('img').pixelDiv({
-        hideIMG : true,        
-        pixelSize : 9,
-        divID : $(this).parent().attr('id'),
-        divClass : 'clearfix',
-    });
+	//DOM.$colorPicker.children('img').pixelDiv({
+    //    hideIMG : true,        
+    //    pixelSize : 9,
+    //    divID : $(this).parent().attr('id'),
+    //    divClass : 'clearfix',
+    //});
     
     DOM.$colorPicker;
     DOM.$colorPickerPixels = $('.pixelDiv-pixel');
@@ -170,14 +169,14 @@ $(function(){
 		if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
 			ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());	
 			
-			if ( background && background != 'rgb(0, 0, 0, 0)') {
+			if ( background && background != 'rgba(0, 0, 0, 0)') {
 				windowCanvas.background = background;
 				ctx.fillStyle = background;
 				ctx.fillRect(0,0,DOM.$canvas.width(),DOM.$canvas.height());
 			}
 			
 			// reset history
-			history = [];
+			drawHistory = [];
 			historyPointer = -1;
 			DOM.$redo.attr('disabled', 'disabled');
 			DOM.$undo.attr('disabled', 'disabled');
@@ -201,7 +200,7 @@ $(function(){
 		ctx.fillStyle = color;
 		ctx.lineHeight = 0;
 		
-		if ( color == 'rgb(0, 0, 0, 0)' ) {
+		if ( color == 'rgba(0, 0, 0, 0)' ) {
 			ctx.clearRect(xPos,yPos,pixel.size,pixel.size);
 		}
 		else {
@@ -298,32 +297,31 @@ $(function(){
 	};
 	
 	var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew) {
-		// push to history
-		history.push({
+		// push to drawHistory
+		var pixelDrawn = {
 			index : actionIndex,
 			action : actionType,
 			xPos : x,
 			yPos : y,
 			originalColor : rgbOriginal,
 			newColor : rgbNew
-		});
+		};
+		drawHistory.push(pixelDrawn);
 		historyPointer++;
 		DOM.$undo.removeAttr('disabled');
 	};
 
 	var undoRedo = function(pointer, undoFlag) {
 		if ( undoFlag ) {
-		    var undoRedoColor = history[pointer].originalColor;
+		    var undoRedoColor = drawHistory[pointer].originalColor;
 		    var nextPointer = pointer - 1;
 		}
 		else {
-			var undoRedoColor = history[pointer].newColor;
+			var undoRedoColor = drawHistory[pointer].newColor;
 			var nextPointer = pointer + 1;
 		}
 		
-		drawPixel(history[pointer].xPos, history[pointer].yPos, undoRedoColor);
-		
-		if ( history[pointer].action == action.fill && history[nextPointer] && history[pointer].index == history[nextPointer].index ) {
+		if ( drawHistory[pointer].action == action.fill && drawHistory[nextPointer] && drawHistory[pointer].index == drawHistory[nextPointer].index ) {
 			if ( undoFlag ) { 
 				historyPointer--;
 			}
@@ -332,6 +330,8 @@ $(function(){
 			}
 			undoRedo(historyPointer, undoFlag);
 		}
+
+		drawPixel(drawHistory[pointer].xPos, drawHistory[pointer].yPos, undoRedoColor);
 	};
 	
 	var resetModes = function() {
@@ -340,7 +340,7 @@ $(function(){
 			DOM.$canvas.removeClass(classes.dropperMode);
 			mode.dropper = false;
 						
-			if ( pixel.color = 'rgb(0, 0, 0, 0)' ) {
+			if ( pixel.color = 'rgba(0, 0, 0, 0)' ) {
 				backgroundIMG = windowCanvas.background;
 			}
 			else {
@@ -431,7 +431,8 @@ $(function(){
 	/* colors */
 	
 	var getRGBColor = function(imageData) {
-		return 'rgb(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ', ' + imageData[3] + ')';
+		var opacity = imageData[3]/255;
+		return 'rgba(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ', ' + opacity + ')';
 	}
 	
 	var rgbToHex = function( rgb ) {
@@ -473,8 +474,8 @@ $(function(){
 	
 	var areColorsEqual = function( alpha, beta ) {
 
-		if ( ( alpha == 'rgb(0, 0, 0, 0)' && ( beta == 'rgb(0, 0, 0)' || beta == '#000000' || beta == 'rgb(0, 0, 0, 255)' ) ) || 
-			( ( alpha == 'rgb(0, 0, 0)' || alpha == '#000000' || alpha == 'rgb(0, 0, 0, 255)' ) && beta == 'rgb(0, 0, 0, 0)' )  || 
+		if ( ( alpha == 'rgba(0, 0, 0, 0)' && ( beta == '#000000' || beta == 'rgba(0, 0, 0, 255)' ) ) || 
+			( ( alpha == '#000000' || alpha == 'rgba(0, 0, 0, 255)' ) && beta == 'rgba(0, 0, 0, 0)' )  || 
 			 rgbToHex(alpha) != rgbToHex(beta) ) {
 			return false;
 		}
@@ -502,7 +503,7 @@ $(function(){
 		else if ( !mode.save ) {
 		
 			// reset history
-			history = history.slice(0, historyPointer+1);
+			drawHistory = drawHistory.slice(0, historyPointer+1);
 			DOM.$redo.attr('disabled','disabled');
 				
 			if ( mode.paint && !areColorsEqual( origRGB, pixel.color ) ) {
@@ -516,6 +517,7 @@ $(function(){
 				action.index++;
 				drawPixel(e.pageX, e.pageY, pixel.color);
 				if ( !areColorsEqual( origRGB, pixel.color) ) {
+					console.log(origRGB, pixel.color);
 					pushToHistory(action.index, action.draw, e.pageX, e.pageY, origRGB, pixel.color);			
 				}
 				
@@ -647,7 +649,7 @@ $(function(){
 		undoRedo(historyPointer, false);
 		
 		DOM.$undo.removeAttr('disabled');
-		if ( historyPointer == history.length - 1 ) {
+		if ( historyPointer == drawHistory.length - 1 ) {
 		    DOM.$redo.attr('disabled', 'disabled');
 		}
 	});
@@ -665,19 +667,13 @@ $(function(){
 	DOM.$color.click(function(){
 		
 		var $newColor = $(this);
-		
-		if ( $newColor.hasClass('favorite') ) {
-			var newColorLabel = colorJennsPick;
-		}
-		else {
-			var newColorLabel = $newColor.attr('data-color');
-		}
+		var newColorLabel = $newColor.attr('data-color');
 		
 		$('.current').removeClass(classes.current);
 		$newColor.addClass(classes.current);
 		pixel.color = newColorLabel;
 
-		if ( pixel.color != 'rgb(0, 0, 0, 0)' ) {
+		if ( pixel.color != 'rgba(0, 0, 0, 0)' ) {
 			var demoColor = pixel.color;
 			DOM.$pixelSizeDemoDiv.css('background-image', 'none');
 			DOM.$colorPickerDemo.css('background-image', 'none');
