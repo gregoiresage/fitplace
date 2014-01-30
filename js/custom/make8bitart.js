@@ -77,17 +77,18 @@ $(function(){
 	};
 	
 	var pixel = {
-		color: 'rgba(0, 0, 0, 255)',
+		color: 'rgba(0, 0, 0, 1)',
 	};
 
 	
 	/*** OUTSIDE LIBRARY STUFF - DRAGGYDIVS & PIXELDIV***/
 	var onMinimizeToolsListClick = function (e) {
-			var $this = $(this);
-			var $elm = $this.data("draggy");
-			$elm.draggyBits('restore');
-			$this.parent().remove();
+		var $this = $(this);
+		var $elm = $this.data("draggy");
+		$elm.draggyBits('restore');
+		$this.parent().remove();
 	};
+
 	var onMinimize = function ($elm) {
 		var $a = $("<a>").html($elm.attr("title")).on('click', onMinimizeToolsListClick).data("draggy", $elm);
 		$('<li></li>').append($a).appendTo(DOM.$minimizedToolsList)
@@ -100,12 +101,12 @@ $(function(){
 		DOM.$canvas.off('mousemove');
 	});
 	
-	//DOM.$colorPicker.children('img').pixelDiv({
-    //    hideIMG : true,        
-    //    pixelSize : 9,
-    //    divID : $(this).parent().attr('id'),
-    //    divClass : 'clearfix',
-    //});
+	DOM.$colorPicker.children('img').pixelDiv({
+        hideIMG : true,        
+        pixelSize : 9,
+        divID : $(this).parent().attr('id'),
+        divClass : 'clearfix',
+    });
     
     DOM.$colorPicker;
     DOM.$colorPickerPixels = $('.pixelDiv-pixel');
@@ -425,8 +426,6 @@ $(function(){
 		}
 	};
 	
-
-	
 	
 	/* colors */
 	
@@ -474,8 +473,8 @@ $(function(){
 	
 	var areColorsEqual = function( alpha, beta ) {
 
-		if ( ( alpha == 'rgba(0, 0, 0, 0)' && ( beta == '#000000' || beta == 'rgba(0, 0, 0, 255)' ) ) || 
-			( ( alpha == '#000000' || alpha == 'rgba(0, 0, 0, 255)' ) && beta == 'rgba(0, 0, 0, 0)' )  || 
+		if ( ( alpha == 'rgba(0, 0, 0, 0)' && ( beta == '#000000' || beta == 'rgba(0, 0, 0, 1)' ) ) || 
+			( ( alpha == '#000000' || alpha == 'rgba(0, 0, 0, 1)' ) && beta == 'rgba(0, 0, 0, 0)' )  || 
 			 rgbToHex(alpha) != rgbToHex(beta) ) {
 			return false;
 		}
@@ -516,8 +515,8 @@ $(function(){
 			
 				action.index++;
 				drawPixel(e.pageX, e.pageY, pixel.color);
+
 				if ( !areColorsEqual( origRGB, pixel.color) ) {
-					console.log(origRGB, pixel.color);
 					pushToHistory(action.index, action.draw, e.pageX, e.pageY, origRGB, pixel.color);			
 				}
 				
@@ -655,10 +654,10 @@ $(function(){
 	});
    
     // undo alias to ctrl+z, macs aliased to cmd+z
-    key('ctrl+z, ⌘+z', triggerClickForEnabled(DOM.$undo));
+    key('ctrl+z, âŒ˜+z', triggerClickForEnabled(DOM.$undo));
 
     // redo alias to ctrl+y and mac aliased cmd+shift+z
-    key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
+    key('ctrl+y, âŒ˜+shift+z', triggerClickForEnabled(DOM.$redo));
 
 
 	/* colors */
