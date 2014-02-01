@@ -220,6 +220,13 @@ $(function(){
 		}
 	
 	}
+
+	var touchDraw = function(e) {
+		// for each finger in your fingers
+		for ( var i = 0; i < e.touches.length; i++ ) {
+			drawOnMove(e.touches[i]);
+		}
+	};
 	
 	var paint = function( initColor, paintColor, x, y ) {
 
@@ -523,7 +530,7 @@ $(function(){
 				DOM.$canvas.on('mousemove', drawOnMove);
 				
 				// touch
-				DOM.$canvas[0].addEventListener('touchmove', drawOnMove, false);
+				DOM.$canvas[0].addEventListener('touchmove', touchDraw, false);
 			}
 			
 		}
