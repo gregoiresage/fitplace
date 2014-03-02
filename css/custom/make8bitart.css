@@ -2,16 +2,16 @@
 * make8bit art
 * @author jenn schiffer
 * make8bitart.com
-* jennschiffer.com
+* jenn.ws
 * @jennschiffer
 */
 
 /* fonts */
 @font-face {
-  font-family: 'VT323';
-  font-style: normal;
-  font-weight: 400;
-  src: url('../../assets/fonts/VT323-Regular.ttf') format('woff');
+    font-family: 'VT323';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../../assets/fonts/VT323-Regular.ttf') format('woff');
 }
 
 body { background: #efefef; padding: 0; margin: 0; font-family: 'VT323', Helvetica, Arial, sans-serif; font-size: 16px; color: #333; }
@@ -19,7 +19,7 @@ a { color: blue; }
 
 /* canvas */
 canvas { background: #fff; cursor: crosshair; display: block; }
-	
+    
 /* draggy "plugin" */
 .draggy { padding: 10px; box-shadow: 5px 5px 0 #000; border: 1px solid #000; background: #fffff3; -webkit-user-select: none; -moz-user-select: none; user-select: none; }
 img.ui-dragger { width: 30px; }
@@ -42,7 +42,7 @@ img.ui-hider { width: 20px; margin: 5px 5px 0 0; }
 /* social and credits */
 #credits { width: 165px; }
 #subheader { font-size: 1.3em; }
-h2 { background: aqua; display: inline-block; float: right; font-size: 1.2em; padding: 5px; margin: 10px 0 15px; }
+h2 { background: aqua; display: inline-block; float: right; font-size: 1em; padding: 5px; margin: 10px 0 15px; }
 h2 a { font-size: 1.2em;}
 .hearts { color: hotpink; }
 
@@ -73,7 +73,7 @@ ul.instructions { padding: 0 0 0 20px; }
 .button.color.purple { background: purple; }
 .button.color.black { background: black; }
 .button.color.gray { background: gray; }
-.button.color.white { background: white; border: 2px solid rgba(0,0,0,.25); }	
+.button.color.white { background: white; border: 2px solid rgba(0,0,0,.25); }    
 .button.color.favorite { background: hotpink; }
 .button.color.custom { background: url('../../assets/colorful.png'); }
 .button.color.transparent { border-color: #ccc; background: url('../../assets/bg.png'); }
@@ -85,31 +85,26 @@ ul.instructions { padding: 0 0 0 20px; }
 #colorpicker .color-demo { background: #000; width: 100%; height: 20px; }
 #colorpicker .pixelDiv { margin: 5px auto; }
 #colorpicker p { font-size: 1.5em; margin: 0 0 10px; }
-#hex-color { width: 50%; margin-left: 5px; }
+#hex-color { width: 45%; margin-left: 5px; }
 #hex-color.current { border: 4px solid #000; }
 #color-dropper { border: 1px solid transparent; padding: 5px; vertical-align: middle; }
 #color-dropper.current-tool { border-color: #000; }
 
-/* wait */
-#wait { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: rgba(255,255,255,.75) url('../../assets/hourglass.gif') no-repeat; background-position: center center; text-align: center; }
-
 /* mobile */
-
 @media only screen and ( min-device-width: 320px ) and ( max-device-width: 568px ) {
-	body { font-size: 2em; }
-		input { font-size: .6em; }
-
-	#header { width: 600px; }
-	#toolbox { width: 300px; }
-	#toolbox input { font-size: .8em; }
-	#colorbox { width: 200px; }
-	#colorbox p { margin: 0; }
-	img.ui-dragger,
-	img.ui-hider { width: 70px; }
-	.eightbit { display: none; }
-	#save-selection { display: none; }
-	.tip { display: none; }
-	h3 { margin: .5em 0; }
+    body { font-size: 2em; }
+    input { font-size: .6em; }
+    #header { width: 600px; }
+    #toolbox { width: 300px; }
+    #toolbox input { font-size: .8em; }
+    #colorbox { width: 200px; }
+    #colorbox p { margin: 0; }
+    img.ui-dragger,
+    img.ui-hider { width: 70px; }
+    .eightbit { display: none; }
+    #save-selection { display: none; }
+    .tip { display: none; }
+    h3 { margin: .5em 0; }
 }
 
 /* clearfix */

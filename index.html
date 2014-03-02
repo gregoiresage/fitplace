@@ -31,7 +31,7 @@
 	<title>make 8-bit art!</title>
 	<link rel="stylesheet" href="css/libs/draggybits.css" />
 	<link rel="stylesheet" href="css/custom/make8bitart.css" />
-	<link rel="icon" href="assets/customcolors.png" />
+	<link rel="icon" href="assets/favicon.png" />
 </head>
 
 <body id="do-what-you-want-what-you-want-with-my-html-body">
@@ -97,7 +97,7 @@
 			<img class="ui-hider" src="assets/draggybits/hider2.png">
 		</div>
 		
-		<div id="subheader">an in-browser canvas tool <div class="tip"> ? <span class="tip-text">only works in browsers that support html5 canvas and javascript. for the old less-cool version, <a href="/old/">click here</a></span></div></div>
+		<div id="subheader">an in-browser canvas tool <div class="tip"> ? <span class="tip-text">only works in browsers that support html5 canvas and javascript. <a href="https://github.com/jennschiffer/make8bitart" target="_blank">it's open source!</a></span></div></div>
 		
 		<h2>made with <span class="hearts">&hearts;&hearts;&hearts;</span> by <a href="http://twitter.com/jennschiffer" target="_blank">@jennschiffer</a></h2>
 		
@@ -106,9 +106,7 @@
 			<iframe id="facebook" src="http://www.facebook.com/plugins/like.php?app_id=124052687676604&amp;href=http%3A%2F%2Fmake8bitart.com&amp;send=false&amp;layout=button_count&amp;width=140&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=verdana&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:140px; height:21px;" allowTransparency="true"></iframe>
 			<br /><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://make8bitart.com" data-text="Make 8-bit art!" data-via="jennschiffer" data-related="jennschiffer">Tweet</a>
 			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-			
-			<p>&hearts;&hearts; <a href="https://github.com/jennschiffer/make8bitart" target="_blank">it's open source!</a> &hearts;&hearts;</p>
-		</div>
+					</div>
 	
 	</div>
 		
@@ -225,7 +223,7 @@
 			<p>#<input id="hex-color" type="text" value="000000" /> <a href="#" title="color dropper"><img id="color-dropper" src="assets/dropper.png" alt="dropper"></a></p>
 			
 			<h3 class="eightbit">click to pick:</h3>
-			<img class="eightbit" id="8bitcolors" src="assets/customcolors.png" />
+			<canvas id="8bitcolors" width="150" height="150"></canvas>
 			<div class="color-demo eightbit"></div>
 		</div>
 			
@@ -233,7 +231,6 @@
 	
 <script src="js/libs/jquery.min.js"></script>
 <script src="js/libs/draggybits.js"></script>
-<script src="js/libs/pixeldiv.js"></script>
 <script src="js/libs/keymaster.js"></script> 
 <script src="js/custom/make8bitart.js"></script>
 
