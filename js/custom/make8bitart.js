@@ -375,8 +375,8 @@ $(function() {
             img.onload = function() {
                 pickerPaletteCtx.drawImage(img,0,0);
             };
-            // NOTE: replace with path to /assets/customcolors.png if this doesn't work
-            img.src = '/stuff/8bit/assets/customcolors.png';
+            // NOTE: prefix path to /assets/customcolors.png if this doesn't work
+            img.src = '/assets/customcolors.png';
     };
 
     

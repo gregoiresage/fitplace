@@ -82,8 +82,7 @@ ul.instructions { padding: 0 0 0 20px; }
 
 /* color picker */
 #colorpicker { position: relative; }
-#colorpicker .color-demo { background: #000; width: 100%; height: 20px; }
-#colorpicker .pixelDiv { margin: 5px auto; }
+#colorpicker .color-demo { background: #000; width: 100%; height: 20px; margin-top: 10px; }
 #colorpicker p { font-size: 1.5em; margin: 0 0 10px; }
 #hex-color { width: 45%; margin-left: 5px; }
 #hex-color.current { border: 4px solid #000; }
