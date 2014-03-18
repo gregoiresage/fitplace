@@ -256,16 +256,16 @@ $(function() {
                     drawPixel(x, y, paintColor);
                     pushToHistory(action.index, action.fill, x, y, initColor, paintColor);
                     
-                    if ( (x - pixel.size) >= 0 && !viewed[ [x - pixel.size, y] ] ) {
+                    if ( (x - pixel.size + 2) >= 0 && !viewed[ [x - pixel.size + 2, y] ] ) {
                         stack.push([x-pixel.size, y]);
                     }
-                    if ( (x + pixel.size) < windowCanvas.width && !viewed[ [x + pixel.size, y] ]) {
+                    if ( (x + pixel.size - 2) < windowCanvas.width && !viewed[ [x + pixel.size - 2, y] ]) {
                         stack.push([x+pixel.size, y]);
                     }
-                    if ( (y - pixel.size) >= 0 && !viewed[ [x, y - pixel.size] ] ) {
+                    if ( (y - pixel.size + 2) >= 0 && !viewed[ [x, y - pixel.size + 2] ] ) {
                         stack.push([x, y-pixel.size]);
                     }
-                    if ( (y + pixel.size) < windowCanvas.height && !viewed[ [x, y + pixel.size] ]) {
+                    if ( (y + pixel.size - 2) < windowCanvas.height && !viewed[ [x, y + pixel.size - 2] ]) {
                         stack.push([x, y+pixel.size]);
                     }
 
