@@ -10,6 +10,10 @@ Just download the source and direct your browser to the `index.html` of the proj
 
 make8bitart.com uses jQuery and a jQuery plugins I wrote: [draggybits](https://github.com/jennschiffer/draggybits)
 
+## now with imgur support
+
+except you need to [register your own imgur app](https://api.imgur.com/) and enter the info on `/js/custom/make8bitart.js` at line 91.
+
 ## misc notes
 
 8-bit truthers will complain that the color palette is not actually 8-bit. I discuss this on my ["blog"](http://negativitysandwiches.com/making-an-8-bit-color-picker/). If that makes you really angry, then I suggest you take a nap, butthorn.

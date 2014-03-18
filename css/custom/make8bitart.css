@@ -89,6 +89,14 @@ ul.instructions { padding: 0 0 0 20px; }
 #color-dropper { border: 1px solid transparent; padding: 5px; vertical-align: middle; }
 #color-dropper.current-tool { border-color: #000; }
 
+/* save modal */
+#save-box { display: none; width: 100%; height: 100%; background: rgba(0,0,0,.8); position: absolute; top: 0; left: 0; }
+#save-modal { position: absolute; top: 20px; left: 12%; padding: 20px; background: #fff; width: 70%; display: inline-block; border: 5px solid #000; }
+#save-modal h2 { float: none; font-size: 2em; }
+#save-modal .ui-hider { position: absolute; top: 10px; right: 10px; }
+#save-modal .ui-hider:hover { cursor: pointer; }
+#save-modal img { max-width: 100%; display: block; }
+
 /* mobile */
 @media only screen and ( min-device-width: 320px ) and ( max-device-width: 568px ) {
     body { font-size: 2em; }

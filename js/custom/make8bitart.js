@@ -36,7 +36,8 @@ $(function() {
         $buttonNewCanvas : $('#new-canvas'),
         $buttonSaveFull : $('#save-full'),
         $buttonSaveSelection : $('#save-selection'),
-        
+        $buttonSaveImgur : $('#save-imgur'),
+                
         $pixelSizeInput : $('.pixel-size-input'),
         $pixelSizeDemoDiv : $('#pixel-size-demo'),
         
@@ -46,7 +47,12 @@ $(function() {
         $saveInstruction : $('.instructions').slideUp(),
         
         $undo : $('#undo'),
-        $redo : $('#redo')
+        $redo : $('#redo'),
+        
+        $saveBox : $('#save-box'),
+        $saveImg : $('#finished-art'),
+        $saveExit : $('#save-box .ui-hider'),
+        $linkImgur : $('#link-imgur')
     };
     
     var mode = {
@@ -85,6 +91,11 @@ $(function() {
     
     var pixel = {
         color: 'rgba(0, 0, 0, 1)',
+    };
+    
+    // to work, register your own imgur app here https://api.imgur.com/ and enter your info
+    var imgur = {
+        clientId: '11112830fafe58a',
     };
 
     
@@ -256,16 +267,16 @@ $(function() {
                     drawPixel(x, y, paintColor);
                     pushToHistory(action.index, action.fill, x, y, initColor, paintColor);
                     
-                    if ( (x - pixel.size) >= 0 && !viewed[ [x - pixel.size, y] ] ) {
+                    if ( (x - pixel.size + 2) >= 0 && !viewed[ [x - pixel.size + 2, y] ] ) {
                         stack.push([x-pixel.size, y]);
                     }
-                    if ( (x + pixel.size) < windowCanvas.width && !viewed[ [x + pixel.size, y] ]) {
+                    if ( (x + pixel.size - 2) < windowCanvas.width && !viewed[ [x + pixel.size - 2, y] ]) {
                         stack.push([x+pixel.size, y]);
                     }
-                    if ( (y - pixel.size) >= 0 && !viewed[ [x, y - pixel.size] ] ) {
+                    if ( (y - pixel.size + 2) >= 0 && !viewed[ [x, y - pixel.size + 2] ] ) {
                         stack.push([x, y-pixel.size]);
                     }
-                    if ( (y + pixel.size) < windowCanvas.height && !viewed[ [x, y + pixel.size] ]) {
+                    if ( (y + pixel.size - 2) < windowCanvas.height && !viewed[ [x, y + pixel.size - 2] ]) {
                         stack.push([x, y+pixel.size]);
                     }
 
@@ -419,7 +430,7 @@ $(function() {
         
             // write on screen
             var img = tempCanvas[0].toDataURL('image/png');
-            window.open(img,'_blank');
+            displayFinishedArt(img);
         }
         
         // remove tempCanvas
@@ -435,11 +446,42 @@ $(function() {
         ctxOverlay.clearRect(rect.startX, rect.startY, rect.w, rect.h);
     };
     
+    var displayFinishedArt = function(src) {
+	    DOM.$saveImg.attr('src', src);
+	    DOM.$saveBox.show();
+    }
+    
     var saveToLocalStorage = function() {
         if ( canStorage() ) {
             savedCanvas = DOM.$canvas[0].toDataURL('image/png');
             localStorage.make8bitartSavedCanvas = savedCanvas;
         }
+    };
+    
+    var uploadToImgur = function() {
+        var imgDataURL = DOM.$saveImg.attr('src').replace(/^data:image\/(png|jpg);base64,/, '');        
+        $.ajax({
+            method: 'POST',
+            url: 'https://api.imgur.com/3/image',
+            headers: {
+                Authorization: 'Client-ID ' + imgur.clientId,
+            },
+            dataType: 'json',
+            data: {
+                image: imgDataURL,
+                type: 'base64',
+                title: 'made on make8bitart.com'
+            },
+            success: function(result) {
+                var id = result.data.id;
+                var url = 'https://imgur.com/gallery/' + id;
+                DOM.$linkImgur.attr('href', url).text('see it on imgur: ' + url);
+                DOM.$buttonSaveImgur.hide();
+            },
+            error: function(result) {
+	            DOM.$linkImgur.text('There was an error saving to Imgur.');
+            }
+        });
     };
     
     
@@ -618,7 +660,7 @@ $(function() {
     // save full canvas 
     DOM.$buttonSaveFull.click(function() {
         var savedPNG = DOM.$canvas[0].toDataURL('image/png');
-        window.open(savedPNG,'_blank');
+        displayFinishedArt(savedPNG);
     });
     
     // save selection of canvas button clicked
@@ -780,6 +822,18 @@ $(function() {
 
             });
         }
+    });
+    
+    /* saving */
+    DOM.$saveExit.click(function() {
+	    DOM.$saveBox.hide();
+	    DOM.$linkImgur.attr('href', '').text('');
+        DOM.$buttonSaveImgur.show();
+    });
+    
+    // save to imgur
+    DOM.$buttonSaveImgur.click(function() {
+        uploadToImgur();
     });
 
     
