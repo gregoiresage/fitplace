@@ -24,6 +24,6 @@ This is an agile development cycle, so I'm poppin' in features as I come up with
 
 I designed, built, and created all of the graphics for this passion project. The dinosaur art in the source was found through a variety of geocities websites. 
 
-If you have feature requests, let me know via Twitter (see below). I am currently *not* accepting pull requests. If that makes you really angry, then I suggest you take a nap, butthorn.
+If you have feature requests, create an Issue to start the discussion!
 
 [@jennschiffer](http://twitter.com/jennschiffer) &bull; [jenn.ws](http://jenn.ws)
