@@ -43,7 +43,7 @@ $(function() {
         
         $minimizedToolsList : $('#minimized-tools-list'),
         $draggydivs : $('.draggy'),
-        $tips : $('.tip'),        
+        $tips : $('.tip'),
         $saveInstruction : $('.instructions').slideUp(),
         
         $undo : $('#undo'),
@@ -73,7 +73,7 @@ $(function() {
         height: DOM.$window.height(),
         width: DOM.$window.width(),
         background: 'url("assets/bg.png")'
-    };    
+    };
 
     var copy = {
         selectionOff : 'turn off selection',
@@ -129,7 +129,7 @@ $(function() {
     });
     DOM.$credits.css({
         left : '480px',
-        top : '120px'    
+        top : '120px'
     });
     DOM.$toolbox.css({
         left : '30px',
@@ -176,7 +176,7 @@ $(function() {
     var resetCanvas = function(background) {
         
         if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
-            ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());    
+            ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
             
             if ( background && background != 'rgba(0, 0, 0, 0)') {
                 windowCanvas.background = background;
@@ -201,30 +201,30 @@ $(function() {
         DOM.$pixelSizeInput.val(pixel.size);
     };
 
-    var drawPixel = function(xPos, yPos, color) {
-        ctx.beginPath();  
-        xPos = ( Math.ceil(xPos/pixel.size) * pixel.size ) - pixel.size;
-        yPos = ( Math.ceil(yPos/pixel.size) * pixel.size ) - pixel.size;
-        ctx.moveTo (xPos, yPos);          
+    var drawPixel = function(xPos, yPos, color, size) {
+        ctx.beginPath();
+        xPos = ( Math.ceil(xPos/size) * size ) - size;
+        yPos = ( Math.ceil(yPos/size) * size ) - size;
+        ctx.moveTo (xPos, yPos);
         ctx.fillStyle = color;
         ctx.lineHeight = 0;
         
         if ( color == 'rgba(0, 0, 0, 0)' ) {
-            ctx.clearRect(xPos,yPos,pixel.size,pixel.size);
+            ctx.clearRect(xPos,yPos,size,size);
         }
         else {
-            ctx.fillRect(xPos,yPos,pixel.size,pixel.size);
+            ctx.fillRect(xPos,yPos,size,size);
         }
         
     };
     
     var drawOnMove = function(e) {
         var hoverData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
-        var hoverRGB = getRGBColor(hoverData);    
+        var hoverRGB = getRGBColor(hoverData);
         
-        if ( !areColorsEqual( hoverRGB, pixel.color) ) {
-            drawPixel(e.pageX, e.pageY, pixel.color);
-            pushToHistory(action.index, action.draw, e.pageX, e.pageY, hoverRGB, pixel.color);
+        if ( !areColorsEqual( hoverRGB, pixel.color, pixel.size) ) {
+            drawPixel(e.pageX, e.pageY, pixel.color, pixel.size);
+            pushToHistory(action.index, action.draw, e.pageX, e.pageY, hoverRGB, pixel.color, pixel.size);
         }
     };
 
@@ -264,8 +264,8 @@ $(function() {
                 var currentColor = getRGBColor(currentPixelData);
                 
                 if ( areColorsEqual(initColor, currentColor) ) {
-                    drawPixel(x, y, paintColor);
-                    pushToHistory(action.index, action.fill, x, y, initColor, paintColor);
+                    drawPixel(x, y, paintColor, pixel.size);
+                    pushToHistory(action.index, action.fill, x, y, initColor, paintColor, pixel.size);
                     
                     if ( (x - pixel.size + 2) >= 0 && !viewed[ [x - pixel.size + 2, y] ] ) {
                         stack.push([x-pixel.size, y]);
@@ -294,24 +294,24 @@ $(function() {
     var canStorage = function() {
         try {
             return 'localStorage' in window && window.localStorage !== null;
-        } 
+        }
         catch (e) {
             return false;
         }
     };
     
     var drawFromLocalStorage = function() {
-        var savedCanvas = localStorage.make8bitartSavedCanvas;    
+        var savedCanvas = localStorage.make8bitartSavedCanvas;
         if ( savedCanvas ) {
             var img = new Image();
             img.onload = function() {
                 ctx.drawImage(img,0,0);
             };
             img.src = savedCanvas;
-        }    
+        }
     };
     
-    var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew) {
+    var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew, pixelSize) {
         // push to drawHistory
         var pixelDrawn = {
             index : actionIndex,
@@ -319,7 +319,8 @@ $(function() {
             xPos : x,
             yPos : y,
             originalColor : rgbOriginal,
-            newColor : rgbNew
+            newColor : rgbNew,
+            pixelSize: pixelSize
         };
         drawHistory.push(pixelDrawn);
         historyPointer++;
@@ -338,7 +339,7 @@ $(function() {
         }
         
         if ( drawHistory[pointer].action == action.fill && drawHistory[nextPointer] && drawHistory[pointer].index == drawHistory[nextPointer].index ) {
-            if ( undoFlag ) { 
+            if ( undoFlag ) {
                 historyPointer--;
             }
             else {
@@ -347,7 +348,7 @@ $(function() {
             undoRedo(historyPointer, undoFlag);
         }
 
-        drawPixel(drawHistory[pointer].xPos, drawHistory[pointer].yPos, undoRedoColor);
+        drawPixel(drawHistory[pointer].xPos, drawHistory[pointer].yPos, undoRedoColor, drawHistory[pointer].pixelSize);
     };
     
     var resetModes = function() {
@@ -396,7 +397,7 @@ $(function() {
     var startSaveSelection = function(e) {
         saveSelection = {
             startX : e.pageX,
-            startY : e.pageY 
+            startY : e.pageY
         };
     };
     
@@ -447,9 +448,9 @@ $(function() {
     };
     
     var displayFinishedArt = function(src) {
-	    DOM.$saveImg.attr('src', src);
-	    DOM.$saveBox.show();
-    }
+        DOM.$saveImg.attr('src', src);
+        DOM.$saveBox.show();
+    };
     
     var saveToLocalStorage = function() {
         if ( canStorage() ) {
@@ -459,7 +460,7 @@ $(function() {
     };
     
     var uploadToImgur = function() {
-        var imgDataURL = DOM.$saveImg.attr('src').replace(/^data:image\/(png|jpg);base64,/, '');        
+        var imgDataURL = DOM.$saveImg.attr('src').replace(/^data:image\/(png|jpg);base64,/, '');
         $.ajax({
             method: 'POST',
             url: 'https://api.imgur.com/3/image',
@@ -479,7 +480,7 @@ $(function() {
                 DOM.$buttonSaveImgur.hide();
             },
             error: function(result) {
-	            DOM.$linkImgur.text('There was an error saving to Imgur.');
+                DOM.$linkImgur.text('There was an error saving to Imgur.');
             }
         });
     };
@@ -494,7 +495,7 @@ $(function() {
     
     var rgbToHex = function( rgb ) {
         if ( rgb.charAt(0) == '#' ) {
-            return rgb.slice(1,7); 
+            return rgb.slice(1,7);
         }
         
         if ( rgb == 'transparent' ) {
@@ -505,7 +506,7 @@ $(function() {
         var rgbArray = rgb.substr(startString, rgb.length - 5).split(',');
         var hex = '';
         for ( var i = 0; i <= 2; i++ ) {
-            var hexUnit = parseInt(rgbArray[i]).toString(16);
+            var hexUnit = parseInt(rgbArray[i],10).toString(16);
             if ( hexUnit.length == 1 ) {
                 hexUnit = '0' + hexUnit;
             }
@@ -536,12 +537,12 @@ $(function() {
     
     var areColorsEqual = function( alpha, beta ) {
 
-        if ( ( alpha == 'rgba(0, 0, 0, 0)' && ( beta == '#000000' || beta == 'rgba(0, 0, 0, 1)' ) ) || 
-            ( ( alpha == '#000000' || alpha == 'rgba(0, 0, 0, 1)' ) && beta == 'rgba(0, 0, 0, 0)' )  || 
+        if ( ( alpha == 'rgba(0, 0, 0, 0)' && ( beta == '#000000' || beta == 'rgba(0, 0, 0, 1)' ) ) ||
+            ( ( alpha == '#000000' || alpha == 'rgba(0, 0, 0, 1)' ) && beta == 'rgba(0, 0, 0, 0)' )  ||
              rgbToHex(alpha) != rgbToHex(beta) ) {
             return false;
         }
-        else { 
+        else {
             return true;
         }
     };
@@ -554,7 +555,7 @@ $(function() {
         e.preventDefault();
                 
         var origData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
-        var origRGB = getRGBColor(origData);    
+        var origRGB = getRGBColor(origData);
             
         if ( mode.dropper ) {
             mode.dropper = false;
@@ -569,7 +570,7 @@ $(function() {
             DOM.$redo.attr('disabled','disabled');
                 
             if ( mode.paint && !areColorsEqual( origRGB, pixel.color ) ) {
-                action.index++;            
+                action.index++;
                 paint( origRGB, pixel.color, e.pageX, e.pageY);
             }
             else {
@@ -577,10 +578,10 @@ $(function() {
                 mode.drawing = true;
             
                 action.index++;
-                drawPixel(e.pageX, e.pageY, pixel.color);
+                drawPixel(e.pageX, e.pageY, pixel.color, pixel.size);
 
                 if ( !areColorsEqual( origRGB, pixel.color) ) {
-                    pushToHistory(action.index, action.draw, e.pageX, e.pageY, origRGB, pixel.color);            
+                    pushToHistory(action.index, action.draw, e.pageX, e.pageY, origRGB, pixel.color, pixel.size);
                 }
                 
                 DOM.$canvas.on('mousemove', drawOnMove);
@@ -593,7 +594,7 @@ $(function() {
         else {
             // overlay stuff
             rect = {};
-            startSaveSelection(e);    
+            startSaveSelection(e);
             rect.startX = e.pageX - this.offsetLeft;
             rect.startY = e.pageY - this.offsetTop;
             DOM.$overlay.on('mousemove', drawSelection);
@@ -675,7 +676,7 @@ $(function() {
             mode.save = true;
             DOM.$saveInstruction.slideDown();
             $(this).val(copy.selectionOff);
-            ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());            
+            ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
             DOM.$overlay.show();
         }
     });
@@ -698,7 +699,7 @@ $(function() {
         undoRedo(historyPointer, true);
         historyPointer--;
         
-        DOM.$redo.removeAttr('disabled');    
+        DOM.$redo.removeAttr('disabled');
             
         if ( historyPointer < 0 ) {
             DOM.$undo.attr('disabled', 'disabled');
@@ -745,7 +746,7 @@ $(function() {
             DOM.$pixelSizeDemoDiv.css('background-image', windowCanvas.background);
             DOM.$colorPickerDemo.css('background-image', windowCanvas.background);
             DOM.$hex.val('');
-        } 
+        }
         DOM.$pixelSizeDemoDiv.css('background-color', demoColor);
         DOM.$colorPickerDemo.css('background-color', demoColor);
         DOM.$hex.val(rgbToHex(DOM.$colorPickerDemo.css('background-color')));
@@ -826,8 +827,8 @@ $(function() {
     
     /* saving */
     DOM.$saveExit.click(function() {
-	    DOM.$saveBox.hide();
-	    DOM.$linkImgur.attr('href', '').text('');
+        DOM.$saveBox.hide();
+        DOM.$linkImgur.attr('href', '').text('');
         DOM.$buttonSaveImgur.show();
     });
     
@@ -843,7 +844,7 @@ $(function() {
     DOM.$tips.hover(
         function() {
             $(this).find('.tip-text').stop().show();
-        }, 
+        },
         function() {
             $(this).find('.tip-text').stop().hide();
         }
@@ -879,7 +880,7 @@ $(function() {
                 
                 // draw image
                 drawFromLocalStorage();
-            } 
+            }
             
         }
     });
