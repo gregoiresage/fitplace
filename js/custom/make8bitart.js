@@ -474,7 +474,8 @@ $(function() {
             data: {
                 image: imgDataURL,
                 type: 'base64',
-                title: 'made on make8bitart.com'
+                title: 'made on make8bitart.com',
+                description: 'made on make8bitart.com'
             },
             success: function(result) {
                 var id = result.data.id;
@@ -836,6 +837,14 @@ $(function() {
         DOM.$saveBox.hide();
         DOM.$linkImgur.attr('href', '').text('');
         DOM.$buttonSaveImgur.show();
+    });
+    
+    // hide save box if clicking outside of modal
+    DOM.$saveBox.click(function(e) {
+	    var $target = $(e.target).context;
+	    if ( $target == DOM.$saveBox[0] ) {
+		    $(this).hide();
+	    }
     });
     
     // save to imgur
