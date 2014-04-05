@@ -90,8 +90,8 @@ ul.instructions { padding: 0 0 0 20px; }
 #color-dropper.current-tool { border-color: #000; }
 
 /* save modal */
-#save-box { display: none; width: 100%; height: 100%; background: rgba(0,0,0,.8); position: absolute; top: 0; left: 0; z-index: 999999;}
-#save-modal { text-align: center; position: absolute; top: 20px; left: 12%; padding: 20px; background: #fff; width: 70%; display: inline-block; border: 5px solid #000; }
+#save-box { display: none; text-align: center; width: 100%; height: 100%; background: rgba(0,0,0,.8); position: absolute; top: 0; left: 0; z-index: 999999;}
+#save-modal { text-align: center; width: auto; max-width: 50%; display: inline-block; padding: 20px; margin: 20px; box-shadow: 5px 5px 0 #000; border: 1px solid #000; background: #fffff3; position: relative; }
 #save-modal h2 { float: none; font-size: 2em; }
 #save-modal .ui-hider { position: absolute; top: 10px; right: 10px; }
 #save-modal .ui-hider:hover { cursor: pointer; }

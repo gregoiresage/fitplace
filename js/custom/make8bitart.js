@@ -9,7 +9,8 @@ $(function() {
     /*** VARIABULLS ***/
 
     var ctx, pickerPaletteCtx, leftSide, topSide, xPos, yPos, resetSelectStart, saveSelection, rect, historyPointer;
-    var drawHistory = [];
+    var undoRedoHistory = [];
+    var drawHistory = []
 
     var DOM = {
         $window : $(window),
@@ -185,7 +186,7 @@ $(function() {
             }
             
             // reset history
-            drawHistory = [];
+            undoRedoHistory = [];
             historyPointer = -1;
             DOM.$redo.attr('disabled', 'disabled');
             DOM.$undo.attr('disabled', 'disabled');
@@ -312,7 +313,7 @@ $(function() {
     };
     
     var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew, pixelSize) {
-        // push to drawHistory
+        // push to undoRedoHistory
         var pixelDrawn = {
             index : actionIndex,
             action : actionType,
@@ -322,6 +323,7 @@ $(function() {
             newColor : rgbNew,
             pixelSize: pixelSize
         };
+        undoRedoHistory.push(pixelDrawn);
         drawHistory.push(pixelDrawn);
         historyPointer++;
         DOM.$undo.removeAttr('disabled');
@@ -330,15 +332,15 @@ $(function() {
     var undoRedo = function(pointer, undoFlag) {
         var undoRedoColor, nextPointer;
         if ( undoFlag ) {
-            undoRedoColor = drawHistory[pointer].originalColor;
+            undoRedoColor = undoRedoHistory[pointer].originalColor;
             nextPointer = pointer - 1;
         }
         else {
-            undoRedoColor = drawHistory[pointer].newColor;
+            undoRedoColor = undoRedoHistory[pointer].newColor;
             nextPointer = pointer + 1;
         }
         
-        if ( drawHistory[pointer].action == action.fill && drawHistory[nextPointer] && drawHistory[pointer].index == drawHistory[nextPointer].index ) {
+        if ( undoRedoHistory[pointer].action == action.fill && undoRedoHistory[nextPointer] && undoRedoHistory[pointer].index == undoRedoHistory[nextPointer].index ) {
             if ( undoFlag ) {
                 historyPointer--;
             }
@@ -348,7 +350,7 @@ $(function() {
             undoRedo(historyPointer, undoFlag);
         }
 
-        drawPixel(drawHistory[pointer].xPos, drawHistory[pointer].yPos, undoRedoColor, drawHistory[pointer].pixelSize);
+        drawPixel(undoRedoHistory[pointer].xPos, undoRedoHistory[pointer].yPos, undoRedoColor, undoRedoHistory[pointer].pixelSize);
     };
     
     var resetModes = function() {
@@ -449,6 +451,7 @@ $(function() {
     
     var displayFinishedArt = function(src) {
         DOM.$saveImg.attr('src', src);
+        DOM.$saveImg.parent().attr('href', src);
         DOM.$saveBox.show();
     };
     
@@ -476,7 +479,7 @@ $(function() {
             success: function(result) {
                 var id = result.data.id;
                 var url = 'https://imgur.com/gallery/' + id;
-                DOM.$linkImgur.attr('href', url).text('see it on imgur: ' + url);
+                DOM.$linkImgur.attr('href', url).text('click: ' + url);
                 DOM.$buttonSaveImgur.hide();
             },
             error: function(result) {
@@ -566,7 +569,7 @@ $(function() {
         else if ( !mode.save ) {
         
             // reset history
-            drawHistory = drawHistory.slice(0, historyPointer+1);
+            undoRedoHistory = undoRedoHistory.slice(0, historyPointer+1);
             DOM.$redo.attr('disabled','disabled');
                 
             if ( mode.paint && !areColorsEqual( origRGB, pixel.color ) ) {
@@ -712,7 +715,7 @@ $(function() {
         undoRedo(historyPointer, false);
         
         DOM.$undo.removeAttr('disabled');
-        if ( historyPointer == drawHistory.length - 1 ) {
+        if ( historyPointer == undoRedoHistory.length - 1 ) {
             DOM.$redo.attr('disabled', 'disabled');
         }
     });
@@ -722,7 +725,10 @@ $(function() {
 
     // redo alias to ctrl+y and mac aliased cmd+shift+z
     key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
-
+    
+    // close save modal alias to esc
+    key('esc', function(){ DOM.$saveBox.hide(); });
+		
 
     /* colors */
     
