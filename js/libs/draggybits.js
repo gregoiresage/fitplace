@@ -1,88 +1,88 @@
 (function($) {
 
-	var pluginName = 'draggyBits';
-	var movingClass = 'ui-moving';
+  var pluginName = 'draggyBits';
+  var movingClass = 'ui-moving';
     var draggerClass = 'ui-dragger';
     var closerClass = 'ui-closer';
     var minimizeClass = 'ui-hider';
     var hiddenClass = 'ui-hidden';
 
     var isMoving = false;
-	var zIndex = 100;
-	var pos = { x:0, y:0 };
-	var numDraggers = 0;
-	var tileOffset = { x:20, y:20};
+  var zIndex = 100;
+  var pos = { x:0, y:0 };
+  var numDraggers = 0;
+  var tileOffset = { x:20, y:20};
 
-	var $current;
-	var $window = $(window);
+  var $current;
+  var $window = $(window);
 
-	var defaults = {
-		onMinimize : function (e) { return false; },
-		onInit : function (e) { return false; },
-		onClose : function (e) { return false; },
-		onRestore : function (e) { return false; }
-	};
+  var defaults = {
+    onMinimize : function (e) { return false; },
+    onInit : function (e) { return false; },
+    onClose : function (e) { return false; },
+    onRestore : function (e) { return false; }
+  };
 
-	var methods = {
+  var methods = {
 
-		init : function (opts) {
-			
-			return this.each(function() {	  
-			
-				var $this = $(this).addClass(pluginName);
-				var $dragger = $this.find('.' + draggerClass);
-				var $closer = $this.find('.' + closerClass).click(onCloseClick);
-				var $minimizer = $this.find('.' + minimizeClass).click(onMinimizeClick);
+    init : function (opts) {
+      
+      return this.each(function() {    
+      
+        var $this = $(this).addClass(pluginName);
+        var $dragger = $this.find('.' + draggerClass);
+        var $closer = $this.find('.' + closerClass).click(onCloseClick);
+        var $minimizer = $this.find('.' + minimizeClass).click(onMinimizeClick);
 
-				var options = $.extend(defaults, opts);
+        var options = $.extend(defaults, opts);
 
-				var data = {
-					$this : $this,
-					$dragger : $dragger,
-					$closer : $closer,
-					$minimizer : $minimizer,
-					onMinimize : options.onMinimize,
-					onClose : options.onClose,
-					onInit : options.onInit,
-					onRestore : options.onRestore
-				};
+        var data = {
+          $this : $this,
+          $dragger : $dragger,
+          $closer : $closer,
+          $minimizer : $minimizer,
+          onMinimize : options.onMinimize,
+          onClose : options.onClose,
+          onInit : options.onInit,
+          onRestore : options.onRestore
+        };
 
-				$this.data(pluginName, data);
+        $this.data(pluginName, data);
 
-				numDraggers++;
+        numDraggers++;
 
-				var css = {
-					top : numDraggers * tileOffset.y,
-					left : 200 + (numDraggers * tileOffset.x),
-					position : 'absolute'
-				};
+        var css = {
+          top : numDraggers * tileOffset.y,
+          left : 200 + (numDraggers * tileOffset.x),
+          position : 'absolute'
+        };
 
-				$this.css(css);
-				
-				options.onInit($this);
-			}); 
-		},
+        $this.css(css);
+        
+        options.onInit($this);
+      }); 
+    },
 
-		minimize : function () {
-			var $this = $(this).addClass(hiddenClass);
-			var data = $this.data(pluginName);
-			data.onMinimize($this);
-		},
+    minimize : function () {
+      var $this = $(this).addClass(hiddenClass);
+      var data = $this.data(pluginName);
+      data.onMinimize($this);
+    },
 
-		restore : function () {
-			var $this = $(this).removeClass(hiddenClass);
-			var data = $this.data(pluginName);			
-			data.onRestore($this);
-		},
+    restore : function () {
+      var $this = $(this).removeClass(hiddenClass);
+      var data = $this.data(pluginName);      
+      data.onRestore($this);
+    },
 
-		close : function () {
-			var $this = $(this);
-			var data = $this.data(pluginName);			
-			data.onClose($this);
-			$this.remove();
-		}
+    close : function () {
+      var $this = $(this);
+      var data = $this.data(pluginName);      
+      data.onClose($this);
+      $this.remove();
+    }
 
-	};
+  };
 
 
 
@@ -97,77 +97,77 @@
         } else {
             $.error('Method ' + method + ' does not exist');
         }
-    };	
+    };  
 
 
 
 
     /*** EVENTS HANDLERS ***/
 
-	var onMove = function (e) {
-		var curr = { x: e.pageX, y: e.pageY };
+  var onMove = function (e) {
+    var curr = { x: e.pageX, y: e.pageY };
 
-		var dx = curr.x - pos.x;
-		var dy = curr.y - pos.y;
+    var dx = curr.x - pos.x;
+    var dy = curr.y - pos.y;
 
-		$current.css({top:"+="+dy, left:"+="+dx});
+    $current.css({top:"+="+dy, left:"+="+dx});
 
-		pos = curr;
-	};
+    pos = curr;
+  };
 
-	var onMouseUp = function (e) {
-		if (!isMoving) {
-			return;
-		}
+  var onMouseUp = function (e) {
+    if (!isMoving) {
+      return;
+    }
 
-		$('.' + movingClass).removeClass(movingClass)
+    $('.' + movingClass).removeClass(movingClass)
 
-		$window.off('mousemove');
-		isMoving = false;
-		
-		// touch
-		window.removeEventListener('touchmove', onMove, false);
-	};
+    $window.off('mousemove');
+    isMoving = false;
+    
+    // touch
+    window.removeEventListener('touchmove', onMove, false);
+  };
 
-	var onMouseDown = function (e) {
-		var $this = $(e.target);
-		var isDragger = $this.hasClass(draggerClass);
+  var onMouseDown = function (e) {
+    var $this = $(e.target);
+    var isDragger = $this.hasClass(draggerClass);
 
-		if (!isDragger) {
-			return;
-		}
+    if (!isDragger) {
+      return;
+    }
 
-		e.preventDefault()
-		pos = { x: e.pageX, y: e.pageY };
-		zIndex++;
+    e.preventDefault()
+    pos = { x: e.pageX, y: e.pageY };
+    zIndex++;
 
-		$current = $this.parents('.'+ pluginName).css("z-index", zIndex).addClass(movingClass);
-		$window.on('mousemove', onMove);
+    $current = $this.parents('.'+ pluginName).css("z-index", zIndex).addClass(movingClass);
+    $window.on('mousemove', onMove);
 
-		isMoving = true;
-		
-		// touch
-		window.addEventListener('touchmove', onMove, false);
-	};
+    isMoving = true;
+    
+    // touch
+    window.addEventListener('touchmove', onMove, false);
+  };
 
-	var onCloseClick = function (e) {
-		var $this = $(this);
-		var $par = $this.parents('.'+ pluginName);
-			$par[pluginName]('close');
-	};
+  var onCloseClick = function (e) {
+    var $this = $(this);
+    var $par = $this.parents('.'+ pluginName);
+      $par[pluginName]('close');
+  };
 
-	var onMinimizeClick = function (e) {
-		var $this = $(this);
-		var $par = $this.parents('.'+ pluginName);
-			$par[pluginName]('minimize');
-	};
+  var onMinimizeClick = function (e) {
+    var $this = $(this);
+    var $par = $this.parents('.'+ pluginName);
+      $par[pluginName]('minimize');
+  };
 
-	/*** GLOBAL EVENTS ***/
+  /*** GLOBAL EVENTS ***/
 
-	$(window).mousedown(onMouseDown).mouseup(onMouseUp);
-	
-	// touch
-	window.addEventListener('touchstart', onMouseDown, false);
-	window.addEventListener('touchend', onMouseUp, false);
+  $(window).mousedown(onMouseDown).mouseup(onMouseUp);
+  
+  // touch
+  window.addEventListener('touchstart', onMouseDown, false);
+  window.addEventListener('touchend', onMouseUp, false);
 
 })( jQuery );
