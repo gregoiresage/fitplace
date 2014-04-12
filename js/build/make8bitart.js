@@ -562,7 +562,6 @@ $(function() {
     currentTool: 'current-tool',
     dropperMode: 'dropper-mode',
     wait: 'wait',
-    hoverGuide: 'hover-guide'
   };
   
   var pixel = {
@@ -1101,30 +1100,7 @@ $(function() {
       rect = {};
     }
   };
-  
-  var hoverGuideOn = function(e) {
-    if ( DOM.$hoverGuide ) {
-      DOM.$hoverGuide.remove();
-    }
-    DOM.$hoverGuide = $('<div>').addClass(classes.hoverGuide)
-      .css({
-        width : pixel.size,
-        height : pixel.size,
-        position : 'absolute',
-        'background-color': pixel.color,
-        opacity: .5,
-        left : ( Math.ceil(e.pageX/pixel.size) * pixel.size ) - pixel.size,
-        top : ( Math.ceil(e.pageY/pixel.size) * pixel.size ) - pixel.size
-      });
-    DOM.$canvas.after(DOM.$hoverGuide);
-    //DOM.$hoverGuide.mousedown(onMouseDown).mouseup(onMouseUp);
-    DOM.$canvas.mousemove(function(e){console.log(e)});
-  };
-  
-  var hoverGuideOff = function() {
-	  DOM.$hoverGuide.remove();
-  }
-  
+    
   /* tools */
   
   // draw clicked

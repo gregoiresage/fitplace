@@ -31,10 +31,7 @@ a { color: blue; }
 
 /* canvas */
 canvas { background: #fff; cursor: crosshair; display: block; }
-
-/* guides */
-.hover-guide { cursor: crosshair; }
-    
+  
 /* draggy "plugin" */
 .draggy { padding: 10px; box-shadow: 5px 5px 0 #000; border: 1px solid #000; background: #fffff3; -webkit-user-select: none; -moz-user-select: none; user-select: none; }
 img.ui-dragger { width: 30px; }
