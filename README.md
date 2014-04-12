@@ -2,9 +2,13 @@
 
 [make8bitart.com](http://make8bitart.com) is a web-based pixel art application that's super fun and easy to use!
 
-## installation
+## install
 
 Just download the source and direct your browser to the `index.html` of the project root directory. It's just HTML, JavaScript and CSS, so no need for a special server setup.
+
+## contribute
+
+Aw yiss, pull requests welcome. Check out the issues for things I want to work on and holler if you want to take one or whatever on. When you download, run `npm install` and then `grunt` to build. Grunt is used to concatenate and minify the js and css files.
 
 ## dependencies
 
@@ -12,7 +16,7 @@ make8bitart.com uses jQuery and a jQuery plugins I wrote: [draggybits](https://g
 
 ## now with imgur support
 
-except you need to [register your own imgur app](https://api.imgur.com/) and enter the info on `/js/custom/make8bitart.js` at line 91.
+[Register your own imgur app](https://api.imgur.com/) and enter the info on `/js/custom/make8bitart.js` at line 91.
 
 ## misc notes
 

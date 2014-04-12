@@ -1,3 +1,15 @@
+/** 
+* draggybits
+* by css perverts aka nick & jenn
+*/
+
+.draggy.ui-hidden { display: none;}
+
+/** controls **/
+.draggy .controls img { float:right; }
+.draggy .controls img.ui-dragger { cursor:move; }		
+.draggy .controls img.ui-closer { cursor:pointer; }		
+.draggy .controls img.ui-hider { cursor:pointer; }	
 /**
 * make8bit art
 * @author jenn schiffer
@@ -19,6 +31,9 @@ a { color: blue; }
 
 /* canvas */
 canvas { background: #fff; cursor: crosshair; display: block; }
+
+/* guides */
+.hover-guide { cursor: crosshair; }
     
 /* draggy "plugin" */
 .draggy { padding: 10px; box-shadow: 5px 5px 0 #000; border: 1px solid #000; background: #fffff3; -webkit-user-select: none; -moz-user-select: none; user-select: none; }
