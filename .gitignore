@@ -1,4 +1,5 @@
-old/*
-chat/*
-node_modules/*
+/old/*
+/chat/*
+/tweet/*
+/node_modules/*
 .htaccess
