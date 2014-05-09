@@ -54,6 +54,7 @@ h2 a { font-size: 1.2em;}
 #paint.current-tool, #pencil.current-tool { border-color: #000; }
 #size { margin: 20px 0; }
 #pixel-size { width: 75%; }
+#pixel-size-slider { margin: 0; width: 100%; }
 #pixel-size-demo { background: black; margin:3px; }
 ul.instructions { padding: 0 0 0 20px; }
 

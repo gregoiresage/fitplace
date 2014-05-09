@@ -1,5 +1,4 @@
-/old/*
-/chat/*
-/tweet/*
-/node_modules/*
+old
+tweet8bitart
+node_modules
 .htaccess
