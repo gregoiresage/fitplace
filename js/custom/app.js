@@ -393,6 +393,26 @@ $(function() {
       img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUBJREFUeNrs2cENhCAQQFEQSqEl+7JkLUA9oIEA711NdmN+ZpOZjeHNXvv08VEJ8ffP/PCNM7zgFhichBIiIRJKiIRIyCf52kUxhUiIhBIiIRIioYRISC+uM6YQCZFQQiREQiSUEKs9phAJJURCJERCCZEQqz2mUEIkREIklBAJkRAJV+Q6YwqREAklREIkREIJsdpjCpFQQiREQiSUEAmRkEquM6YQCZFQQiREQiSUkLFX+yM3/b72h4QSJn9BU+iHFAmRUEIkREIkXHy196+9KURCJJQQCZEQCSVEQjpynTGFSIiEEiIhEiKhhFjtMYVIKCESIiESSoiEWO0xhRIiIRIioYRIiIRIuCLXGVOIhEgoIRIiIRJKiNUeU4iEEiIhEiKhhEiIhFRynRlDSqbQDykSIiESSoiESMitU4ABAMQzCLMjUyg5AAAAAElFTkSuQmCC';
   };
 
+  // builds a 2x2 grid of grey and white "pixels" to match pixel size
+  var generateBackgroundGrid = function(pixelSize) {
+    var bgCanvas = document.createElement('canvas'),
+      bgCtx = bgCanvas.getContext('2d'),
+      width = pixelSize * 2,
+      height = pixelSize * 2;
+
+    bgCanvas.width = width;
+    bgCanvas.height = height;
+
+    bgCtx.fillStyle = '#fff';
+    bgCtx.fillRect(0, 0, width, height);
+
+    bgCtx.fillStyle = '#ccc';
+    bgCtx.fillRect(0, 0, pixelSize, pixelSize);
+    bgCtx.fillRect(pixelSize, pixelSize, pixelSize, pixelSize);
+
+    return bgCanvas.toDataURL();
+  };
+
   
   /* saving */
   
@@ -643,7 +663,7 @@ $(function() {
     $(this).addClass(classes.currentTool);
     mode.paint = true;
   });
-  
+
   // pixel size slider changed
   DOM.$pixelSizeInput.change(function() {
     pixel.size = $(this).val();
@@ -651,6 +671,12 @@ $(function() {
       width : pixel.size,
       height : pixel.size
     });
+    
+    var img = new Image();
+    img.src = generateBackgroundGrid(pixel.size);
+    img.onload = function updateCanvasBackground() {
+      DOM.$canvas.css('background','url(' + img.src + ')');
+    }
     
     // set both inputs to be equal
     DOM.$pixelSizeInput.val(pixel.size);
