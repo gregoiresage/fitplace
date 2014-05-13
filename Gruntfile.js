@@ -11,28 +11,28 @@ module.exports = function(grunt) {
           'js/libs/keymaster.js',
           'js/custom/*.js'
         ],
-        dest: 'js/build/make8bitart.js',
+        dest: 'build/make8bitart.js',
       },
       css : {
         src: [
           'css/libs/*.css',
           'css/custom/*.css',
         ],
-        dest: 'css/build/make8bitart.css',
+        dest: 'build/make8bitart.css',
       }
     },
     uglify: {
       build: {
-        src: 'js/build/make8bitart.js',
-        dest: 'js/build/make8bitart.min.js'
+        src: 'build/make8bitart.js',
+        dest: 'build/make8bitart.min.js'
       }
     },
     cssmin: {
       minify: {
         expand: true,
-        cwd: 'css/build',
+        cwd: 'build',
         src: ['*.css', '!*.min.css'],
-        dest: 'css/build',
+        dest: 'build',
         ext: '.min.css'
       },
   }  

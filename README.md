@@ -8,7 +8,7 @@ Just download the source and direct your browser to the `index.html` of the proj
 
 ## contribute
 
-Aw yiss, pull requests welcome. Check out the issues for things I want to work on and holler if you want to take one or whatever on. When you download, run `npm install` and then `grunt` to build. Grunt is used to concatenate and minify the js and css files.
+Aw yiss, pull requests welcome. Check out the issues for things I want to work on and holler if you want to take one or whatever on. When you download, run `npm install` and then `grunt` to build. Grunt is used to concatenate and minify the js and css files into the build folder.
 
 ## dependencies
 
