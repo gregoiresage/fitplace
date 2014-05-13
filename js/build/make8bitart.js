@@ -625,7 +625,6 @@ $(function() {
     
     // drawing
     DOM.$canvas = $('<canvas id="canvas" width="' + windowCanvas.width + '" height="' + windowCanvas.height + '">Your browser doesn\'t support canvas. Boo-hiss.</canvas>');
-    DOM.$canvas.css('background',windowCanvas.background);
     DOM.$body.prepend( DOM.$canvas );
     ctx = DOM.$canvas[0].getContext('2d');
     
@@ -654,7 +653,6 @@ $(function() {
       ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
       
       if ( background && background != 'rgba(0, 0, 0, 0)') {
-        windowCanvas.background = background;
         ctx.fillStyle = background;
         ctx.fillRect(0,0,DOM.$canvas.width(),DOM.$canvas.height());
       }
@@ -833,10 +831,7 @@ $(function() {
       DOM.$canvas.removeClass(classes.dropperMode);
       mode.dropper = false;
             
-      if ( pixel.color == 'rgba(0, 0, 0, 0)' ) {
-        backgroundIMG = windowCanvas.background;
-      }
-      else {
+      if ( pixel.color != 'rgba(0, 0, 0, 0)' ) {
         backgroundIMG = 'none';
       }
       
@@ -867,6 +862,7 @@ $(function() {
       img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUBJREFUeNrs2cENhCAQQFEQSqEl+7JkLUA9oIEA711NdmN+ZpOZjeHNXvv08VEJ8ffP/PCNM7zgFhichBIiIRJKiIRIyCf52kUxhUiIhBIiIRIioYRISC+uM6YQCZFQQiREQiSUEKs9phAJJURCJERCCZEQqz2mUEIkREIklBAJkRAJV+Q6YwqREAklREIkREIJsdpjCpFQQiREQiSUEAmRkEquM6YQCZFQQiREQiSUkLFX+yM3/b72h4QSJn9BU+iHFAmRUEIkREIkXHy196+9KURCJJQQCZEQCSVEQjpynTGFSIiEEiIhEiKhhFjtMYVIKCESIiESSoiEWO0xhRIiIRIioYRIiIRIuCLXGVOIhEgoIRIiIRJKiNUeU4iEEiIhEiKhhEiIhFRynRlDSqbQDykSIiESSoiESMitU4ABAMQzCLMjUyg5AAAAAElFTkSuQmCC';
   };
 
+  // builds a 2x2 grid of grey and white "pixels" to match pixel size
   var generateBackgroundGrid = function(pixelSize) {
     var bgCanvas = document.createElement('canvas'),
       bgCtx = bgCanvas.getContext('2d'),
@@ -1406,6 +1402,13 @@ $(function() {
   buildColorPickerPalette();
   initpixel(15);
   
+  // init background
+  var img = new Image();
+  img.src = generateBackgroundGrid(pixel.size);
+  img.onload = function updateCanvasBackground() {
+    DOM.$canvas.css('background','url(' + img.src + ')');
+  }
+  
   historyPointer = -1;
   
   DOM.$canvas.mousedown(onMouseDown).mouseup(onMouseUp);
@@ -1417,3 +1420,4 @@ $(function() {
   DOM.$overlay[0].addEventListener('touchstart', onMouseDown, false);
   DOM.$overlay[0].addEventListener('touchend', onMouseUp, false);
 });
+f

@@ -151,7 +151,6 @@ $(function() {
     
     // drawing
     DOM.$canvas = $('<canvas id="canvas" width="' + windowCanvas.width + '" height="' + windowCanvas.height + '">Your browser doesn\'t support canvas. Boo-hiss.</canvas>');
-    DOM.$canvas.css('background',windowCanvas.background);
     DOM.$body.prepend( DOM.$canvas );
     ctx = DOM.$canvas[0].getContext('2d');
     
@@ -180,7 +179,6 @@ $(function() {
       ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
       
       if ( background && background != 'rgba(0, 0, 0, 0)') {
-        windowCanvas.background = background;
         ctx.fillStyle = background;
         ctx.fillRect(0,0,DOM.$canvas.width(),DOM.$canvas.height());
       }
@@ -359,10 +357,7 @@ $(function() {
       DOM.$canvas.removeClass(classes.dropperMode);
       mode.dropper = false;
             
-      if ( pixel.color == 'rgba(0, 0, 0, 0)' ) {
-        backgroundIMG = windowCanvas.background;
-      }
-      else {
+      if ( pixel.color != 'rgba(0, 0, 0, 0)' ) {
         backgroundIMG = 'none';
       }
       
@@ -933,6 +928,13 @@ $(function() {
   buildColorPickerPalette();
   initpixel(15);
   
+  // init background
+  var img = new Image();
+  img.src = generateBackgroundGrid(pixel.size);
+  img.onload = function updateCanvasBackground() {
+    DOM.$canvas.css('background','url(' + img.src + ')');
+  }
+  
   historyPointer = -1;
   
   DOM.$canvas.mousedown(onMouseDown).mouseup(onMouseUp);
@@ -944,3 +946,4 @@ $(function() {
   DOM.$overlay[0].addEventListener('touchstart', onMouseDown, false);
   DOM.$overlay[0].addEventListener('touchend', onMouseUp, false);
 });
+f
