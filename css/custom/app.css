@@ -11,7 +11,7 @@
     font-family: 'VT323';
     font-style: normal;
     font-weight: 400;
-    src: url('../../assets/fonts/VT323-Regular.ttf') format('woff');
+    src: url('../assets/fonts/VT323-Regular.ttf') format('woff');
 }
 
 body { background: #efefef; padding: 0; margin: 0; font-family: 'VT323', Helvetica, Arial, sans-serif; font-size: 16px; color: #333; }
@@ -76,8 +76,8 @@ ul.instructions { padding: 0 0 0 20px; }
 .button.color.gray { background: gray; }
 .button.color.white { background: white; border: 2px solid rgba(0,0,0,.25); }    
 .button.color.favorite { background: hotpink; }
-.button.color.custom { background: url('../../assets/colorful.png'); }
-.button.color.transparent { border-color: #ccc; background: url('../../assets/bg.png'); }
+.button.color.custom { background: url('../assets/colorful.png'); }
+.button.color.transparent { border-color: #ccc; background: url('../assets/bg.png'); }
 .button.color.current, .button.current, .button.custom.current{ border: 5px solid #333; margin: 1px;}
 .button.brush.current { margin: 1px 8px 1px 0;}
 
