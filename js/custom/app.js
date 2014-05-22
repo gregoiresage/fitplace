@@ -921,7 +921,6 @@ $(function() {
     }
   });
 
-
   
   /*** INIT HA HA HA ***/
   generateCanvas();
@@ -946,4 +945,3 @@ $(function() {
   DOM.$overlay[0].addEventListener('touchstart', onMouseDown, false);
   DOM.$overlay[0].addEventListener('touchend', onMouseUp, false);
 });
-f

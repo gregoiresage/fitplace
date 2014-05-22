@@ -2,12 +2,12 @@
 
   var pluginName = 'draggyBits';
   var movingClass = 'ui-moving';
-    var draggerClass = 'ui-dragger';
-    var closerClass = 'ui-closer';
-    var minimizeClass = 'ui-hider';
-    var hiddenClass = 'ui-hidden';
+  var draggerClass = 'ui-dragger';
+  var closerClass = 'ui-closer';
+  var minimizeClass = 'ui-hider';
+  var hiddenClass = 'ui-hidden';
 
-    var isMoving = false;
+  var isMoving = false;
   var zIndex = 100;
   var pos = { x:0, y:0 };
   var numDraggers = 0;
