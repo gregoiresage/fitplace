@@ -9,14 +9,14 @@ module.exports = function(grunt) {
           'js/libs/jquery.min.js',
           'js/libs/draggybits.js',
           'js/libs/keymaster.js',
-          'js/custom/*.js'
+          'js/app/*.js'
         ],
         dest: 'build/make8bitart.js',
       },
       css : {
         src: [
           'css/libs/*.css',
-          'css/custom/*.css',
+          'css/app/*.css',
         ],
         dest: 'build/make8bitart.css',
       }
