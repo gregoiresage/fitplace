@@ -197,7 +197,7 @@ ul.instructions {
 
 /* color palette box */
 #colorbox {
-  width: 150px;
+  width: 160px;
 }
 
 #colorbox h3 {
@@ -234,8 +234,8 @@ ul.instructions {
 .button.color {
   background: #fff;
   border: 5px solid none;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   margin: 4px;
 }
@@ -317,7 +317,7 @@ ul.instructions {
 }
 
 #hex-color {
-  width: 45%;
+  width: 50%;
   margin-left: 5px;
 }
 

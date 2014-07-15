@@ -10,7 +10,8 @@ $(function() {
 
   var ctx, pickerPaletteCtx, leftSide, topSide, xPos, yPos, resetSelectStart, saveSelection, rect, historyPointer;
   var undoRedoHistory = [];
-  var drawHistory = []
+  var drawHistory = [];
+  var colorHistory = [];
 
   var DOM = {
     $window : $(window),
@@ -24,7 +25,6 @@ $(function() {
     $waiting : $('#wait'),
     
     $color : $('.color').not('.custom'),
-    $colorCustom : $('.color.custom'),
     $colorPicker : $('#colorpicker'),
     $colorPickerPalette : $('#8bitcolors'),
     $colorPickerDemo : $('.color-demo'),
@@ -781,10 +781,6 @@ $(function() {
     DOM.$draggydivs.css('box-shadow','5px 5px 0 ' + newColorLabel);
   });
   
-  // custom color picker started
-  DOM.$colorCustom.click(function() {
-    DOM.$colorPicker.slideToggle();
-  });
   
   // custom color hover
   DOM.$colorPickerPalette.mouseover( function(e) {
@@ -813,7 +809,6 @@ $(function() {
        var clickData = pickerPaletteCtx.getImageData( e.pageX - boundingRect.left, e.pageY - boundingRect.top, 1, 1).data;
     var newColor = getRGBColor(clickData);
     $('.current').removeClass(classes.current);
-    DOM.$colorCustom.addClass(classes.current);
     
     pixel.color = newColor;
     DOM.$colorPickerDemo.css('background-color', newColor);
