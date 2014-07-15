@@ -192,8 +192,20 @@ ul.instructions {
   margin: 5px 0;
 }
 
+#colorbox h3.color-history-label {
+  margin-top: 15px;
+}
+
+
 #color {
   margin-bottom: 10px;
+}
+
+#color ul,
+#color ul li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .button {

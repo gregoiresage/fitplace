@@ -498,7 +498,8 @@ $(function() {
     $colorbox : $('#colorbox'),
     $waiting : $('#wait'),
     
-    $color : $('.color').not('.custom'),
+    $color : $('.color'),
+    $colorHistoryPalette : $('.color-history'),
     $colorPicker : $('#colorpicker'),
     $colorPickerPalette : $('#8bitcolors'),
     $colorPickerDemo : $('.color-demo'),
@@ -1039,6 +1040,7 @@ $(function() {
       return true;
     }
   };
+
     
   /*** EVENTS OH MAN ***/
   
@@ -1081,6 +1083,30 @@ $(function() {
         
         // touch
         DOM.$canvas[0].addEventListener('touchmove', touchDraw, false);
+
+        // color history palette - shows latest 20 colors used
+        var colorHistoryPos = colorHistory.indexOf(pixel.color); 
+       
+        if ( colorHistoryPos == -1 ) {
+          console.log('color not in array');
+          if ( colorHistory.length >= 20 ) {
+            console.log('array too large');
+            colorHistory.pop();
+            DOM.$colorHistoryPalette.find('li').eq(20).remove();
+          }
+        }
+        else {
+          console.log('color in array', colorHistoryPos);
+          colorHistory.splice(colorHistoryPos, 1);
+          DOM.$colorHistoryPalette.find('li').eq(colorHistoryPos).remove();
+        }
+
+        colorHistory.unshift(pixel.color);
+        DOM.$colorHistoryPalette.prepend('<li><a class="button color" style="background-color:' + pixel.color + '" title="history:' + pixel.color + '" data-color="' + pixel.color + '" /> </a></li>');
+        
+        // bind click to new colors
+        DOM.$color = $('.color');
+        DOM.$color.click(bindColorClick);
       }
       
     }
@@ -1228,9 +1254,8 @@ $(function() {
 
   /* colors */
   
-  // choose color
-  DOM.$color.click(function() {
-    
+  // color click binding function
+  var bindColorClick = function(){    
     var $newColor = $(this);
     var newColorLabel = $newColor.attr('data-color');
     var demoColor;
@@ -1253,8 +1278,11 @@ $(function() {
     DOM.$colorPickerDemo.css('background-color', demoColor);
     DOM.$hex.val(rgbToHex(DOM.$colorPickerDemo.css('background-color')));
     DOM.$draggydivs.css('box-shadow','5px 5px 0 ' + newColorLabel);
-  });
-  
+  };
+
+  // choose color
+  DOM.$color.click(bindColorClick);
+
   
   // custom color hover
   DOM.$colorPickerPalette.mouseover( function(e) {
@@ -1321,8 +1349,11 @@ $(function() {
       });
     }
   });
+
   
   /* saving */
+
+  // hide save box if exit button clicked
   DOM.$saveExit.click(function() {
     DOM.$saveBox.hide();
     DOM.$linkImgur.attr('href', '').text('');
