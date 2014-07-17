@@ -487,6 +487,17 @@ $(function() {
   var drawHistory = [];
   var colorHistory = [];
 
+  var classes = {
+    selectionCanvas : 'selectionCanvas',
+    current: 'current',
+    currentTool: 'current-tool',
+    dropperMode: 'dropper-mode',
+    wait: 'wait',
+    tipText: 'tip-text',
+    color: 'color',
+    transparent: 'transparent'
+  };
+
   var DOM = {
     $window : $(window),
     $body : $('body'),
@@ -555,14 +566,6 @@ $(function() {
     selectionOff : 'turn off selection',
     selectionOn : 'selection',
     fullPage : 'full page'
-  };
-  
-  var classes = {
-    selectionCanvas : 'selectionCanvas',
-    current: 'current',
-    currentTool: 'current-tool',
-    dropperMode: 'dropper-mode',
-    wait: 'wait',
   };
   
   var pixel = {
@@ -1021,7 +1024,7 @@ $(function() {
   
   var hexColorChosen = function() {
     var newColor = '#' + DOM.$hex.val();
-    $('.current').removeClass(classes.current);
+    $('.'+classes.current).removeClass(classes.current);
     DOM.$hex.addClass(classes.current);
     
     pixel.color = newColor;
@@ -1039,6 +1042,32 @@ $(function() {
     else {
       return true;
     }
+  };
+
+  var updateColorHistoryPalette = function() {
+    
+    var colorHistoryPos = colorHistory.indexOf(pixel.color); 
+
+    if ( colorHistoryPos == -1 ) {
+      if ( colorHistory.length == 19 ) {
+        colorHistory.pop();
+        DOM.$colorHistoryPalette.find('li').eq(20).remove();
+      }
+    }
+    else {
+      colorHistory.splice(colorHistoryPos, 1);
+      DOM.$colorHistoryPalette.find('li').eq(colorHistoryPos).remove();
+    }
+
+    colorHistory.unshift(pixel.color);
+
+    var latestColorButton = $('<li><a class="button color" style="background-color:' + pixel.color + '" title="history:' + pixel.color + '" data-color="' + pixel.color + '" /> </a></li>');
+    DOM.$colorHistoryPalette.prepend(latestColorButton);
+    latestColorButton.find('a').addClass(classes.current);
+
+    // bind click to new colors
+    DOM.$color = $('.'+classes.color);
+    DOM.$color.click(bindColorClick);
   };
 
     
@@ -1084,29 +1113,10 @@ $(function() {
         // touch
         DOM.$canvas[0].addEventListener('touchmove', touchDraw, false);
 
-        // color history palette - shows latest 20 colors used
-        var colorHistoryPos = colorHistory.indexOf(pixel.color); 
-       
-        if ( colorHistoryPos == -1 ) {
-          console.log('color not in array');
-          if ( colorHistory.length >= 20 ) {
-            console.log('array too large');
-            colorHistory.pop();
-            DOM.$colorHistoryPalette.find('li').eq(20).remove();
-          }
+        // update color history palette - shows latest 20 colors used
+        if ( pixel.color !== 'rgba(0, 0, 0, 0)' ) {
+          updateColorHistoryPalette();
         }
-        else {
-          console.log('color in array', colorHistoryPos);
-          colorHistory.splice(colorHistoryPos, 1);
-          DOM.$colorHistoryPalette.find('li').eq(colorHistoryPos).remove();
-        }
-
-        colorHistory.unshift(pixel.color);
-        DOM.$colorHistoryPalette.prepend('<li><a class="button color" style="background-color:' + pixel.color + '" title="history:' + pixel.color + '" data-color="' + pixel.color + '" /> </a></li>');
-        
-        // bind click to new colors
-        DOM.$color = $('.color');
-        DOM.$color.click(bindColorClick);
       }
       
     }
@@ -1260,7 +1270,7 @@ $(function() {
     var newColorLabel = $newColor.attr('data-color');
     var demoColor;
     
-    $('.current').removeClass(classes.current);
+    $('.'+classes.current).removeClass(classes.current);
     $newColor.addClass(classes.current);
     pixel.color = newColorLabel;
 
@@ -1310,7 +1320,7 @@ $(function() {
     var boundingRect = DOM.$colorPickerPalette[0].getBoundingClientRect();
        var clickData = pickerPaletteCtx.getImageData( e.pageX - boundingRect.left, e.pageY - boundingRect.top, 1, 1).data;
     var newColor = getRGBColor(clickData);
-    $('.current').removeClass(classes.current);
+    $('.'+classes.current).removeClass(classes.current);
     
     pixel.color = newColor;
     DOM.$colorPickerDemo.css('background-color', newColor);
@@ -1379,10 +1389,10 @@ $(function() {
   // tooltip hover 
   DOM.$tips.hover(
     function() {
-      $(this).find('.tip-text').stop().show();
+      $(this).find('.'+classes.tipText).stop().show();
     },
     function() {
-      $(this).find('.tip-text').stop().hide();
+      $(this).find('.'+classes.tipText).stop().hide();
     }
   );
 
