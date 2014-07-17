@@ -485,7 +485,6 @@ $(function() {
   var ctx, pickerPaletteCtx, leftSide, topSide, xPos, yPos, resetSelectStart, saveSelection, rect, historyPointer;
   var undoRedoHistory = [];
   var drawHistory = [];
-  var colorHistory = [];
 
   var classes = {
     selectionCanvas : 'selectionCanvas',
@@ -854,8 +853,7 @@ $(function() {
     DOM.$pencil.removeClass(classes.currentTool);
   };
   
-  var buildColorPickerPalette = function() {
-    
+  var initColorPickerPalette = function() {
     // turns palette into canvas
     pickerPaletteCtx = DOM.$colorPickerPalette[0].getContext('2d');
     var img = new Image();
@@ -864,6 +862,25 @@ $(function() {
       };
       // NOTE: original png is assets/customcolors.png. using data uri so it works in different directories
       img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUBJREFUeNrs2cENhCAQQFEQSqEl+7JkLUA9oIEA711NdmN+ZpOZjeHNXvv08VEJ8ffP/PCNM7zgFhichBIiIRJKiIRIyCf52kUxhUiIhBIiIRIioYRISC+uM6YQCZFQQiREQiSUEKs9phAJJURCJERCCZEQqz2mUEIkREIklBAJkRAJV+Q6YwqREAklREIkREIJsdpjCpFQQiREQiSUEAmRkEquM6YQCZFQQiREQiSUkLFX+yM3/b72h4QSJn9BU+iHFAmRUEIkREIkXHy196+9KURCJJQQCZEQCSVEQjpynTGFSIiEEiIhEiKhhFjtMYVIKCESIiESSoiEWO0xhRIiIRIioYRIiIRIuCLXGVOIhEgoIRIiIRJKiNUeU4iEEiIhEiKhhEiIhFRynRlDSqbQDykSIiESSoiESMitU4ABAMQzCLMjUyg5AAAAAElFTkSuQmCC';
+  };
+
+  var initColorHistoryPalette = function() {
+    if ( colorHistory.length === 0 ) {
+      return;
+    }
+    else {
+      // make all color history values consistently hex without hash
+      var sanitizedColors = sanitizeColorArray(colorHistory);
+
+      sanitizedColors.forEach(function(color){
+        var latestColorButton = $('<li><a class="button color" style="background-color:#' + color + '" title="history:#' + color + '" data-color="#' + color + '" /> </a></li>');
+        DOM.$colorHistoryPalette.append(latestColorButton);
+      });
+
+      // bind click to color buttons
+      DOM.$color = $('.'+classes.color);
+      DOM.$color.click(bindColorClick);
+    }
   };
 
   // builds a 2x2 grid of grey and white "pixels" to match pixel size
@@ -990,26 +1007,38 @@ $(function() {
     return 'rgba(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ', ' + opacity + ')';
   };
   
+  // get hex without '#'
   var rgbToHex = function( rgb ) {
-    if ( rgb.charAt(0) == '#' ) {
+    if ( rgb.length === 6 ) {
+      return rgb;
+    }
+    else if ( rgb.charAt(0) === '#' && rgb.length === 7 ) {
       return rgb.slice(1,7);
     }
-    
-    if ( rgb == 'transparent' ) {
+    else if ( rgb == 'transparent' ) {
       return null;
     }
-    
-    var startString = ( rgb.charAt(3) == 'a' ) ? 5 : 4;
-    var rgbArray = rgb.substr(startString, rgb.length - 5).split(',');
-    var hex = '';
-    for ( var i = 0; i <= 2; i++ ) {
-      var hexUnit = parseInt(rgbArray[i],10).toString(16);
-      if ( hexUnit.length == 1 ) {
-        hexUnit = '0' + hexUnit;
+    else {
+      var startString = ( rgb.charAt(3) == 'a' ) ? 5 : 4;
+      var rgbArray = rgb.substr(startString, rgb.length - 5).split(',');
+      var hex = '';
+      for ( var i = 0; i <= 2; i++ ) {
+        var hexUnit = parseInt(rgbArray[i],10).toString(16);
+        if ( hexUnit.length == 1 ) {
+          hexUnit = '0' + hexUnit;
+        }
+        hex += hexUnit;
       }
-      hex += hexUnit;
+      return hex;
     }
-    return hex;
+  };
+
+  var sanitizeColorArray = function( colorArray ) {
+    for ( var i = 0; i < colorArray.length; i++ ) {
+      colorArray[i] = rgbToHex(colorArray[i]);
+    }
+
+    return colorArray;
   };
   
   var setDropperColor = function( color ) {
@@ -1033,7 +1062,6 @@ $(function() {
   };
   
   var areColorsEqual = function( alpha, beta ) {
-
     if ( ( alpha == 'rgba(0, 0, 0, 0)' && ( beta == '#000000' || beta == 'rgba(0, 0, 0, 1)' ) ) ||
       ( ( alpha == '#000000' || alpha == 'rgba(0, 0, 0, 1)' ) && beta == 'rgba(0, 0, 0, 0)' )  ||
        rgbToHex(alpha) != rgbToHex(beta) ) {
@@ -1045,8 +1073,8 @@ $(function() {
   };
 
   var updateColorHistoryPalette = function() {
-    
-    var colorHistoryPos = colorHistory.indexOf(pixel.color); 
+    var hexColor = rgbToHex(pixel.color);
+    var colorHistoryPos = colorHistory.indexOf(hexColor); 
 
     if ( colorHistoryPos == -1 ) {
       if ( colorHistory.length == 19 ) {
@@ -1059,15 +1087,20 @@ $(function() {
       DOM.$colorHistoryPalette.find('li').eq(colorHistoryPos).remove();
     }
 
-    colorHistory.unshift(pixel.color);
+    colorHistory.unshift(hexColor);
 
-    var latestColorButton = $('<li><a class="button color" style="background-color:' + pixel.color + '" title="history:' + pixel.color + '" data-color="' + pixel.color + '" /> </a></li>');
+    var latestColorButton = $('<li><a class="button color" style="background-color:#' + hexColor + '" title="history:#' + hexColor + '" data-color="#' + hexColor + '" /> </a></li>');
     DOM.$colorHistoryPalette.prepend(latestColorButton);
     latestColorButton.find('a').addClass(classes.current);
 
     // bind click to new colors
     DOM.$color = $('.'+classes.color);
     DOM.$color.click(bindColorClick);
+
+    // save to local storage
+    if ( canStorage() ) {
+      localStorage.colorHistory = colorHistory;
+    }
   };
 
     
@@ -1135,7 +1168,6 @@ $(function() {
   };
   
   var onMouseUp = function(e) {
-
     if ( !mode.save ) {
       DOM.$canvas.off('mousemove');
       mode.drawing = false;
@@ -1434,7 +1466,17 @@ $(function() {
   
   /*** INIT HA HA HA ***/
   generateCanvas();
-  buildColorPickerPalette();
+  initColorPickerPalette();
+
+  // check local storage for color history palette
+  if ( canStorage() && localStorage.colorHistory ) {
+    var colorHistory = localStorage.colorHistory.split(',');
+  }
+  else {
+    var colorHistory = [];
+  }
+
+  initColorHistoryPalette();
   initpixel(15);
   
   // init background
