@@ -64,7 +64,13 @@ $(function() {
     $saveBox : $('#save-box'),
     $saveImg : $('#finished-art'),
     $saveExit : $('#save-box .ui-hider'),
-    $linkImgur : $('#link-imgur')
+    $linkImgur : $('#link-imgur'),
+
+    $colorHistoryTools : {
+      clearPalette: $('#color-history-tools .clear'),
+      exportPalette: $('#color-history-tools .export'),
+      importPalette: $('#color-history-tools .import')
+    }
   };
   
   var mode = {
@@ -987,6 +993,28 @@ $(function() {
       }
       
     }
+  });
+
+  // clear color history
+  DOM.$colorHistoryTools.clearPalette.click(function(){
+    // clear array
+    colorHistory = [];
+
+    // clear palette
+    DOM.$colorHistoryPalette.find('li').remove();
+
+    // clear local storage
+    localStorage.colorHistory = [];
+  });
+
+  // import color history
+  DOM.$colorHistoryTools.importPalette.click(function(){
+    console.log('import coming soon');
+  });
+
+  // export color history
+  DOM.$colorHistoryTools.exportPalette.click(function(){
+    console.log('export coming soon');
   });
 
   

@@ -192,11 +192,6 @@ ul.instructions {
   margin: 5px 0;
 }
 
-#colorbox h3.color-history-label {
-  margin-top: 15px;
-}
-
-
 #color {
   margin-bottom: 10px;
 }
@@ -277,10 +272,6 @@ ul.instructions {
   border: 2px solid rgba(0,0,0,.25);
 }
 
-.button.color.favorite {
-  background: hotpink;
-}
-
 .button.color.custom {
   background: url('../assets/colorful.png');
 }
@@ -297,6 +288,15 @@ ul.instructions {
 
 .button.brush.current {
   margin: 1px 8px 1px 0;
+}
+
+/* color history palette */
+#colorbox h3.color-history-label {
+  margin-top: 15px;
+}
+
+#color-history-tools {
+  display: block;
 }
 
 /* color picker */
