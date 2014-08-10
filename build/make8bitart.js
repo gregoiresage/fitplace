@@ -1043,7 +1043,6 @@ $(function() {
     for ( var i = 0; i < colorArray.length; i++ ) {
       colorArray[i] = rgbToHex(colorArray[i]);
     }
-
     return colorArray;
   };
   
@@ -1081,11 +1080,10 @@ $(function() {
   var updateColorHistoryPalette = function() {
     var hexColor = rgbToHex(pixel.color);
     var colorHistoryPos = colorHistory.indexOf(hexColor); 
-
     if ( colorHistoryPos == -1 ) {
-      if ( colorHistory.length == 19 ) {
+      if ( colorHistory.length == 20 ) {
         colorHistory.pop();
-        DOM.$colorHistoryPalette.find('li').eq(20).remove();
+        DOM.$colorHistoryPalette.find('li').eq(19).remove();
       }
     }
     else {
@@ -1393,7 +1391,6 @@ $(function() {
           'background-color' : hoverRGB
         });
         DOM.$hex.val(rgbToHex(hoverRGB));
-
       });
     }
   });
@@ -1469,15 +1466,10 @@ $(function() {
     }
   });
 
-  // clear color history
+  // clear color history, palette and storage
   DOM.$colorHistoryTools.clearPalette.click(function(){
-    // clear array
     colorHistory = [];
-
-    // clear palette
     DOM.$colorHistoryPalette.find('li').remove();
-
-    // clear local storage
     localStorage.colorHistory = [];
   });
 
