@@ -494,7 +494,8 @@ $(function() {
     wait: 'wait',
     tipText: 'tip-text',
     color: 'color',
-    transparent: 'transparent'
+    transparent: 'transparent',
+    activeTab: 'active'
   };
 
   var DOM = {
@@ -507,11 +508,15 @@ $(function() {
     $savebox : $('#savebox'),
     $colorbox : $('#colorbox'),
     $waiting : $('#wait'),
+
+    $tabs : $('.tabs'),
     
     $color : $('.color'),
-    $colorHistoryPalette : $('.color-history'),
-    $colorPicker : $('#colorpicker'),
-    $colorPickerPalette : $('#8bitcolors'),
+    $colorHistoryModule : $('#color-history'),
+    $colorHistoryPalette : $('.color-history-list'),
+    $pickers : $('#pickers'),
+    $palettes : $('#palettes'),
+    $8bitPicker : $('#eight-bit-colors'),
     $colorPickerDemo : $('.color-demo'),
     $hex : $('#hex-color'),
     $dropper : $('#color-dropper'),
@@ -859,9 +864,9 @@ $(function() {
     DOM.$pencil.removeClass(classes.currentTool);
   };
   
-  var initColorPickerPalette = function() {
+  var init8bitPicker = function() {
     // turns palette into canvas
-    pickerPaletteCtx = DOM.$colorPickerPalette[0].getContext('2d');
+    pickerPaletteCtx = DOM.$8bitPicker[0].getContext('2d');
     var img = new Image();
       img.onload = function() {
         pickerPaletteCtx.drawImage(img,0,0);
@@ -1100,6 +1105,7 @@ $(function() {
     // bind click to new colors
     DOM.$color = $('.'+classes.color);
     DOM.$color.click(bindColorClick);
+    DOM.$colorHistoryModule.show();
 
     // save to local storage
     if ( canStorage() ) {
@@ -1331,18 +1337,18 @@ $(function() {
 
   
   // custom color hover
-  DOM.$colorPickerPalette.mouseover( function(e) {
+  DOM.$8bitPicker.mouseover( function(e) {
     $(this).mousemove( mousemovePickerPalette );
   });
   
-  DOM.$colorPickerPalette.mouseout( function(e) {
+  DOM.$8bitPicker.mouseout( function(e) {
     $(this).unbind('mouseover');
     DOM.$colorPickerDemo.css('background-color', pixel.color);
     DOM.$hex.val(rgbToHex(DOM.$colorPickerDemo.css('background-color')));
   });
   
   var mousemovePickerPalette = function(e) {
-    var boundingRect = DOM.$colorPickerPalette[0].getBoundingClientRect();
+    var boundingRect = DOM.$8bitPicker[0].getBoundingClientRect();
        var hoverData = pickerPaletteCtx.getImageData( e.pageX - boundingRect.left, e.pageY - boundingRect.top, 1, 1).data;
     var hoverRGB = getRGBColor(hoverData);
     DOM.$pixelSizeDemoDiv.css('background-image', 'none');
@@ -1352,8 +1358,8 @@ $(function() {
   };
   
   // custom color chosen
-  DOM.$colorPickerPalette.click(function(e) {
-    var boundingRect = DOM.$colorPickerPalette[0].getBoundingClientRect();
+  DOM.$8bitPicker.click(function(e) {
+    var boundingRect = DOM.$8bitPicker[0].getBoundingClientRect();
        var clickData = pickerPaletteCtx.getImageData( e.pageX - boundingRect.left, e.pageY - boundingRect.top, 1, 1).data;
     var newColor = getRGBColor(clickData);
     $('.'+classes.current).removeClass(classes.current);
@@ -1421,6 +1427,24 @@ $(function() {
   
   /* misc */
 
+  // tabs
+  DOM.$tabs.children('li').click(function(e){
+    var activeTab = $(this);
+    var href = activeTab.attr('data-href');
+    activeTab.siblings().removeClass(classes.activeTab);
+    activeTab.addClass(classes.activeTab);
+
+    var toHide = [];
+    activeTab.siblings().each(function(){
+      toHide.push($(this).attr('data-href'));
+    });
+
+    $(href).show();
+    for ( var i = 0; i < toHide.length; i++ ) {
+      $(toHide[i]).hide();
+    }
+  });
+
   // tooltip hover 
   DOM.$tips.hover(
     function() {
@@ -1471,6 +1495,7 @@ $(function() {
     colorHistory = [];
     DOM.$colorHistoryPalette.find('li').remove();
     localStorage.colorHistory = [];
+    DOM.$colorHistoryModule.hide();
   });
 
   // import color history
@@ -1485,8 +1510,9 @@ $(function() {
 
   
   /*** INIT HA HA HA ***/
+  DOM.$pickers.hide();
   generateCanvas();
-  initColorPickerPalette();
+  init8bitPicker();
 
   // check local storage for color history palette
   if ( canStorage() && localStorage.colorHistory ) {
@@ -1494,6 +1520,7 @@ $(function() {
   }
   else {
     var colorHistory = [];
+    DOM.$colorHistoryModule.hide();
   }
 
   initColorHistoryPalette();

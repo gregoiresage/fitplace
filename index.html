@@ -153,7 +153,7 @@
     </div>
     
     <div id="size" class="inner">
-      <h3>pixel size</h3>
+      <h3>brush size</h3>
       <input id="pixel-size" class="pixel-size-input" type="number" min="1" max="100" step="1" value="15" />
       <div class="tip"> ? <span class="tip-text">changing pixel size *won't* clear the whole page, but using different sized pixels makes it less "8-bit"ish. you do you, though. I'm not the 8-bit police.</span></div>
       <input id="pixel-size-slider" class="pixel-size-input" type="range" min="1" max="100" step="1" value="15" />
@@ -200,8 +200,13 @@
       <img class="ui-dragger" src="assets/draggybits/dragger2.png">  
       <img class="ui-hider" src="assets/draggybits/hider2.png">  
     </div>
+
+    <ul class="tabs">
+      <li class="palettes active" data-href="#palettes">palettes</li>
+      <li class="pickers" data-href="#pickers">pickers</li>
+    </ul>
     
-    <div id="color" class="inner clearfix">
+    <div id="palettes" class="inner clearfix">
       <h3>pick a color:</h3>
       <ul class="clearfix">
         <li><a class="button color primary red" title="red" data-color="rgba(255, 0, 0, 1)"> </a></li>
@@ -216,23 +221,30 @@
         <li><a class="button color transparent" title="erase" data-color="rgba(0, 0, 0, 0)"> </a></li>
       </ul>
 
-      <h3 class="color-history-label">history palette:</h3>
-      <ul class="color-history clearfix"></ul>
+      <div id="color-history">
+        <h3 class="color-history-label">history palette:</h3>
+        <ul class="color-history-list clearfix"></ul>
 
-      <div id="color-history-tools">
-        <button class="clear">clear</button>
-        <!--<button class="export">export</button>
-        <button class="import">import</button>-->
+        <div id="color-history-tools">
+          <button class="clear">clear</button>
+          <!--<button class="export">export</button>
+          <button class="import">import</button>-->
+        </div>
       </div>
     </div>
     
-    <div id="colorpicker">
-      <h3>hex value:</h3>
-      <p>#<input id="hex-color" type="text" value="000000" /> <a href="#" title="color dropper"><img id="color-dropper" src="assets/dropper.png" alt="dropper"></a></p>
+    <div id="pickers">
+      <div id="hex-picker">
+        <h3>hex value:</h3>
+        
+        #<input id="hex-color" type="text" value="000000" /> <a href="#" title="color dropper"><img id="color-dropper" src="assets/dropper.png" alt="dropper"></a>
+      </div>
       
-      <h3 class="eightbit">click to pick:</h3>
-      <canvas id="8bitcolors" width="150" height="150"></canvas>
-      <div class="color-demo eightbit"></div>
+      <div id="eight-bit-picker">
+        <h3 class="eightbit">click to pick:</h3>
+        <canvas id="eight-bit-colors" width="150" height="150"></canvas>
+        <div class="color-demo eightbit"></div>
+      </div>
     </div>
       
   </div>

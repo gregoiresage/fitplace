@@ -66,6 +66,26 @@ img.ui-hider {
   margin: 5px 5px 0 0;
 }
 
+/* tabs */
+.tabs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tabs li {
+  width:50px;
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid #666;
+  background-color: #ccc;
+}
+
+.tabs li.active {
+  background-color: #999;
+  box-shadow: inset 0 0 5px #000;
+}
+
 /* tool tips */
 .tip {
   display: inline-block;
@@ -195,7 +215,7 @@ ul.instructions {
   padding: 0 0 0 20px;
 }
 
-/* color palette box */
+/* color picker/palette box */
 #colorbox {
   width: 160px;
 }
@@ -204,12 +224,12 @@ ul.instructions {
   margin: 5px 0;
 }
 
-#color {
+#palettes {
   margin-bottom: 10px;
 }
 
-#color ul,
-#color ul li {
+#palettes ul,
+#palettes ul li {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -307,7 +327,7 @@ ul.instructions {
   margin-top: 15px;
 }
 
-#color ul.color-history {
+#palettes ul.color-history-list {
   margin-bottom: 5px;
 }
 
@@ -316,18 +336,21 @@ ul.instructions {
 }
 
 /* color picker */
-#colorpicker {
+#eight-bit-colors {
+  width: 100%; 
+}
+#eight-bit-picker {
   position: relative;
 }
 
-#colorpicker .color-demo {
+#eight-bit-picker .color-demo {
   background: #000;
   width: 100%;
   height: 20px;
   margin-top: 10px;
 }
 
-#colorpicker p {
+#eight-bit-picker p {
   font-size: 1.5em;
   margin: 0 0 10px;
 }
