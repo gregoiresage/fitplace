@@ -484,7 +484,19 @@ $(function() {
 
   var ctx, pickerPaletteCtx, leftSide, topSide, xPos, yPos, resetSelectStart, saveSelection, rect, historyPointer;
   var undoRedoHistory = [];
-  var drawHistory = []
+  var drawHistory = [];
+
+  var classes = {
+    selectionCanvas : 'selectionCanvas',
+    current: 'current',
+    currentTool: 'current-tool',
+    dropperMode: 'dropper-mode',
+    wait: 'wait',
+    tipText: 'tip-text',
+    color: 'color',
+    transparent: 'transparent',
+    activeTab: 'active'
+  };
 
   var DOM = {
     $window : $(window),
@@ -496,11 +508,15 @@ $(function() {
     $savebox : $('#savebox'),
     $colorbox : $('#colorbox'),
     $waiting : $('#wait'),
+
+    $tabs : $('.tabs'),
     
-    $color : $('.color').not('.custom'),
-    $colorCustom : $('.color.custom'),
-    $colorPicker : $('#colorpicker'),
-    $colorPickerPalette : $('#8bitcolors'),
+    $color : $('.color'),
+    $colorHistoryModule : $('#color-history'),
+    $colorHistoryPalette : $('.color-history-list'),
+    $pickers : $('#pickers'),
+    $palettes : $('#palettes'),
+    $8bitPicker : $('#eight-bit-colors'),
     $colorPickerDemo : $('.color-demo'),
     $hex : $('#hex-color'),
     $dropper : $('#color-dropper'),
@@ -527,7 +543,13 @@ $(function() {
     $saveBox : $('#save-box'),
     $saveImg : $('#finished-art'),
     $saveExit : $('#save-box .ui-hider'),
-    $linkImgur : $('#link-imgur')
+    $linkImgur : $('#link-imgur'),
+
+    $colorHistoryTools : {
+      clearPalette: $('#color-history-tools .clear'),
+      exportPalette: $('#color-history-tools .export'),
+      importPalette: $('#color-history-tools .import')
+    }
   };
   
   var mode = {
@@ -554,14 +576,6 @@ $(function() {
     selectionOff : 'turn off selection',
     selectionOn : 'selection',
     fullPage : 'full page'
-  };
-  
-  var classes = {
-    selectionCanvas : 'selectionCanvas',
-    current: 'current',
-    currentTool: 'current-tool',
-    dropperMode: 'dropper-mode',
-    wait: 'wait',
   };
   
   var pixel = {
@@ -850,16 +864,34 @@ $(function() {
     DOM.$pencil.removeClass(classes.currentTool);
   };
   
-  var buildColorPickerPalette = function() {
-    
+  var init8bitPicker = function() {
     // turns palette into canvas
-    pickerPaletteCtx = DOM.$colorPickerPalette[0].getContext('2d');
+    pickerPaletteCtx = DOM.$8bitPicker[0].getContext('2d');
     var img = new Image();
       img.onload = function() {
         pickerPaletteCtx.drawImage(img,0,0);
       };
       // NOTE: original png is assets/customcolors.png. using data uri so it works in different directories
       img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAUBJREFUeNrs2cENhCAQQFEQSqEl+7JkLUA9oIEA711NdmN+ZpOZjeHNXvv08VEJ8ffP/PCNM7zgFhichBIiIRJKiIRIyCf52kUxhUiIhBIiIRIioYRISC+uM6YQCZFQQiREQiSUEKs9phAJJURCJERCCZEQqz2mUEIkREIklBAJkRAJV+Q6YwqREAklREIkREIJsdpjCpFQQiREQiSUEAmRkEquM6YQCZFQQiREQiSUkLFX+yM3/b72h4QSJn9BU+iHFAmRUEIkREIkXHy196+9KURCJJQQCZEQCSVEQjpynTGFSIiEEiIhEiKhhFjtMYVIKCESIiESSoiEWO0xhRIiIRIioYRIiIRIuCLXGVOIhEgoIRIiIRJKiNUeU4iEEiIhEiKhhEiIhFRynRlDSqbQDykSIiESSoiESMitU4ABAMQzCLMjUyg5AAAAAElFTkSuQmCC';
+  };
+
+  var initColorHistoryPalette = function() {
+    if ( colorHistory.length === 0 ) {
+      return;
+    }
+    else {
+      // make all color history values consistently hex without hash
+      var sanitizedColors = sanitizeColorArray(colorHistory);
+
+      sanitizedColors.forEach(function(color){
+        var latestColorButton = $('<li><a class="button color" style="background-color:#' + color + '" title="history:#' + color + '" data-color="#' + color + '" /> </a></li>');
+        DOM.$colorHistoryPalette.append(latestColorButton);
+      });
+
+      // bind click to color buttons
+      DOM.$color = $('.'+classes.color);
+      DOM.$color.click(bindColorClick);
+    }
   };
 
   // builds a 2x2 grid of grey and white "pixels" to match pixel size
@@ -986,26 +1018,37 @@ $(function() {
     return 'rgba(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ', ' + opacity + ')';
   };
   
+  // get hex without '#'
   var rgbToHex = function( rgb ) {
-    if ( rgb.charAt(0) == '#' ) {
+    if ( rgb.length === 6 ) {
+      return rgb;
+    }
+    else if ( rgb.charAt(0) === '#' && rgb.length === 7 ) {
       return rgb.slice(1,7);
     }
-    
-    if ( rgb == 'transparent' ) {
+    else if ( rgb == 'transparent' ) {
       return null;
     }
-    
-    var startString = ( rgb.charAt(3) == 'a' ) ? 5 : 4;
-    var rgbArray = rgb.substr(startString, rgb.length - 5).split(',');
-    var hex = '';
-    for ( var i = 0; i <= 2; i++ ) {
-      var hexUnit = parseInt(rgbArray[i],10).toString(16);
-      if ( hexUnit.length == 1 ) {
-        hexUnit = '0' + hexUnit;
+    else {
+      var startString = ( rgb.charAt(3) == 'a' ) ? 5 : 4;
+      var rgbArray = rgb.substr(startString, rgb.length - 5).split(',');
+      var hex = '';
+      for ( var i = 0; i <= 2; i++ ) {
+        var hexUnit = parseInt(rgbArray[i],10).toString(16);
+        if ( hexUnit.length == 1 ) {
+          hexUnit = '0' + hexUnit;
+        }
+        hex += hexUnit;
       }
-      hex += hexUnit;
+      return hex;
     }
-    return hex;
+  };
+
+  var sanitizeColorArray = function( colorArray ) {
+    for ( var i = 0; i < colorArray.length; i++ ) {
+      colorArray[i] = rgbToHex(colorArray[i]);
+    }
+    return colorArray;
   };
   
   var setDropperColor = function( color ) {
@@ -1020,7 +1063,7 @@ $(function() {
   
   var hexColorChosen = function() {
     var newColor = '#' + DOM.$hex.val();
-    $('.current').removeClass(classes.current);
+    $('.'+classes.current).removeClass(classes.current);
     DOM.$hex.addClass(classes.current);
     
     pixel.color = newColor;
@@ -1029,7 +1072,6 @@ $(function() {
   };
   
   var areColorsEqual = function( alpha, beta ) {
-
     if ( ( alpha == 'rgba(0, 0, 0, 0)' && ( beta == '#000000' || beta == 'rgba(0, 0, 0, 1)' ) ) ||
       ( ( alpha == '#000000' || alpha == 'rgba(0, 0, 0, 1)' ) && beta == 'rgba(0, 0, 0, 0)' )  ||
        rgbToHex(alpha) != rgbToHex(beta) ) {
@@ -1039,6 +1081,38 @@ $(function() {
       return true;
     }
   };
+
+  var updateColorHistoryPalette = function() {
+    var hexColor = rgbToHex(pixel.color);
+    var colorHistoryPos = colorHistory.indexOf(hexColor); 
+    if ( colorHistoryPos == -1 ) {
+      if ( colorHistory.length == 20 ) {
+        colorHistory.pop();
+        DOM.$colorHistoryPalette.find('li').eq(19).remove();
+      }
+    }
+    else {
+      colorHistory.splice(colorHistoryPos, 1);
+      DOM.$colorHistoryPalette.find('li').eq(colorHistoryPos).remove();
+    }
+
+    colorHistory.unshift(hexColor);
+
+    var latestColorButton = $('<li><a class="button color" style="background-color:#' + hexColor + '" title="history:#' + hexColor + '" data-color="#' + hexColor + '" /> </a></li>');
+    DOM.$colorHistoryPalette.prepend(latestColorButton);
+    latestColorButton.find('a').addClass(classes.current);
+
+    // bind click to new colors
+    DOM.$color = $('.'+classes.color);
+    DOM.$color.click(bindColorClick);
+    DOM.$colorHistoryModule.show();
+
+    // save to local storage
+    if ( canStorage() ) {
+      localStorage.colorHistory = colorHistory;
+    }
+  };
+
     
   /*** EVENTS OH MAN ***/
   
@@ -1081,6 +1155,11 @@ $(function() {
         
         // touch
         DOM.$canvas[0].addEventListener('touchmove', touchDraw, false);
+
+        // update color history palette - shows latest 20 colors used
+        if ( pixel.color !== 'rgba(0, 0, 0, 0)' ) {
+          updateColorHistoryPalette();
+        }
       }
       
     }
@@ -1099,7 +1178,6 @@ $(function() {
   };
   
   var onMouseUp = function(e) {
-
     if ( !mode.save ) {
       DOM.$canvas.off('mousemove');
       mode.drawing = false;
@@ -1228,14 +1306,13 @@ $(function() {
 
   /* colors */
   
-  // choose color
-  DOM.$color.click(function() {
-    
+  // color click binding function
+  var bindColorClick = function(){    
     var $newColor = $(this);
     var newColorLabel = $newColor.attr('data-color');
     var demoColor;
     
-    $('.current').removeClass(classes.current);
+    $('.'+classes.current).removeClass(classes.current);
     $newColor.addClass(classes.current);
     pixel.color = newColorLabel;
 
@@ -1253,26 +1330,25 @@ $(function() {
     DOM.$colorPickerDemo.css('background-color', demoColor);
     DOM.$hex.val(rgbToHex(DOM.$colorPickerDemo.css('background-color')));
     DOM.$draggydivs.css('box-shadow','5px 5px 0 ' + newColorLabel);
-  });
-  
-  // custom color picker started
-  DOM.$colorCustom.click(function() {
-    DOM.$colorPicker.slideToggle();
-  });
+  };
+
+  // choose color
+  DOM.$color.click(bindColorClick);
+
   
   // custom color hover
-  DOM.$colorPickerPalette.mouseover( function(e) {
+  DOM.$8bitPicker.mouseover( function(e) {
     $(this).mousemove( mousemovePickerPalette );
   });
   
-  DOM.$colorPickerPalette.mouseout( function(e) {
+  DOM.$8bitPicker.mouseout( function(e) {
     $(this).unbind('mouseover');
     DOM.$colorPickerDemo.css('background-color', pixel.color);
     DOM.$hex.val(rgbToHex(DOM.$colorPickerDemo.css('background-color')));
   });
   
   var mousemovePickerPalette = function(e) {
-    var boundingRect = DOM.$colorPickerPalette[0].getBoundingClientRect();
+    var boundingRect = DOM.$8bitPicker[0].getBoundingClientRect();
        var hoverData = pickerPaletteCtx.getImageData( e.pageX - boundingRect.left, e.pageY - boundingRect.top, 1, 1).data;
     var hoverRGB = getRGBColor(hoverData);
     DOM.$pixelSizeDemoDiv.css('background-image', 'none');
@@ -1282,12 +1358,11 @@ $(function() {
   };
   
   // custom color chosen
-  DOM.$colorPickerPalette.click(function(e) {
-    var boundingRect = DOM.$colorPickerPalette[0].getBoundingClientRect();
+  DOM.$8bitPicker.click(function(e) {
+    var boundingRect = DOM.$8bitPicker[0].getBoundingClientRect();
        var clickData = pickerPaletteCtx.getImageData( e.pageX - boundingRect.left, e.pageY - boundingRect.top, 1, 1).data;
     var newColor = getRGBColor(clickData);
-    $('.current').removeClass(classes.current);
-    DOM.$colorCustom.addClass(classes.current);
+    $('.'+classes.current).removeClass(classes.current);
     
     pixel.color = newColor;
     DOM.$colorPickerDemo.css('background-color', newColor);
@@ -1322,12 +1397,14 @@ $(function() {
           'background-color' : hoverRGB
         });
         DOM.$hex.val(rgbToHex(hoverRGB));
-
       });
     }
   });
+
   
   /* saving */
+
+  // hide save box if exit button clicked
   DOM.$saveExit.click(function() {
     DOM.$saveBox.hide();
     DOM.$linkImgur.attr('href', '').text('');
@@ -1350,13 +1427,31 @@ $(function() {
   
   /* misc */
 
+  // tabs
+  DOM.$tabs.children('li').click(function(e){
+    var activeTab = $(this);
+    var href = activeTab.attr('data-href');
+    activeTab.siblings().removeClass(classes.activeTab);
+    activeTab.addClass(classes.activeTab);
+
+    var toHide = [];
+    activeTab.siblings().each(function(){
+      toHide.push($(this).attr('data-href'));
+    });
+
+    $(href).show();
+    for ( var i = 0; i < toHide.length; i++ ) {
+      $(toHide[i]).hide();
+    }
+  });
+
   // tooltip hover 
   DOM.$tips.hover(
     function() {
-      $(this).find('.tip-text').stop().show();
+      $(this).find('.'+classes.tipText).stop().show();
     },
     function() {
-      $(this).find('.tip-text').stop().hide();
+      $(this).find('.'+classes.tipText).stop().hide();
     }
   );
 
@@ -1395,10 +1490,40 @@ $(function() {
     }
   });
 
+  // clear color history, palette and storage
+  DOM.$colorHistoryTools.clearPalette.click(function(){
+    colorHistory = [];
+    DOM.$colorHistoryPalette.find('li').remove();
+    localStorage.colorHistory = [];
+    DOM.$colorHistoryModule.hide();
+  });
+
+  // import color history
+  DOM.$colorHistoryTools.importPalette.click(function(){
+    console.log('import coming soon');
+  });
+
+  // export color history
+  DOM.$colorHistoryTools.exportPalette.click(function(){
+    console.log('export coming soon');
+  });
+
   
   /*** INIT HA HA HA ***/
+  DOM.$pickers.hide();
   generateCanvas();
-  buildColorPickerPalette();
+  init8bitPicker();
+
+  // check local storage for color history palette
+  if ( canStorage() && localStorage.colorHistory ) {
+    var colorHistory = localStorage.colorHistory.split(',');
+  }
+  else {
+    var colorHistory = [];
+    DOM.$colorHistoryModule.hide();
+  }
+
+  initColorHistoryPalette();
   initpixel(15);
   
   // init background

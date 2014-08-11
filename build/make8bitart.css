@@ -51,7 +51,7 @@ canvas {
   padding: 10px;
   box-shadow: 5px 5px 0 #000;
   border: 1px solid #000;
-  background: #fffff3;
+  background: #eeffff;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -64,6 +64,26 @@ img.ui-dragger {
 img.ui-hider {
   width: 20px;
   margin: 5px 5px 0 0;
+}
+
+/* tabs */
+.tabs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tabs li {
+  width:50px;
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid #666;
+  background-color: #ccc;
+}
+
+.tabs li.active {
+  background-color: #999;
+  box-shadow: inset 0 0 5px #000;
 }
 
 /* tool tips */
@@ -195,17 +215,24 @@ ul.instructions {
   padding: 0 0 0 20px;
 }
 
-/* color palette box */
+/* color picker/palette box */
 #colorbox {
-  width: 150px;
+  width: 160px;
 }
 
 #colorbox h3 {
   margin: 5px 0;
 }
 
-#color {
+#palettes {
   margin-bottom: 10px;
+}
+
+#palettes ul,
+#palettes ul li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .button {
@@ -234,8 +261,8 @@ ul.instructions {
 .button.color {
   background: #fff;
   border: 5px solid none;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   margin: 4px;
 }
@@ -277,10 +304,6 @@ ul.instructions {
   border: 2px solid rgba(0,0,0,.25);
 }
 
-.button.color.favorite {
-  background: hotpink;
-}
-
 .button.color.custom {
   background: url('../assets/colorful.png');
 }
@@ -299,25 +322,41 @@ ul.instructions {
   margin: 1px 8px 1px 0;
 }
 
+/* color history palette */
+#colorbox h3.color-history-label {
+  margin-top: 15px;
+}
+
+#palettes ul.color-history-list {
+  margin-bottom: 5px;
+}
+
+#color-history-tools {
+  display: block;
+}
+
 /* color picker */
-#colorpicker {
+#eight-bit-colors {
+  width: 100%; 
+}
+#eight-bit-picker {
   position: relative;
 }
 
-#colorpicker .color-demo {
+#eight-bit-picker .color-demo {
   background: #000;
   width: 100%;
   height: 20px;
   margin-top: 10px;
 }
 
-#colorpicker p {
+#eight-bit-picker p {
   font-size: 1.5em;
   margin: 0 0 10px;
 }
 
 #hex-color {
-  width: 45%;
+  width: 50%;
   margin-left: 5px;
 }
 
