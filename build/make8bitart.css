@@ -116,16 +116,17 @@ img.ui-hider {
 /* header */
 #header {
   font-size: 1em;
-  width: 300px;
+  width: 365px;
 }
 
 #header h1 {
-  font-size: 2.5em;
+  font-size: 3em;
   margin: 0;
 }
 
 #minimized-tools-list {
   list-style: none;
+  margin-top: 10px;
 }
 
 #minimized-tools-list li {
@@ -145,8 +146,8 @@ img.ui-hider {
 }
 
 /* social and credits */
-#credits {
-  width: 165px;
+#share {
+  width: 120px;
 }
 
 #subheader {
@@ -154,12 +155,9 @@ img.ui-hider {
 }
 
 h2 {
-  background: aqua;
-  display: inline-block;
-  float: right;
   font-size: 1em;
-  padding: 5px;
-  margin: 10px 0 15px;
+  margin: 0;
+  font-style: italic;
 }
 
 h2 a {

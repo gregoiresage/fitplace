@@ -29,7 +29,7 @@ $(function() {
     $body : $('body'),
     
     $header : $('#header'),
-    $credits : $('#credits'),
+    $share : $('#share'),
     $toolbox : $('#toolbox'),
     $savebox : $('#savebox'),
     $colorbox : $('#colorbox'),
@@ -139,12 +139,12 @@ $(function() {
   /*** DRAGGY POSITIONS ***/
   
   DOM.$header.css({
-    left: '200px',
+    left: '260px',
     top : '20px'
   });
-  DOM.$credits.css({
-    left : '480px',
-    top : '120px'
+  DOM.$share.css({
+    left : '560px',
+    top : '180px'
   });
   DOM.$toolbox.css({
     left : '30px',
@@ -1058,6 +1058,9 @@ $(function() {
   img.onload = function updateCanvasBackground() {
     DOM.$canvas.css('background','url(' + img.src + ')');
   }
+
+  // init hide toolboxes
+  DOM.$share.draggyBits('minimize');
   
   historyPointer = -1;
   
