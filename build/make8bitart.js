@@ -54,6 +54,8 @@
 
         $this.data(pluginName, data);
 
+        $dragger.attr('aria-grabbed', false);
+
         numDraggers++;
 
         var css = {
@@ -121,10 +123,13 @@
   };
 
   var onMouseUp = function (e) {
+    var $this = $(e.target);
+
     if (!isMoving) {
       return;
     }
 
+    $this.attr('aria-grabbed', false);
     $('.' + movingClass).removeClass(movingClass)
 
     $window.off('mousemove');
@@ -146,6 +151,7 @@
     pos = { x: e.pageX, y: e.pageY };
     zIndex++;
 
+    $this.attr('aria-grabbed', true);
     $current = $this.parents('.'+ pluginName).css("z-index", zIndex).addClass(movingClass);
     $window.on('mousemove', onMove);
 

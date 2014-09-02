@@ -316,7 +316,7 @@ ul.instructions {
 
 /* color picker */
 #eight-bit-colors {
-  width: 100%; 
+  margin: 0 auto; 
 }
 #eight-bit-picker {
   position: relative;
