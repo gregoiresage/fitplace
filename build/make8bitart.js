@@ -77,7 +77,7 @@
     },
 
     restore : function () {
-      var $this = $(this).removeClass(hiddenClass);
+      var $this = $(this).removeClass(hiddenClass).css("z-index", zIndex++);
       var data = $this.data(pluginName);      
       data.onRestore($this);
     },
@@ -142,6 +142,8 @@
   var onMouseDown = function (e) {
     var $this = $(e.target);
     var isDragger = $this.hasClass(draggerClass);
+    
+    $this.parents('.'+ pluginName).css("z-index", zIndex++);
 
     if (!isDragger) {
       return;
@@ -149,10 +151,9 @@
 
     e.preventDefault()
     pos = { x: e.pageX, y: e.pageY };
-    zIndex++;
 
     $this.attr('aria-grabbed', true);
-    $current = $this.parents('.'+ pluginName).css("z-index", zIndex).addClass(movingClass);
+    $current = $this.parents('.'+ pluginName).addClass(movingClass);
     $window.on('mousemove', onMove);
 
     isMoving = true;
