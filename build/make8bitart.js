@@ -511,7 +511,7 @@ $(function() {
     $body : $('body'),
     
     $header : $('#header'),
-    $share : $('#share'),
+    $whatbox : $('#what'),
     $toolbox : $('#toolbox'),
     $savebox : $('#savebox'),
     $colorbox : $('#colorbox'),
@@ -606,7 +606,7 @@ $(function() {
   };
 
   var onMinimize = function($elm) {
-    var $a = $('<a>').html($elm.attr('title')).on('click', onMinimizeToolsListClick).data('draggy', $elm);
+    var $a = $('<a href="#' + $elm.attr('data-title') + '">').html($elm.attr('title')).on('click', onMinimizeToolsListClick).data('draggy', $elm);
     $('<li></li>').append($a).appendTo(DOM.$minimizedToolsList);
   };
   
@@ -625,9 +625,9 @@ $(function() {
     left: '260px',
     top : '20px'
   });
-  DOM.$share.css({
+  DOM.$whatbox.css({
     left : '560px',
-    top : '180px'
+    top : '120px'
   });
   DOM.$toolbox.css({
     left : '30px',
@@ -1547,7 +1547,7 @@ $(function() {
   }
 
   // init hide toolboxes
-  DOM.$share.draggyBits('minimize');
+  DOM.$whatbox.draggyBits('minimize');
   DOM.$savebox.draggyBits('minimize');
   
   historyPointer = -1;
