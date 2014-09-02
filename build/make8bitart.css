@@ -207,6 +207,11 @@ ul.instructions {
   padding: 0 0 0 20px;
 }
 
+/* save box */
+#savebox {
+  top: 255px;
+}
+
 /* color picker/palette box */
 #colorbox {
   width: 160px;

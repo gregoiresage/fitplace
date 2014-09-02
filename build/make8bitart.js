@@ -515,6 +515,7 @@ $(function() {
     $toolbox : $('#toolbox'),
     $savebox : $('#savebox'),
     $colorbox : $('#colorbox'),
+    $savebox : $('#savebox'),
     $waiting : $('#wait'),
 
     $tabs : $('.tabs'),
@@ -636,6 +637,10 @@ $(function() {
     left : '750px',
     top : '50px'
   });
+  DOM.$savebox.css({
+    top : '255px',
+    left : '234px'
+  })
 
   
 
@@ -1543,6 +1548,7 @@ $(function() {
 
   // init hide toolboxes
   DOM.$share.draggyBits('minimize');
+  DOM.$savebox.draggyBits('minimize');
   
   historyPointer = -1;
   
