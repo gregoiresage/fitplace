@@ -104,11 +104,12 @@ img.ui-hider {
 /* header */
 #header {
   font-size: 1em;
-  width: 365px;
+  width: 190px;
 }
 
 #header h1 {
-  font-size: 3em;
+  font-size: 5em;
+  line-height: .7em;
   margin: 0;
 }
 
@@ -135,7 +136,7 @@ img.ui-hider {
 
 /* social and credits */
 #share {
-  width: 120px;
+  width: 150px;
 }
 
 #subheader {
