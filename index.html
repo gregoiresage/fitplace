@@ -89,7 +89,7 @@
       _____ \         ~-+-~                   ___~=_______
            ~@#~~ == ...______ __ ___ _--~~--_                  SOCIAL LINKS -->       
   
-  <div id="what" class="draggy" title="what is this even?">
+  <div id="what" class="draggy" title="what is this even?" data-title="what">
   
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger2.png" alt="drag">
@@ -124,7 +124,7 @@
                        |  | {   }         \   \_\
                       '---.o___,'       .o___,      TOOLBOX -->                 
               
-  <div id="toolbox" class="draggy" title="canvas/brush tools">
+  <div id="toolbox" class="draggy" title="canvas/brush tools" data-title="tools">
 
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger2.png" alt="drag">
@@ -135,8 +135,8 @@
       <h3>canvas tools</h3>
       
       <div id="instruments">
-        <a href="#" title="draw"><img class="current-tool" id="pencil" src="assets/pencil.png" alt="draw" /></a>
-        <a href="#" title="paint"><img id="paint" src="assets/paint.png" alt="paint" /></a> 
+        <img class="current-tool" id="pencil" src="assets/pencil.png" alt="draw"  data-href="#draw" role="button" title="draw" />
+        <img id="paint" src="assets/paint.png" alt="paint"  data-href="#paint" role="button" title="paint/fill" />
       </div>
       
       <p>
@@ -157,9 +157,27 @@
     </div>
   </div>
 
-  <!-- -->
+  <!-- 
+                                     _..-=~=-._
+                                 _.-~'          ~.
+                     __..---~~~~~                 ~.
+                _.-~~                      _.._     ~.
+            _ -~_                         /    \      ;
+           ( ` '@)                       {      |      :
+           /                             |      |      :
+          /     /}         (  )          |      |     .-  --- farting on
+         /     //-=-~-_-_  |  |          \      ;    .'        the h8rs
+        /     //     | =._-|  }/ / / /_.==\     ; _.'   *
+       ( oo  //|     = )  ~| /.__..-='|    \    :'     **
+        ====||*|    / /    + )    \   |_.-~`\   :      |**
+           |*| *   / /    / /      \  |     ([ ])     /|||(
+       *    |*    /_/    / /       (  ]     `/ \'     /|||_
+      **(*   |   (((|   /_/      __/_/__    -| |--    _|_|__
+      *|\|             (((|      -----     __|_|__
+   _/(h8rs)|__            '''                 -----
+     _||_|__              SAVE BOX -->
     
-  <div id="savebox" class="draggy" title="save your work">
+  <div id="savebox" class="draggy" title="save your work" data-title="save">
 
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger2.png" alt="drag">
@@ -199,7 +217,7 @@
                               \\      WWW                       
                               MMM        COLORBOX -->
                               
-  <div id="colorbox" class="draggy" title="color tools">
+  <div id="colorbox" class="draggy" title="color tools" data-title="colors">
 
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger2.png" alt="drag">
@@ -242,7 +260,7 @@
       <div id="hex-picker">
         <h3>hex value:</h3>
 
-        #<input id="hex-color" type="text" value="000000" /> <a href="#" title="color dropper"><img id="color-dropper" src="assets/dropper.png" alt="color dropper"></a>
+        #<input id="hex-color" type="text" value="000000" /> <img id="color-dropper" src="assets/dropper.png" alt="color dropper" data-href="#dropper" role="button" title="color dropper" />
       </div>
       
       <div id="eight-bit-picker">
@@ -251,7 +269,6 @@
         <div class="color-demo eightbit"></div>
       </div>
     </div>
-      
   </div>
 
   <div id="save-box">

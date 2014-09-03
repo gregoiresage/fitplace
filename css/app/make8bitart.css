@@ -51,8 +51,8 @@ canvas {
 /* draggy "plugin" */
 .draggy {
   padding: 10px;
-  box-shadow: 5px 5px 0 #000;
-  border: 1px solid #000;
+  box-shadow: 7px 7px 0 #000;
+  border: 4px solid #000;
   background: #ffeeff;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -339,6 +339,7 @@ ul.instructions {
 /* color picker */
 #eight-bit-colors {
   margin: 0 auto; 
+  background: transparent;
 }
 #eight-bit-picker {
   position: relative;
@@ -397,7 +398,7 @@ ul.instructions {
   margin: 20px;
   box-shadow: 5px 5px 0 #000;
   border: 1px solid #000;
-  background: #fffff3;
+  background: #eeffff;
   position: relative;
 }
 
@@ -421,6 +422,7 @@ ul.instructions {
   display: block;
   border: 5px solid #000;
   margin: 10px auto;
+  background: url('../assets/bg.png');
 }
 
 /* mobile */
