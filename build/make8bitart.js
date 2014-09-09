@@ -929,18 +929,23 @@ $(function() {
 
   
   /* saving */
-  
+
+  var roundToNearestPixel = function(n) {
+    var canRound = (0 === pixel.size || void(0) !== pixel.size);
+    return canRound ? Math.round(n / pixel.size) * pixel.size : n;
+  };
+
   var startSaveSelection = function(e) {
     saveSelection = {
-      startX : e.pageX,
-      startY : e.pageY
+      startX : roundToNearestPixel(e.pageX),
+      startY : roundToNearestPixel(e.pageY)
     };
   };
   
   var generateSaveSelection = function(e) {
-    
-    saveSelection.endX = e.pageX;
-    saveSelection.endY = e.pageY;
+
+    saveSelection.endX = roundToNearestPixel(e.pageX);
+    saveSelection.endY = roundToNearestPixel(e.pageY);
 
     generateSelectionCanvas(saveSelection);
     DOM.$buttonSaveSelection.click();
@@ -975,8 +980,8 @@ $(function() {
   };
 
   var drawSelection = function(e) {
-    rect.w = (e.pageX - this.offsetLeft) - rect.startX;
-    rect.h = (e.pageY - this.offsetTop) - rect.startY ;
+    rect.w = roundToNearestPixel((e.pageX - this.offsetLeft) - rect.startX);
+    rect.h = roundToNearestPixel((e.pageY - this.offsetTop) - rect.startY);
     ctxOverlay.clearRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
     ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
     ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
@@ -1180,8 +1185,8 @@ $(function() {
       // overlay stuff
       rect = {};
       startSaveSelection(e);
-      rect.startX = e.pageX - this.offsetLeft;
-      rect.startY = e.pageY - this.offsetTop;
+      rect.startX = roundToNearestPixel(e.pageX - this.offsetLeft);
+      rect.startY = roundToNearestPixel(e.pageY - this.offsetTop);
       DOM.$overlay.on('mousemove', drawSelection);
       
       // touch
