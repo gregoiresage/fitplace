@@ -342,7 +342,6 @@ $(function() {
       current[0]--;
       current[1]++;
 
-
       if(y < windowCanvas.height) {
         addNextLine(y + 1, !up, true);
       }
