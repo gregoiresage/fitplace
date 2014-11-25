@@ -258,11 +258,14 @@ $(function() {
 
     // xMin, xMax, y, down[true] / up[false], extendLeft, extendRight
     var ranges = [[x, x, y, null, true, true]],
-    w = windowCanvas.width,
-    img = ctx.getImageData(0, 0, windowCanvas.width, windowCanvas.height),
-    imgData = img.data,
-    colorArray = paintColor.substring(5, paintColor.length -1).split(',');
+    w = windowCanvas.width;
 
+    // get data array from ImageData object
+    var img = ctx.getImageData(0, 0, windowCanvas.width, windowCanvas.height),
+    imgData = img.data,
+    paintColorArray = paintColor.substring(5, paintColor.length -1).split(',');
+
+    // lookup pixel colour from x & y coords
     function getColorForCoords (x, y) {
       var index = 4 * (x + y * windowCanvas.width);
       var indices = [index, index + 1, index + 2, index + 3]
@@ -272,11 +275,12 @@ $(function() {
       return getRGBColor(values);
     }
 
+    // set pixel colour in imgData array
     function markPixel(x, y) {
       var index = 4 * (x + y * w);
-      imgData[index] = colorArray[0];
-      imgData[index + 1] = colorArray[1];
-      imgData[index + 2] = colorArray[2];
+      imgData[index] = paintColorArray[0];
+      imgData[index + 1] = paintColorArray[1];
+      imgData[index + 2] = paintColorArray[2];
       imgData[index + 3] = 255;
     }
 
@@ -348,6 +352,8 @@ $(function() {
     }
 
     img.data = imgData;
+
+    // replace entire canvas
     ctx.putImageData(img, 0, 0);
 
   }

@@ -740,12 +740,15 @@ $(function() {
 
     // xMin, xMax, y, down[true] / up[false], extendLeft, extendRight
     var ranges = [[x, x, y, null, true, true]],
-    w = windowCanvas.width,
-    img = ctx.getImageData(0, 0, windowCanvas.width, windowCanvas.height),
-    imgData = img.data,
-    colorArray = paintColor.substring(5, paintColor.length -1).split(',');
+    w = windowCanvas.width;
 
-    function colorFromCoords (x, y) {
+    // get data array from ImageData object
+    var img = ctx.getImageData(0, 0, windowCanvas.width, windowCanvas.height),
+    imgData = img.data,
+    paintColorArray = paintColor.substring(5, paintColor.length -1).split(',');
+
+    // lookup pixel colour from x & y coords
+    function getColorForCoords (x, y) {
       var index = 4 * (x + y * windowCanvas.width);
       var indices = [index, index + 1, index + 2, index + 3]
       var values = indices.map(function(i){
@@ -754,15 +757,44 @@ $(function() {
       return getRGBColor(values);
     }
 
+    // set pixel colour in imgData array
     function markPixel(x, y) {
       var index = 4 * (x + y * w);
-      imgData[index] = colorArray[0];
-      imgData[index + 1] = colorArray[1];
-      imgData[index + 2] = colorArray[2];
+      imgData[index] = paintColorArray[0];
+      imgData[index + 1] = paintColorArray[1];
+      imgData[index + 2] = paintColorArray[2];
       imgData[index + 3] = 255;
     }
 
-    var initColor = colorFromCoords(x, y);
+    function addNextLine(newY, isNext, downwards) {
+      var rMinX = minX;
+      var inRange = false;
+
+      for(var x = minX; x <= maxX; x++) {
+        // skip testing, if testing previous line within previous range
+        var empty = (isNext || (x < current[0] || x > current[1])) && areColorsEqual(getColorForCoords(x, newY), initColor);
+        if(!inRange && empty) {
+          rMinX = x;
+          inRange = true;
+        }
+        else if(inRange && !empty) {
+          ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, false]);
+          inRange = false;
+        }
+        if(inRange) {
+          markPixel(x, newY, paintColor, 1);
+        }
+        // skip
+        if(!isNext && x == current[0]) {
+          x = current[1];
+        }
+      }
+      if(inRange) {
+        ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, true]);
+      }
+    }
+
+    var initColor = getColorForCoords(x, y);
 
     markPixel(x, y, paintColor, 1);
 
@@ -775,7 +807,7 @@ $(function() {
       var y = current[2];
 
       if(current[4]) {
-        while(minX > 0 && areColorsEqual(colorFromCoords(minX - 1, y), initColor)) {
+        while(minX > 0 && areColorsEqual(getColorForCoords(minX - 1, y), initColor)) {
           minX--;
           markPixel(minX, y, paintColor, 1);
         }
@@ -783,7 +815,7 @@ $(function() {
 
       var maxX = current[1];
       if(current[5]) {
-        while(maxX < windowCanvas.width - 1 && areColorsEqual(colorFromCoords(maxX + 1, y), initColor)) {
+        while(maxX < windowCanvas.width - 1 && areColorsEqual(getColorForCoords(maxX + 1, y), initColor)) {
           maxX++;
           markPixel(maxX, y, paintColor, 1);
         }
@@ -792,33 +824,6 @@ $(function() {
       current[0]--;
       current[1]++;
 
-      function addNextLine(newY, isNext, downwards) {
-        var rMinX = minX;
-        var inRange = false;
-
-        for(var x = minX; x <= maxX; x++) {
-          // skip testing, if testing previous line within previous range
-          var empty = (isNext || (x < current[0] || x > current[1])) && areColorsEqual(colorFromCoords(x, newY), initColor);
-          if(!inRange && empty) {
-            rMinX = x;
-            inRange = true;
-          }
-          else if(inRange && !empty) {
-            ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, false]);
-            inRange = false;
-          }
-          if(inRange) {
-            markPixel(x, newY, paintColor, 1);
-          }
-          // skip
-          if(!isNext && x == current[0]) {
-            x = current[1];
-          }
-        }
-        if(inRange) {
-          ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, true]);
-        }
-      }
 
       if(y < windowCanvas.height) {
         addNextLine(y + 1, !up, true);
@@ -829,6 +834,8 @@ $(function() {
     }
 
     img.data = imgData;
+
+    // replace entire canvas
     ctx.putImageData(img, 0, 0);
 
   }
