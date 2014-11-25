@@ -253,61 +253,102 @@ $(function() {
     }
   };
   
-  var paint = function( initColor, paintColor, x, y ) {
+  function paint(x, y, paintColor) {
 
-    // bless u sweet prince @potch
-    var position = [x, y];
-    
-    var viewed = {};
-    var stack = [];
-    
-    var thisPixelData = ctx.getImageData( x, y, 1, 1).data;
-    initColor = getRGBColor(thisPixelData);
-      
-    stack.push(position);
-    
-    function fill() {
-      var iterations = 0;
-   
-      while (stack.length && iterations < 10000) {
-        
-        iterations++;
-        var current = stack.pop();
-        var x = current[0];
-        var y = current[1];
-       
-        viewed[current] = true;
-         
-        var currentPixelData = ctx.getImageData( x, y, 1, 1).data;
-        var currentColor = getRGBColor(currentPixelData);
-        
-        if ( areColorsEqual(initColor, currentColor) ) {
-          drawPixel(x, y, paintColor, pixel.size);
-          pushToHistory(action.index, action.fill, x, y, initColor, paintColor, pixel.size);
-          
-          if ( (x - pixel.size + 2) >= 0 && !viewed[ [x - pixel.size + 2, y] ] ) {
-            stack.push([x-pixel.size, y]);
-          }
-          if ( (x + pixel.size - 2) < windowCanvas.width && !viewed[ [x + pixel.size - 2, y] ]) {
-            stack.push([x+pixel.size, y]);
-          }
-          if ( (y - pixel.size + 2) >= 0 && !viewed[ [x, y - pixel.size + 2] ] ) {
-            stack.push([x, y-pixel.size]);
-          }
-          if ( (y + pixel.size - 2) < windowCanvas.height && !viewed[ [x, y + pixel.size - 2] ]) {
-            stack.push([x, y+pixel.size]);
-          }
+    // xMin, xMax, y, down[true] / up[false], extendLeft, extendRight
+    var ranges = [[x, x, y, null, true, true]],
+    w = windowCanvas.width,
+    img = ctx.getImageData(0, 0, windowCanvas.width, windowCanvas.height),
+    imgData = img.data,
+    colorArray = paintColor.substring(5, paintColor.length -1).split(',');
 
+    function colorFromCoords (x, y) {
+      var index = 4 * (x + y * windowCanvas.width);
+      var indices = [index, index + 1, index + 2, index + 3]
+      var values = indices.map(function(i){
+        return imgData[i]
+      });
+      return getRGBColor(values);
+    }
+
+    function markPixel(x, y) {
+      var index = 4 * (x + y * w);
+      imgData[index] = colorArray[0];
+      imgData[index + 1] = colorArray[1];
+      imgData[index + 2] = colorArray[2];
+      imgData[index + 3] = 255;
+    }
+
+    var initColor = colorFromCoords(x, y);
+
+    markPixel(x, y, paintColor, 1);
+
+    while(ranges.length) {
+      var current = ranges.pop();
+      var down = current[3] === true;
+      var up =   current[3] === false;
+
+      var minX = current[0];
+      var y = current[2];
+
+      if(current[4]) {
+        while(minX > 0 && areColorsEqual(colorFromCoords(minX - 1, y), initColor)) {
+          minX--;
+          markPixel(minX, y, paintColor, 1);
         }
       }
-      if (stack.length) {
-        setTimeout(fill, 10);
+
+      var maxX = current[1];
+      if(current[5]) {
+        while(maxX < windowCanvas.width - 1 && areColorsEqual(colorFromCoords(maxX + 1, y), initColor)) {
+          maxX++;
+          markPixel(maxX, y, paintColor, 1);
+        }
+      }
+
+      current[0]--;
+      current[1]++;
+
+      function addNextLine(newY, isNext, downwards) {
+        var rMinX = minX;
+        var inRange = false;
+
+        for(var x = minX; x <= maxX; x++) {
+          // skip testing, if testing previous line within previous range
+          var empty = (isNext || (x < current[0] || x > current[1])) && areColorsEqual(colorFromCoords(x, newY), initColor);
+          if(!inRange && empty) {
+            rMinX = x;
+            inRange = true;
+          }
+          else if(inRange && !empty) {
+            ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, false]);
+            inRange = false;
+          }
+          if(inRange) {
+            markPixel(x, newY, paintColor, 1);
+          }
+          // skip
+          if(!isNext && x == current[0]) {
+            x = current[1];
+          }
+        }
+        if(inRange) {
+          ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, true]);
+        }
+      }
+
+      if(y < windowCanvas.height) {
+        addNextLine(y + 1, !up, true);
+      }
+      if(y > 0) {
+        addNextLine(y - 1, !down, false);
       }
     }
-    
-    // fill it up fill it up fill it up
-    fill();
-  };
+
+    img.data = imgData;
+    ctx.putImageData(img, 0, 0);
+
+  }
 
   var canStorage = function() {
     try {
@@ -669,7 +710,7 @@ $(function() {
         
       if ( mode.paint && !areColorsEqual( origRGB, pixel.color ) ) {
         action.index++;
-        paint( origRGB, pixel.color, e.pageX, e.pageY);
+        paint( e.pageX, e.pageY, pixel.color );
       }
       else {
         // draw mode
