@@ -263,7 +263,7 @@ $(function() {
     imgData = img.data,
     colorArray = paintColor.substring(5, paintColor.length -1).split(',');
 
-    function colorFromCoords (x, y) {
+    function getColorForCoords (x, y) {
       var index = 4 * (x + y * windowCanvas.width);
       var indices = [index, index + 1, index + 2, index + 3]
       var values = indices.map(function(i){
@@ -280,7 +280,35 @@ $(function() {
       imgData[index + 3] = 255;
     }
 
-    var initColor = colorFromCoords(x, y);
+    function addNextLine(newY, isNext, downwards) {
+      var rMinX = minX;
+      var inRange = false;
+
+      for(var x = minX; x <= maxX; x++) {
+        // skip testing, if testing previous line within previous range
+        var empty = (isNext || (x < current[0] || x > current[1])) && areColorsEqual(getColorForCoords(x, newY), initColor);
+        if(!inRange && empty) {
+          rMinX = x;
+          inRange = true;
+        }
+        else if(inRange && !empty) {
+          ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, false]);
+          inRange = false;
+        }
+        if(inRange) {
+          markPixel(x, newY, paintColor, 1);
+        }
+        // skip
+        if(!isNext && x == current[0]) {
+          x = current[1];
+        }
+      }
+      if(inRange) {
+        ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, true]);
+      }
+    }
+
+    var initColor = getColorForCoords(x, y);
 
     markPixel(x, y, paintColor, 1);
 
@@ -293,7 +321,7 @@ $(function() {
       var y = current[2];
 
       if(current[4]) {
-        while(minX > 0 && areColorsEqual(colorFromCoords(minX - 1, y), initColor)) {
+        while(minX > 0 && areColorsEqual(getColorForCoords(minX - 1, y), initColor)) {
           minX--;
           markPixel(minX, y, paintColor, 1);
         }
@@ -301,7 +329,7 @@ $(function() {
 
       var maxX = current[1];
       if(current[5]) {
-        while(maxX < windowCanvas.width - 1 && areColorsEqual(colorFromCoords(maxX + 1, y), initColor)) {
+        while(maxX < windowCanvas.width - 1 && areColorsEqual(getColorForCoords(maxX + 1, y), initColor)) {
           maxX++;
           markPixel(maxX, y, paintColor, 1);
         }
@@ -310,33 +338,6 @@ $(function() {
       current[0]--;
       current[1]++;
 
-      function addNextLine(newY, isNext, downwards) {
-        var rMinX = minX;
-        var inRange = false;
-
-        for(var x = minX; x <= maxX; x++) {
-          // skip testing, if testing previous line within previous range
-          var empty = (isNext || (x < current[0] || x > current[1])) && areColorsEqual(colorFromCoords(x, newY), initColor);
-          if(!inRange && empty) {
-            rMinX = x;
-            inRange = true;
-          }
-          else if(inRange && !empty) {
-            ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, false]);
-            inRange = false;
-          }
-          if(inRange) {
-            markPixel(x, newY, paintColor, 1);
-          }
-          // skip
-          if(!isNext && x == current[0]) {
-            x = current[1];
-          }
-        }
-        if(inRange) {
-          ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, true]);
-        }
-      }
 
       if(y < windowCanvas.height) {
         addNextLine(y + 1, !up, true);
