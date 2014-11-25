@@ -254,6 +254,7 @@ $(function() {
   };
   
   function paint(x, y, paintColor) {
+    // thanks to Will Thimbleby http://will.thimbleby.net/scanline-flood-fill/
 
     // xMin, xMax, y, down[true] / up[false], extendLeft, extendRight
     var ranges = [[x, x, y, null, true, true]],
