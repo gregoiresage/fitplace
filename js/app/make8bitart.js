@@ -253,7 +253,7 @@ $(function() {
     }
   };
   
-  function paint(x, y, paintColor) {
+  function paint(x, y, paintColor, initColor) {
     // thanks to Will Thimbleby http://will.thimbleby.net/scanline-flood-fill/
 
     // xMin, xMax, y, down[true] / up[false], extendLeft, extendRight
@@ -717,7 +717,7 @@ $(function() {
         
       if ( mode.paint && !areColorsEqual( origRGB, pixel.color ) ) {
         action.index++;
-        paint( e.pageX, e.pageY, pixel.color );
+        paint( e.pageX, e.pageY, pixel.color, origRGB );
       }
       else {
         // draw mode
