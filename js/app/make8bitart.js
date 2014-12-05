@@ -256,6 +256,9 @@ $(function() {
   function paint(x, y, paintColor, initColor) {
     // thanks to Will Thimbleby http://will.thimbleby.net/scanline-flood-fill/
 
+    x = ( Math.ceil(x/pixel.size) * pixel.size ) - pixel.size;
+    y = ( Math.ceil(y/pixel.size) * pixel.size ) - pixel.size;
+    
     // xMin, xMax, y, down[true] / up[false], extendLeft, extendRight
     var ranges = [[x, x, y, null, true, true]],
     w = windowCanvas.width;
@@ -278,17 +281,28 @@ $(function() {
     // set pixel colour in imgData array
     function markPixel(x, y) {
       var index = 4 * (x + y * w);
-      imgData[index] = paintColorArray[0];
-      imgData[index + 1] = paintColorArray[1];
-      imgData[index + 2] = paintColorArray[2];
-      imgData[index + 3] = 255;
+
+      for (var j = index; j < index + pixel.size * 4; j+=4) {
+        imgData[j] = paintColorArray[0];
+        imgData[j + 1] = paintColorArray[1];
+        imgData[j + 2] = paintColorArray[2];
+        imgData[j + 3] = 255;      
+
+        for (var k = j; k < j + pixel.size * (w * 4); k+= w * 4) {
+          imgData[k] = paintColorArray[0];
+          imgData[k + 1] = paintColorArray[1];
+          imgData[k + 2] = paintColorArray[2];
+          imgData[k + 3] = 255;        
+        }
+      }
+
     }
 
     function addNextLine(newY, isNext, downwards) {
       var rMinX = minX;
       var inRange = false;
 
-      for(var x = minX; x <= maxX; x++) {
+      for(var x = minX; x <= maxX; x+= pixel.size) {
         // skip testing, if testing previous line within previous range
         var empty = (isNext || (x < current[0] || x > current[1])) && areColorsEqual(getColorForCoords(x, newY), initColor);
         if(!inRange && empty) {
@@ -296,7 +310,7 @@ $(function() {
           inRange = true;
         }
         else if(inRange && !empty) {
-          ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, false]);
+          ranges.push([rMinX, x-pixel.size, newY, downwards, rMinX == minX, false]);
           inRange = false;
         }
         if(inRange) {
@@ -308,7 +322,7 @@ $(function() {
         }
       }
       if(inRange) {
-        ranges.push([rMinX, x-1, newY, downwards, rMinX == minX, true]);
+        ranges.push([rMinX, x-pixel.size, newY, downwards, rMinX == minX, true]);
       }
     }
 
@@ -325,28 +339,28 @@ $(function() {
       var y = current[2];
 
       if(current[4]) {
-        while(minX > 0 && areColorsEqual(getColorForCoords(minX - 1, y), initColor)) {
-          minX--;
+        while(minX > 0 && areColorsEqual(getColorForCoords(minX - pixel.size, y), initColor)) {
+          minX-=pixel.size;
           markPixel(minX, y, paintColor, 1);
         }
       }
 
       var maxX = current[1];
       if(current[5]) {
-        while(maxX < windowCanvas.width - 1 && areColorsEqual(getColorForCoords(maxX + 1, y), initColor)) {
-          maxX++;
+        while(maxX < windowCanvas.width - pixel.size && areColorsEqual(getColorForCoords(maxX + pixel.size, y), initColor)) {
+          maxX+=pixel.size;
           markPixel(maxX, y, paintColor, 1);
         }
       }
 
-      current[0]--;
-      current[1]++;
+      current[0]-=pixel.size;
+      current[1]+=pixel.size;
 
       if(y < windowCanvas.height) {
-        addNextLine(y + 1, !up, true);
+        addNextLine(y + pixel.size, !up, true);
       }
       if(y > 0) {
-        addNextLine(y - 1, !down, false);
+        addNextLine(y - pixel.size, !down, false);
       }
     }
 
