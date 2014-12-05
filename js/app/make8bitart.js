@@ -295,7 +295,7 @@ $(function() {
           imgData[k + 3] = 255;        
         }
       }
-
+      pushToHistory(action.index, action.fill, x + pixel.size, y + pixel.size, initColor, paintColor, pixel.size);
     }
 
     function addNextLine(newY, isNext, downwards) {
