@@ -738,6 +738,7 @@ $(function() {
   function paint(x, y, paintColor, initColor) {
     // thanks to Will Thimbleby http://will.thimbleby.net/scanline-flood-fill/
 
+
     x = ( Math.ceil(x/pixel.size) * pixel.size ) - pixel.size;
     y = ( Math.ceil(y/pixel.size) * pixel.size ) - pixel.size;
     
@@ -747,8 +748,11 @@ $(function() {
 
     // get data array from ImageData object
     var img = ctx.getImageData(0, 0, windowCanvas.width, windowCanvas.height),
-    imgData = img.data,
-    paintColorArray = paintColor.substring(5, paintColor.length -1).split(',');
+    imgData = img.data;  
+    if (paintColor[0] === '#') {
+      paintColor = hexToRgba(paintColor);
+    }
+    var paintColorArray = paintColor.substring(5, paintColor.length -1).split(',');
 
     // lookup pixel colour from x & y coords
     function getColorForCoords (x, y) {
@@ -1117,6 +1121,16 @@ $(function() {
       }
       return hex;
     }
+  };
+
+  function hexToRgba(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 'rgba(' + parseInt(result[1], 16) + ', ' + parseInt(result[2], 16) + ', ' +  parseInt(result[3], 16) + ', 1)'  : null;
   };
 
   var sanitizeColorArray = function( colorArray ) {
