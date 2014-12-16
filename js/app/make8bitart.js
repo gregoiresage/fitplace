@@ -253,9 +253,8 @@ $(function() {
     }
   };
   
-  function paint(x, y, paintColor, initColor) {
+  var paint = function(x, y, paintColor, initColor) {
     // thanks to Will Thimbleby http://will.thimbleby.net/scanline-flood-fill/
-
 
     x = ( Math.ceil(x/pixel.size) * pixel.size ) - pixel.size;
     y = ( Math.ceil(y/pixel.size) * pixel.size ) - pixel.size;
