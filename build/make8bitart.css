@@ -225,7 +225,7 @@ ul.instructions {
 
 /* save box */
 #savebox {
-  top: 255px;
+  width: 145px;
 }
 
 /* color picker/palette box */

@@ -880,7 +880,7 @@ $(function() {
   
   var mousemovePickerPalette = function(e) {
     var boundingRect = DOM.$8bitPicker[0].getBoundingClientRect();
-       var hoverData = pickerPaletteCtx.getImageData( e.pageX - boundingRect.left, e.pageY - boundingRect.top, 1, 1).data;
+    var hoverData = pickerPaletteCtx.getImageData( e.pageX - boundingRect.left, e.pageY - boundingRect.top, 1, 1).data;
     var hoverRGB = getRGBColor(hoverData);
     DOM.$pixelSizeDemoDiv.css('background-image', 'none');
     DOM.$colorPickerDemo.css('background-image', 'none');
