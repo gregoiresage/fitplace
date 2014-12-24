@@ -253,61 +253,126 @@ $(function() {
     }
   };
   
-  var paint = function( initColor, paintColor, x, y ) {
+  var paint = function(x, y, paintColor, initColor) {
+    // thanks to Will Thimbleby http://will.thimbleby.net/scanline-flood-fill/
 
-    // bless u sweet prince @potch
-    var position = [x, y];
+    x = ( Math.ceil(x/pixel.size) * pixel.size ) - pixel.size;
+    y = ( Math.ceil(y/pixel.size) * pixel.size ) - pixel.size;
     
-    var viewed = {};
-    var stack = [];
-    
-    var thisPixelData = ctx.getImageData( x, y, 1, 1).data;
-    initColor = getRGBColor(thisPixelData);
-      
-    stack.push(position);
-    
-    function fill() {
-      var iterations = 0;
-   
-      while (stack.length && iterations < 10000) {
-        
-        iterations++;
-        var current = stack.pop();
-        var x = current[0];
-        var y = current[1];
-       
-        viewed[current] = true;
-         
-        var currentPixelData = ctx.getImageData( x, y, 1, 1).data;
-        var currentColor = getRGBColor(currentPixelData);
-        
-        if ( areColorsEqual(initColor, currentColor) ) {
-          drawPixel(x, y, paintColor, pixel.size);
-          pushToHistory(action.index, action.fill, x, y, initColor, paintColor, pixel.size);
-          
-          if ( (x - pixel.size + 2) >= 0 && !viewed[ [x - pixel.size + 2, y] ] ) {
-            stack.push([x-pixel.size, y]);
-          }
-          if ( (x + pixel.size - 2) < windowCanvas.width && !viewed[ [x + pixel.size - 2, y] ]) {
-            stack.push([x+pixel.size, y]);
-          }
-          if ( (y - pixel.size + 2) >= 0 && !viewed[ [x, y - pixel.size + 2] ] ) {
-            stack.push([x, y-pixel.size]);
-          }
-          if ( (y + pixel.size - 2) < windowCanvas.height && !viewed[ [x, y + pixel.size - 2] ]) {
-            stack.push([x, y+pixel.size]);
-          }
+    // xMin, xMax, y, down[true] / up[false], extendLeft, extendRight
+    var ranges = [[x, x, y, null, true, true]],
+    w = windowCanvas.width;
 
+    // get data array from ImageData object
+    var img = ctx.getImageData(0, 0, windowCanvas.width, windowCanvas.height),
+    imgData = img.data;  
+    if (paintColor[0] === '#') {
+      paintColor = hexToRgba(paintColor);
+    }
+    var paintColorArray = paintColor.substring(5, paintColor.length -1).split(',');
+
+    // lookup pixel colour from x & y coords
+    function getColorForCoords (x, y) {
+      var index = 4 * (x + y * windowCanvas.width);
+      var indices = [index, index + 1, index + 2, index + 3]
+      var values = indices.map(function(i){
+        return imgData[i]
+      });
+      return getRGBColor(values);
+    }
+
+    // set pixel colour in imgData array
+    function markPixel(x, y) {
+      var index = 4 * (x + y * w);
+
+      for (var j = index; j < index + pixel.size * 4; j+=4) {
+        imgData[j] = paintColorArray[0];
+        imgData[j + 1] = paintColorArray[1];
+        imgData[j + 2] = paintColorArray[2];
+        imgData[j + 3] = 255;      
+
+        for (var k = j; k < j + pixel.size * (w * 4); k+= w * 4) {
+          imgData[k] = paintColorArray[0];
+          imgData[k + 1] = paintColorArray[1];
+          imgData[k + 2] = paintColorArray[2];
+          imgData[k + 3] = 255;        
         }
       }
-      if (stack.length) {
-        setTimeout(fill, 10);
+      pushToHistory(action.index, action.fill, x + pixel.size, y + pixel.size, initColor, paintColor, pixel.size);
+    }
+
+    function addNextLine(newY, isNext, downwards) {
+      var rMinX = minX;
+      var inRange = false;
+
+      for(var x = minX; x <= maxX; x+= pixel.size) {
+        // skip testing, if testing previous line within previous range
+        var empty = (isNext || (x < current[0] || x > current[1])) && areColorsEqual(getColorForCoords(x, newY), initColor);
+        if(!inRange && empty) {
+          rMinX = x;
+          inRange = true;
+        }
+        else if(inRange && !empty) {
+          ranges.push([rMinX, x-pixel.size, newY, downwards, rMinX == minX, false]);
+          inRange = false;
+        }
+        if(inRange) {
+          markPixel(x, newY, paintColor, 1);
+        }
+        // skip
+        if(!isNext && x == current[0]) {
+          x = current[1];
+        }
+      }
+      if(inRange) {
+        ranges.push([rMinX, x-pixel.size, newY, downwards, rMinX == minX, true]);
       }
     }
-    
-    // fill it up fill it up fill it up
-    fill();
-  };
+
+    var initColor = getColorForCoords(x, y);
+
+    markPixel(x, y, paintColor, 1);
+
+    while(ranges.length) {
+      var current = ranges.pop();
+      var down = current[3] === true;
+      var up =   current[3] === false;
+
+      var minX = current[0];
+      var y = current[2];
+
+      if(current[4]) {
+        while(minX > 0 && areColorsEqual(getColorForCoords(minX - pixel.size, y), initColor)) {
+          minX-=pixel.size;
+          markPixel(minX, y, paintColor, 1);
+        }
+      }
+
+      var maxX = current[1];
+      if(current[5]) {
+        while(maxX < windowCanvas.width - pixel.size && areColorsEqual(getColorForCoords(maxX + pixel.size, y), initColor)) {
+          maxX+=pixel.size;
+          markPixel(maxX, y, paintColor, 1);
+        }
+      }
+
+      current[0]-=pixel.size;
+      current[1]+=pixel.size;
+
+      if(y < windowCanvas.height) {
+        addNextLine(y + pixel.size, !up, true);
+      }
+      if(y > 0) {
+        addNextLine(y - pixel.size, !down, false);
+      }
+    }
+
+    img.data = imgData;
+
+    // replace entire canvas
+    ctx.putImageData(img, 0, 0);
+
+  }
 
   var canStorage = function() {
     try {
@@ -580,6 +645,16 @@ $(function() {
     }
   };
 
+  function hexToRgba(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? 'rgba(' + parseInt(result[1], 16) + ', ' + parseInt(result[2], 16) + ', ' +  parseInt(result[3], 16) + ', 1)'  : null;
+  };
+
   var sanitizeColorArray = function( colorArray ) {
     for ( var i = 0; i < colorArray.length; i++ ) {
       colorArray[i] = rgbToHex(colorArray[i]);
@@ -674,7 +749,7 @@ $(function() {
         
       if ( mode.paint && !areColorsEqual( origRGB, pixel.color ) ) {
         action.index++;
-        paint( origRGB, pixel.color, e.pageX, e.pageY);
+        paint( e.pageX, e.pageY, pixel.color, origRGB );
       }
       else {
         // draw mode
