@@ -389,7 +389,7 @@ ul.instructions {
 }
 
 /* save modal */
-#save-box {
+#save-modal-container {
   display: none;
   text-align: center;
   width: 100%;

@@ -33,7 +33,6 @@ $(function() {
     $toolbox : $('#toolbox'),
     $savebox : $('#savebox'),
     $colorbox : $('#colorbox'),
-    $savebox : $('#savebox'),
     $waiting : $('#wait'),
 
     $tabs : $('.tabs'),
@@ -67,9 +66,9 @@ $(function() {
     $undo : $('#undo'),
     $redo : $('#redo'),
     
-    $saveBox : $('#save-box'),
+    $saveModalContainer : $('#save-modal-container'),
     $saveImg : $('#finished-art'),
-    $saveExit : $('#save-box .ui-hider'),
+    $saveExit : $('#save-modal .ui-hider'),
     $linkImgur : $('#link-imgur'),
 
     $colorHistoryTools : {
@@ -158,7 +157,7 @@ $(function() {
   DOM.$savebox.css({
     top : '255px',
     left : '234px'
-  })
+  });
 
   
 
@@ -274,9 +273,9 @@ $(function() {
     // lookup pixel colour from x & y coords
     function getColorForCoords (x, y) {
       var index = 4 * (x + y * windowCanvas.width);
-      var indices = [index, index + 1, index + 2, index + 3]
+      var indices = [index, index + 1, index + 2, index + 3];
       var values = indices.map(function(i){
-        return imgData[i]
+        return imgData[i];
       });
       return getRGBColor(values);
     }
@@ -329,7 +328,7 @@ $(function() {
       }
     }
 
-    var initColor = getColorForCoords(x, y);
+    initColor = getColorForCoords(x, y);
 
     markPixel(x, y, paintColor, 1);
 
@@ -339,7 +338,7 @@ $(function() {
       var up =   current[3] === false;
 
       var minX = current[0];
-      var y = current[2];
+      y = current[2];
 
       if(current[4]) {
         while(minX > 0 && areColorsEqual(getColorForCoords(minX - pixel.size, y), initColor)) {
@@ -372,7 +371,7 @@ $(function() {
     // replace entire canvas
     ctx.putImageData(img, 0, 0);
 
-  }
+  };
 
   var canStorage = function() {
     try {
@@ -574,7 +573,7 @@ $(function() {
   var displayFinishedArt = function(src) {
     DOM.$saveImg.attr('src', src);
     DOM.$saveImg.parent().attr('href', src);
-    DOM.$saveBox.show();
+    DOM.$saveModalContainer.show();
   };
   
   var saveToLocalStorage = function() {
@@ -645,7 +644,7 @@ $(function() {
     }
   };
 
-  function hexToRgba(hex) {
+  var hexToRgba = function( hex ) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
     hex = hex.replace(shorthandRegex, function(m, r, g, b) {
@@ -834,7 +833,7 @@ $(function() {
     img.src = generateBackgroundGrid(pixel.size);
     img.onload = function updateCanvasBackground() {
       DOM.$canvas.css('background','url(' + img.src + ')');
-    }
+    };
     
     // set both inputs to be equal
     DOM.$pixelSizeInput.val(pixel.size);
@@ -912,7 +911,7 @@ $(function() {
   key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
   
   // close save modal alias to esc
-  key('esc', function(){ DOM.$saveBox.hide(); });
+  key('esc', function(){ DOM.$saveModalContainer.hide(); });
 
   // pencil tool (matches photoshop)
   key('B', triggerClickForEnabled(DOM.$pencil));
@@ -1020,17 +1019,17 @@ $(function() {
   
   /* saving */
 
-  // hide save box if exit button clicked
+  // hide save modal container if exit button clicked
   DOM.$saveExit.click(function() {
-    DOM.$saveBox.hide();
+    DOM.$saveModalContainer.hide();
     DOM.$linkImgur.attr('href', '').text('');
     DOM.$buttonSaveImgur.show();
   });
   
-  // hide save box if clicking outside of modal
-  DOM.$saveBox.click(function(e) {
+  // hide save modal container if clicking outside of modal
+  DOM.$saveModalContainer.click(function(e) {
     var $target = $(e.target).context;
-    if ( $target == DOM.$saveBox[0] ) {
+    if ( $target == DOM.$saveModalContainer[0] ) {
       $(this).hide();
     }
   });
@@ -1132,10 +1131,10 @@ $(function() {
 
   // check local storage for color history palette
   if ( canStorage() && localStorage.colorHistory ) {
-    var colorHistory = localStorage.colorHistory.split(',');
+    colorHistory = localStorage.colorHistory.split(',');
   }
   else {
-    var colorHistory = [];
+    colorHistory = [];
     DOM.$colorHistoryModule.hide();
   }
 
@@ -1147,7 +1146,7 @@ $(function() {
   img.src = generateBackgroundGrid(pixel.size);
   img.onload = function updateCanvasBackground() {
     DOM.$canvas.css('background','url(' + img.src + ')');
-  }
+  };
 
   // init hide toolboxes
   DOM.$whatbox.draggyBits('minimize');

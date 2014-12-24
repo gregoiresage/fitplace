@@ -3,6 +3,10 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    jshint: {
+      all: ['Gruntfile.js','js/app/*']
+    },
+    
     concat: {   
       dist: {
         src: [
@@ -21,12 +25,14 @@ module.exports = function(grunt) {
         dest: 'build/make8bitart.css',
       }
     },
+    
     uglify: {
       build: {
         src: 'build/make8bitart.js',
         dest: 'build/make8bitart.min.js'
       }
     },
+    
     cssmin: {
       minify: {
         expand: true,
@@ -36,6 +42,7 @@ module.exports = function(grunt) {
         ext: '.min.css'
       },
     },
+    
     watch: {
       scripts: {
         files: ['js/*/*.js'],
@@ -57,8 +64,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['concat','uglify','cssmin']);
+  grunt.registerTask('default', ['concat','uglify','cssmin','jshint']);
 
 };
