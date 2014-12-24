@@ -833,7 +833,12 @@ $(function() {
   
   // close save modal alias to esc
   key('esc', function(){ DOM.$saveBox.hide(); });
-    
+
+  // pencil tool (matches photoshop)
+  key('B', triggerClickForEnabled(DOM.$pencil));
+
+  // paint bucket tool (matches photoshop)
+  key('G', triggerClickForEnabled(DOM.$paint));
 
   /* colors */
   
