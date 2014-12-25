@@ -40,8 +40,10 @@ $(function() {
     $color : $('.color'),
     $colorHistoryModule : $('#color-history'),
     $colorHistoryPalette : $('.color-history-list'),
+    $colorCustomPalette : $('.color-custom-list'),
     $pickers : $('#pickers'),
-    $palettes : $('#palettes'),
+    $customPalettes : $('#custom-palettes'),
+    $defaultPalettes : $('#default-palettes'),
     $8bitPicker : $('#eight-bit-colors'),
     $colorPickerDemo : $('.color-demo'),
     $hex : $('#hex-color'),
@@ -74,7 +76,11 @@ $(function() {
     $colorHistoryTools : {
       clearPalette: $('#color-history-tools .clear'),
       exportPalette: $('#color-history-tools .export'),
-      importPalette: $('#color-history-tools .import')
+    },
+    
+    $colorCustomTools : {
+      clearPalette: $('#color-custom-tools .clear'),
+      importPalette: $('#color-custom-tools .import')
     }
   };
   
@@ -1113,19 +1119,70 @@ $(function() {
     DOM.$colorHistoryModule.hide();
   });
 
-  // import color history
-  DOM.$colorHistoryTools.importPalette.click(function(){
-    console.log('import coming soon');
-  });
-
   // export color history
   DOM.$colorHistoryTools.exportPalette.click(function(){
     console.log('export coming soon');
   });
+  
+  // clear custom colors palette
+  DOM.$colorCustomTools.clearPalette.click(function(){
+    DOM.$colorCustomPalette.find('li').remove();
+  });
+  
+  // import custom colors palette
+  DOM.$colorCustomTools.importPalette.on('change', function(e){
+    
+    // get the file submitted
+    var file = $(this).prop('files')[0];
+    
+    // helper function to parse csv data
+    var parseCSVData = function(data) {
+      
+      // since we have csv data, clear the current custom palette
+      DOM.$colorCustomPalette.find('li').remove();
+      
+      // get csv text and parse
+      var csv = data.target.result;
+      var rows = csv.split(/\r\n|\n/);
+      
+      for ( var i = 0; i < rows.length; i++ ) {
+        var dataPair = rows[i].split(',');
+  
+        // create button, set properties, and add to palette
+        var $newCustomButton = $('<a>');
+        $newCustomButton.attr({
+          'class' : 'button color',
+          'style' : 'background-color:#' + dataPair[1],
+          'title' : dataPair[0],
+          'data-color' : '#' + dataPair[1]
+        });
+        var $newCustomButtonContainer = $('<li>').append($newCustomButton);
+        DOM.$colorCustomPalette.append($newCustomButtonContainer);
+      }
+      
+      // set events to make these colors work
+      DOM.$color = $('.'+classes.color);
+      DOM.$color.click(bindColorClick);
+    };
 
+    // read the file if browser has the FileReader API
+    if ( window.FileReader ) {
+
+      fileReader = new FileReader();
+      fileReader.readAsText(file);
+      fileReader.onload = parseCSVData;
+      fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
+    }
+    else {
+      alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
+    }
+  });
+  
+  
   
   /*** INIT HA HA HA ***/
   DOM.$pickers.hide();
+  DOM.$customPalettes.hide();
   generateCanvas();
   init8bitPicker();
 

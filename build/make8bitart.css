@@ -69,6 +69,7 @@ canvas {
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
+  overflow: hidden;
 }
 
 img.ui-dragger {
@@ -88,7 +89,7 @@ img.ui-hider {
 }
 
 .tabs li {
-  width:50px;
+  width:100px;
   display: inline-block;
   padding: 5px 10px;
   border: 1px solid #aaa;
@@ -98,6 +99,10 @@ img.ui-hider {
 .tabs li.active {
   background-color: magenta;
   box-shadow: inset 1px 1px 3px #000;
+}
+
+.tabs:hover {
+  cursor: pointer;
 }
 
 /* tool tips */
@@ -230,19 +235,19 @@ ul.instructions {
 
 /* color picker/palette box */
 #colorbox {
-  width: 160px;
+  width: 195px;
 }
 
 #colorbox h3 {
   margin: 5px 0;
 }
 
-#palettes {
+.palettes {
   margin-bottom: 10px;
 }
 
-#palettes ul,
-#palettes ul li {
+.palettes ul,
+.palettes ul li {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -340,7 +345,8 @@ ul.instructions {
   margin-top: 15px;
 }
 
-#palettes ul.color-history-list {
+.palettes ul.color-history-list,
+.palettes ul.color-custom-list {
   margin-bottom: 5px;
 }
 

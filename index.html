@@ -225,11 +225,12 @@
     </div>
 
     <ul class="tabs">
-      <li class="palettes active" data-href="#palettes" role="button">palettes</li>
-      <li class="pickers" data-href="#pickers" role="button">pickers</li>
+      <li class="default active" data-href="#default-palettes" role="button">default/history</li>
+      <li class="pickers" data-href="#pickers" role="button">color pickers</li>
+      <li class="custom" data-href="#custom-palettes" role="button">custom palettes</li>
     </ul>
     
-    <div id="palettes" class="inner clearfix">
+    <div id="default-palettes" class="inner palettes clearfix">
       <h3>pick a color:</h3>
       <ul class="clearfix">
         <li><a class="button color primary red" title="red" data-color="rgba(255, 0, 0, 1)"> </a></li>
@@ -245,15 +246,15 @@
       </ul>
 
       <div id="color-history">
-        <h3 class="color-history-label">history palette:</h3>
+        <h3 class="color-history-label">history:</h3>
         <ul class="color-history-list clearfix"></ul>
 
         <div id="color-history-tools">
           <button class="clear">clear</button>
-          <!--<button class="export">export</button>
-          <button class="import">import</button>-->
+          <!--<button class="export">export</button>-->
         </div>
       </div>
+      
     </div>
     
     <div id="pickers">
@@ -268,6 +269,23 @@
         <canvas id="eight-bit-colors" width="150" height="150"></canvas>
         <div class="color-demo eightbit"></div>
       </div>
+    </div>
+    
+    <div id="custom-palettes">
+      <div id="color-custom" class="palettes">
+        <h3 class="color-upload-label">custom:</h3>        
+        
+
+        <ul class="color-custom-list clearfix"></ul>
+        
+        <div id="color-custom-tools">
+          <p>Upload file in "name,hex" csv format, like in <a href="assets/example.csv">example.csv</a>!</p>
+
+          <input type="file" name="upload-palette" class="import" /> 
+          <button class="clear">clear</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
