@@ -260,7 +260,7 @@ $(function() {
   
   var paint = function(x, y, paintColor, initColor) {
     // thanks to Will Thimbleby http://will.thimbleby.net/scanline-flood-fill/
-
+    
     x = ( Math.ceil(x/pixel.size) * pixel.size ) - pixel.size;
     y = ( Math.ceil(y/pixel.size) * pixel.size ) - pixel.size;
     
@@ -289,18 +289,21 @@ $(function() {
     // set pixel colour in imgData array
     function markPixel(x, y) {
       var index = 4 * (x + y * w);
+      
+      var alpha = parseInt(paintColorArray[3]) === 0 ? 0 : 255;
+      console.log(paintColorArray[3], alpha);
 
       for (var j = index; j < index + pixel.size * 4; j+=4) {
         imgData[j] = paintColorArray[0];
         imgData[j + 1] = paintColorArray[1];
         imgData[j + 2] = paintColorArray[2];
-        imgData[j + 3] = 255;      
+        imgData[j + 3] = alpha;      
 
         for (var k = j; k < j + pixel.size * (w * 4); k+= w * 4) {
           imgData[k] = paintColorArray[0];
           imgData[k + 1] = paintColorArray[1];
           imgData[k + 2] = paintColorArray[2];
-          imgData[k + 3] = 255;        
+          imgData[k + 3] = alpha;        
         }
       }
       pushToHistory(action.index, action.fill, x + pixel.size, y + pixel.size, initColor, paintColor, pixel.size);
