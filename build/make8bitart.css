@@ -220,7 +220,7 @@ img.ui-hider {
   width: 75%;
   font-size: 1.2em;
   font-family: monospace;
-  padding: 5px 3px;
+  padding: 5px 3px 3px;
 }
 
 #pixel-size-slider {
@@ -390,7 +390,7 @@ ul.instructions {
   margin-left: 5px;
   font-size: 1.5em;
   font-family: monospace;
-  padding: 5px 3px;
+  padding: 5px 3px 3px;
 }
 
 #hex-color.current {
