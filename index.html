@@ -65,7 +65,7 @@
   <div id="header" class="draggy" title="header">
   
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger2.png" alt="drag">
+      <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
     </div>
   
     <h1>make 8-bit art!</h1>
@@ -92,7 +92,7 @@
   <div id="what" class="draggy" title="what is this even?" data-title="what">
   
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger2.png" alt="drag">
+      <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="minimize">
     </div>
 
@@ -125,7 +125,7 @@
   <div id="toolbox" class="draggy" title="canvas/brush tools" data-title="tools">
 
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger2.png" alt="drag">
+      <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="minimize">
     </div>
     
@@ -133,23 +133,21 @@
       <h3>canvas tools</h3>
       
       <div id="instruments">
-        <img class="current-tool" id="pencil" src="assets/pencil.png" alt="draw"  data-href="#draw" role="button" title="draw" />
-        <img id="paint" src="assets/paint.png" alt="paint"  data-href="#paint" role="button" title="paint/fill" />
+        <img class="current-tool icon-button" id="pencil" src="assets/pencil.png" alt="draw" data-href="#draw" role="button" title="draw" />
+        <img id="paint" src="assets/paint.png" alt="paint" class="icon-button" data-href="#paint" role="button" title="paint/fill" />
       </div>
       
-      <p>
+      <h3>edit tools</h3>
         <input type="submit" id="undo" title="ctrl+z" value="undo" disabled="disabled" />
         <input type="submit" id="redo" title="ctrl+y" value="redo" disabled="disabled" />
-      </p>
-  
-      <input type="submit" value="new canvas" id="new-canvas" /> 
-      <div class="tip"> ? <span class="tip-text">this will clear your canvas and create a new one with the background of whichever color is selected, including "erase" for a transparent one</span></div>
+        
+        <br />  
+        <input type="submit" value="new canvas" id="new-canvas" />
     </div>
     
     <div id="size" class="inner">
-      <h3>brush size</h3>
+      <h3>brush tools</h3>
       <input id="pixel-size" class="pixel-size-input" type="number" min="1" max="100" step="1" value="15" />
-      <div class="tip"> ? <span class="tip-text">changing pixel size *won't* clear the whole page, but using different sized pixels makes it less "8-bit"ish. you do you, though. I'm not the 8-bit police.</span></div>
       <input id="pixel-size-slider" class="pixel-size-input" type="range" min="1" max="100" step="1" value="15" />
       <div id="pixel-size-demo" class="color-demo"> </div>
     </div>
@@ -178,7 +176,7 @@
   <div id="savebox" class="draggy" title="save your work" data-title="save">
 
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger2.png" alt="drag">
+      <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="minimize">
     </div>
     
@@ -218,7 +216,7 @@
   <div id="colorbox" class="draggy" title="color tools" data-title="colors">
 
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger2.png" alt="drag">
+      <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="minimize">
     </div>
 
@@ -259,19 +257,19 @@
       <div id="hex-picker">
         <h3>hex value:</h3>
 
-        #<input id="hex-color" type="text" value="000000" /> <img id="color-dropper" src="assets/dropper.png" alt="color dropper" data-href="#dropper" role="button" title="color dropper" />
+        <span class="pound">#</span><input id="hex-color" type="text" value="000000" /> <img class="icon-button" id="color-dropper" src="assets/dropper2.png" alt="color dropper" data-href="#dropper" role="button" title="color dropper" />
       </div>
       
       <div id="eight-bit-picker">
         <h3 class="eightbit">click to pick:</h3>
-        <canvas id="eight-bit-colors" width="150" height="150"></canvas>
+        <canvas id="eight-bit-colors" width="195" height="195"></canvas>
         <div class="color-demo eightbit"></div>
       </div>
     </div>
     
     <div id="custom-palettes">
       <div id="color-custom" class="palettes">
-        <h3 class="color-upload-label">custom:</h3>        
+        <h3 class="color-upload-label">custom palette:</h3>        
         
 
         <ul class="color-custom-list clearfix"></ul>
