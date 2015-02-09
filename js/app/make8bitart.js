@@ -21,7 +21,8 @@ $(function() {
     tipText: 'tip-text',
     color: 'color',
     transparent: 'transparent',
-    activeTab: 'active'
+    activeTab: 'active',
+    hidden: 'hidden'
   };
 
   var DOM = {
@@ -185,8 +186,9 @@ $(function() {
       position : 'absolute',
       top : 0,
       left : 0,
-      display : 'none'
-    });
+    })
+    .addClass(classes.hidden);
+    
     DOM.$body.prepend( DOM.$overlay );
     ctxOverlay = DOM.$overlay[0].getContext('2d');
     ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
@@ -582,7 +584,7 @@ $(function() {
   var displayFinishedArt = function(src) {
     DOM.$saveImg.attr('src', src);
     DOM.$saveImg.parent().attr('href', src);
-    DOM.$saveModalContainer.show();
+    DOM.$saveModalContainer.removeClass(classes.hidden);
   };
   
   var saveToLocalStorage = function() {
@@ -611,7 +613,7 @@ $(function() {
         var id = result.data.id;
         var url = 'https://imgur.com/gallery/' + id;
         DOM.$linkImgur.attr('href', url).text('click: ' + url);
-        DOM.$buttonSaveImgur.hide();
+        DOM.$buttonSaveImgur.addClass(classes.hidden);
       },
       error: function(result) {
         DOM.$linkImgur.text('There was an error saving to Imgur.');
@@ -724,7 +726,7 @@ $(function() {
     // bind click to new colors
     DOM.$color = $('.'+classes.color);
     DOM.$color.click(bindColorClick);
-    DOM.$colorHistoryModule.show();
+    DOM.$colorHistoryModule.removeClass(classes.hidden);
 
     // save to local storage
     if ( canStorage() ) {
@@ -866,14 +868,14 @@ $(function() {
       mode.save = false;
       DOM.$saveInstruction.slideUp();
       $(this).val(copy.selectionOn);
-      DOM.$overlay.hide();
+      DOM.$overlay.addClass(classes.hidden);
     }
     else {
       mode.save = true;
       DOM.$saveInstruction.slideDown();
       $(this).val(copy.selectionOff);
       ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-      DOM.$overlay.show();
+      DOM.$overlay.removeClass(classes.hidden);
     }
   });
 
@@ -920,7 +922,7 @@ $(function() {
   key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
   
   // close save modal alias to esc
-  key('esc', function(){ DOM.$saveModalContainer.hide(); });
+  key('esc', function(){ DOM.$saveModalContainer.addClass(classes.hidden); });
 
   // pencil tool (matches photoshop)
   key('B', triggerClickForEnabled(DOM.$pencil));
@@ -1030,16 +1032,16 @@ $(function() {
 
   // hide save modal container if exit button clicked
   DOM.$saveExit.click(function() {
-    DOM.$saveModalContainer.hide();
+    DOM.$saveModalContainer.addClass(classes.hidden);
     DOM.$linkImgur.attr('href', '').text('');
-    DOM.$buttonSaveImgur.show();
+    DOM.$buttonSaveImgur.removeClass(classes.hidden);
   });
   
   // hide save modal container if clicking outside of modal
   DOM.$saveModalContainer.click(function(e) {
     var $target = $(e.target).context;
     if ( $target == DOM.$saveModalContainer[0] ) {
-      $(this).hide();
+      $(this).addClass(classes.hidden);
     }
   });
   
@@ -1063,19 +1065,19 @@ $(function() {
       toHide.push($(this).attr('data-href'));
     });
 
-    $(href).show();
+    $(href).removeClass(classes.hidden);
     for ( var i = 0; i < toHide.length; i++ ) {
-      $(toHide[i]).hide();
+      $(toHide[i]).addClass(classes.hidden);
     }
   });
 
   // tooltip hover 
   DOM.$tips.hover(
     function() {
-      $(this).find('.'+classes.tipText).stop().show();
+      $(this).find('.'+classes.tipText).stop().removeClass(classes.hidden);
     },
     function() {
-      $(this).find('.'+classes.tipText).stop().hide();
+      $(this).find('.'+classes.tipText).stop().addClass(classes.hidden);
     }
   );
 
@@ -1119,7 +1121,7 @@ $(function() {
     colorHistory = [];
     DOM.$colorHistoryPalette.find('li').remove();
     localStorage.colorHistory = [];
-    DOM.$colorHistoryModule.hide();
+    DOM.$colorHistoryModule.addClass(classes.hidden);
   });
 
   // export color history
@@ -1184,8 +1186,8 @@ $(function() {
   
   
   /*** INIT HA HA HA ***/
-  DOM.$pickers.hide();
-  DOM.$customPalettes.hide();
+  DOM.$pickers.addClass(classes.hidden);
+  DOM.$customPalettes.addClass(classes.hidden);
   generateCanvas();
   init8bitPicker();
 
@@ -1195,7 +1197,7 @@ $(function() {
   }
   else {
     colorHistory = [];
-    DOM.$colorHistoryModule.hide();
+    DOM.$colorHistoryModule.addClass(classes.hidden);
   }
 
   initColorHistoryPalette();

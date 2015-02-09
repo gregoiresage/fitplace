@@ -13,7 +13,12 @@ module.exports = function(grunt) {
           'js/libs/jquery-2.1.1.min.js',
           'js/libs/draggybits.js',
           'js/libs/keymaster.js',
-          'js/app/*.js'
+        ],
+        dest: 'build/vendor.js',
+      },
+      app: {
+        src: [
+          'js/app/make8bitart.js',
         ],
         dest: 'build/make8bitart.js',
       },
@@ -28,8 +33,8 @@ module.exports = function(grunt) {
     
     uglify: {
       build: {
-        src: 'build/make8bitart.js',
-        dest: 'build/make8bitart.min.js'
+        src: 'build/vendor.js',
+        dest: 'build/vendor.min.js'
       }
     },
     
