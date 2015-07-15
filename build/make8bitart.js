@@ -293,7 +293,6 @@ $(function() {
       var index = 4 * (x + y * w);
 
       var alpha = parseInt(paintColorArray[3]) === 0 ? 0 : 255;
-      console.log(paintColorArray[3], alpha);
 
       for (var j = index; j < index + pixel.size * 4; j+=4) {
         imgData[j] = paintColorArray[0];
@@ -686,6 +685,7 @@ $(function() {
 
   var setDropperColor = function( color ) {
     pixel.color = color;
+    DOM.$color.removeClass(classes.current);
     DOM.$pixelSizeDemoDiv.css('background-image', 'none');
     DOM.$colorPickerDemo.css('background-image', 'none');
     DOM.$pixelSizeDemoDiv.css('background-color', pixel.color);
@@ -753,6 +753,10 @@ $(function() {
 
   var onMouseDown = function(e) {
     e.preventDefault();
+    
+    if ( e.which === 3 ) {
+      return;
+    }
 
     var origData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
     var origRGB = getRGBColor(origData);
@@ -829,6 +833,19 @@ $(function() {
       mode.save = false;
       rect = {};
     }
+  };
+  
+  var onRightClick = function(e) {
+    mode.dropper = false;
+    var origData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
+    var origRGB = getRGBColor(origData);
+    
+    setDropperColor(origRGB);
+    
+    DOM.$canvas.removeClass(classes.dropperMode);
+    DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
+    
+    return false;
   };
 
   /* tools */
@@ -1234,6 +1251,7 @@ $(function() {
 
   DOM.$canvas.mousedown(onMouseDown).mouseup(onMouseUp);
   DOM.$overlay.mousedown(onMouseDown).mouseup(onMouseUp);
+  DOM.$canvas.on('contextmenu', onRightClick);
 
   //touch
   DOM.$canvas[0].addEventListener('touchstart', onMouseDown, false);
