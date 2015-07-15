@@ -22,7 +22,8 @@ $(function() {
     color: 'color',
     transparent: 'transparent',
     activeTab: 'active',
-    hidden: 'hidden'
+    hidden: 'hidden',
+    local: 'local'
   };
 
   var DOM = {
@@ -32,7 +33,7 @@ $(function() {
     $header : $('#header'),
     $whatbox : $('#what'),
     $toolbox : $('#toolbox'),
-    $savebox : $('#savebox'),
+    $filebox : $('#filebox'),
     $colorbox : $('#colorbox'),
     $waiting : $('#wait'),
 
@@ -73,6 +74,9 @@ $(function() {
     $saveImg : $('#finished-art'),
     $saveExit : $('#save-modal .ui-hider'),
     $linkImgur : $('#link-imgur'),
+    
+    $importFile: $('#open-file'),
+    $importLocal: $('#open-local'),
 
     $colorHistoryTools : {
       clearPalette: $('#color-history-tools .clear'),
@@ -161,7 +165,7 @@ $(function() {
     left : '750px',
     top : '50px'
   });
-  DOM.$savebox.css({
+  DOM.$filebox.css({
     top : '255px',
     left : '234px'
   });
@@ -1245,7 +1249,12 @@ $(function() {
 
   // init hide toolboxes
   DOM.$whatbox.draggyBits('minimize');
-  DOM.$savebox.draggyBits('minimize');
+  DOM.$filebox.draggyBits('minimize');
+  
+  // only show the following in draggy divs if local storage exists
+  if ( !canStorage() ) {
+    $('.'+classes.local).addClass(classes.hidden);
+  }
 
   historyPointer = -1;
 

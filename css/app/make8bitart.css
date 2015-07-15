@@ -204,8 +204,21 @@ ul.instructions {
 }
 
 /* save box */
-#savebox {
-  width: 100px;
+#filebox {
+  width: 175px;
+}
+
+#filebox input {
+  display: block;
+}
+
+#filebox label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+#filebox h3 {
+  margin: 1em 0 .5em;
 }
 
 /* color picker/palette box */

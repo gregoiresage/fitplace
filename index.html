@@ -171,9 +171,9 @@
       **(*   |   (((|   /_/      __/_/__    -| |--    _|_|__
       *|\|             (((|      -----     __|_|__
    _/(h8rs)|__            '''                 -----
-     _||_|__              SAVE BOX -->
+     _||_|__              FILE BOX -->
     
-  <div id="savebox" class="draggy" title="save your work" data-title="save">
+  <div id="filebox" class="draggy" title="import/save" data-title="import-save">
 
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
@@ -181,10 +181,21 @@
     </div>
     
     <div id="save" class="inner">
-      <h3>save your art</h3> 
+      <h3>import art</h3> 
       
+      <label for="open-file">
+        import an image:
+        <input type="file" value="import image" id="open-file" />
+      </label>
+      
+      <label for="open-local" class="local">
+        import from local storage:
+        <input type="submit" value="open existing art" id="open-local" />
+      </label>
+      
+      <h3>save your art</h3>
       <input type="submit" value="full page" id="save-full" /> 
-      <br />
+
       <input type="submit" value="selection" id="save-selection" />
       
       <ul class="instructions">
