@@ -181,19 +181,26 @@
     </div>
     
     <div id="save" class="inner">
-      <h3>import art</h3> 
       
+      <!-- NOT YET 
       <label for="open-file">
         import an image:
         <input type="file" value="import image" id="open-file" />
       </label>
+      -->
       
-      <label for="open-local" class="local">
+      <label for="open-local" class="local" id="open-local-form">
+      
+            <h3>import art</h3> 
+
         import from local storage:
         <input type="submit" value="open existing art" id="open-local" />
       </label>
       
       <h3>save your art</h3>
+      
+      <input type="submit" value="local to browser" id="save-local" class="local" />
+      
       <input type="submit" value="full page" id="save-full" /> 
 
       <input type="submit" value="selection" id="save-selection" />
@@ -296,14 +303,25 @@
     </div>
   </div>
 
-  <div id="save-modal-container" class="hidden">
-    <div id="save-modal">
+  <div id="save-modal-container" class="modal hidden">
+    <div id="save-modal" class="inside-modal">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="close">
 
       <h2>you saved your art!</h2>
       <a href="#" target="_blank"><img id="finished-art" /></a>
     
       <p>Click or drag your art to your desktop to save, <br />or <input type="submit" value="upload to imgur.com" id="save-imgur" /> <a id="link-imgur"></a>!</p> 
+    </div>
+  </div>
+  
+  <div id="open-modal-container" class="modal hidden">
+    <div id="open-modal" class="inside-modal">
+      <img class="ui-hider" src="assets/draggybits/hider2.png" alt="close">
+
+      <h2>you have some locally saved art!</h2>
+      <h3>wanna open one? click a thumbnail...</h3>
+      
+      <ul class="gallery"> </ul>
     </div>
   </div>
   

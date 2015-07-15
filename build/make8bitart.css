@@ -59,7 +59,7 @@ img.icon-button {
 }
 
 .hidden {
-  display: none;
+  display: none!important;
 }
 
 /* canvas */
@@ -402,8 +402,8 @@ ul.instructions {
   border-color: #000;
 }
 
-/* save modal */
-#save-modal-container {
+/* save and open modal */
+.modal {
   text-align: center;
   width: 100%;
   height: 100%;
@@ -414,7 +414,7 @@ ul.instructions {
   z-index: 999999;
 }
 
-#save-modal {
+.inside-modal {
   text-align: center;
   width: auto;
   max-width: 50%;
@@ -427,19 +427,51 @@ ul.instructions {
   position: relative;
 }
 
-#save-modal h2 {
+.inside-modal h2 {
   float: none;
   font-size: 2em;
 }
 
-#save-modal .ui-hider {
+.inside-modal .ui-hider {
   position: absolute;
   top: 10px;
   right: 10px;
 }
 
-#save-modal .ui-hider:hover {
+.inside-modal .ui-hider:hover {
   cursor: pointer;
+}
+
+.gallery {
+  margin: 0;
+  padding: 0;
+}
+
+.gallery li {
+  list-style-type: none;
+  display: inline-block;
+  margin: 10px;
+  border: 5px solid #000;
+  position: relative;
+}
+
+.gallery li:hover {
+  cursor: pointer;
+}
+
+.gallery li img {
+  height: 50px;
+}
+
+
+.gallery li img.delete {
+  height: 10px;
+  padding: 5px;
+  background-color: #fff;
+  border: 2px solid #000;
+  position: absolute; 
+  top: -10px;
+  right: -10px;
 }
 
 #finished-art {

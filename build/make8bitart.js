@@ -8,9 +8,10 @@ $(function() {
 
   /*** VARIABULLS ***/
 
-  var ctx, pickerPaletteCtx, leftSide, topSide, xPos, yPos, resetSelectStart, saveSelection, rect, historyPointer, drawPathId;
+  var ctx, pickerPaletteCtx, leftSide, topSide, xPos, yPos, resetSelectStart, savedCanvas, savedCanvasArray, saveSelection, rect, historyPointer, drawPathId;
   var undoRedoHistory = [];
   var drawHistory = [];
+  var currentLocalArtId = 0;
 
   var classes = {
     selectionCanvas : 'selectionCanvas',
@@ -23,7 +24,8 @@ $(function() {
     transparent: 'transparent',
     activeTab: 'active',
     hidden: 'hidden',
-    local: 'local'
+    local: 'local',
+    deleteItem: 'delete'
   };
 
   var DOM = {
@@ -55,9 +57,12 @@ $(function() {
     $paint : $('#paint'),
 
     $buttonNewCanvas : $('#new-canvas'),
+    $buttonSaveLocal : $('#save-local'),
     $buttonSaveFull : $('#save-full'),
     $buttonSaveSelection : $('#save-selection'),
     $buttonSaveImgur : $('#save-imgur'),
+    $buttonOpenFile : $('#open-file'),
+    $buttonOpenLocal : $('#open-local'),
 
     $pixelSizeInput : $('.pixel-size-input'),
     $pixelSizeDemoDiv : $('#pixel-size-demo'),
@@ -69,14 +74,20 @@ $(function() {
 
     $undo : $('#undo'),
     $redo : $('#redo'),
+    
+    $modalContainers : $('.modal'),
+    $modalExit : $('.modal .ui-hider'),
 
     $saveModalContainer : $('#save-modal-container'),
     $saveImg : $('#finished-art'),
-    $saveExit : $('#save-modal .ui-hider'),
     $linkImgur : $('#link-imgur'),
     
-    $importFile: $('#open-file'),
-    $importLocal: $('#open-local'),
+    $openLocalModalContainer : $('#open-modal-container'),
+    $openFile: $('#open-file'),
+    $openLocalForm : $('#open-local-form'),
+    $openLocal: $('#open-local'),
+    $openLocalGallery : $('#open-modal .gallery'),
+    $openLocalGalleryItems : $('#open-modal .gallery li'),
 
     $colorHistoryTools : {
       clearPalette: $('#color-history-tools .clear'),
@@ -395,15 +406,29 @@ $(function() {
       return false;
     }
   };
+  
+  var drawToCanvas = function(src, x, y, clear) {
+    if ( clear ) {
+      ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
+    }
+    
+    var img = new Image();
+    img.onload = function() {
+      ctx.drawImage(img, x, y);
+    };
+    img.src = src;
+  };
+  
+  var drawFromLocalStorageArray = function(id) {
+    if ( savedCanvasArray[id] ) {
+      drawToCanvas(savedCanvasArray[id], 0, 0, true);
+    }
+  };
 
   var drawFromLocalStorage = function() {
     var savedCanvas = localStorage.make8bitartSavedCanvas;
     if ( savedCanvas ) {
-      var img = new Image();
-      img.onload = function() {
-        ctx.drawImage(img,0,0);
-      };
-      img.src = savedCanvas;
+      drawToCanvas(savedCanvas, 0, 0, true);
     }
   };
 
@@ -601,11 +626,66 @@ $(function() {
     DOM.$saveImg.parent().attr('href', src);
     DOM.$saveModalContainer.removeClass(classes.hidden);
   };
+  
+  var renderLocalGallery = function() {
+        
+    if ( savedCanvasArray.length === 0 ) {
+      DOM.$openLocalModalContainer.addClass(classes.hidden);
+      DOM.$openLocalForm.addClass(classes.hidden);
+      return;
+    }
+    
+    DOM.$openLocalForm.removeClass(classes.hidden);
+    DOM.$openLocalGalleryItems.remove();
+    
+    for( var i = 0; i < savedCanvasArray.length; i++ ) {
+      var $li = $('<li data-local="' + i + '"><img class="thumb" src="' + savedCanvasArray[i] + '" /><img class="delete" src="assets/draggybits/hider2.png" alt="close"></li>');
+      DOM.$openLocalGallery.append($li);
+    }
+    
+    DOM.$openLocalGalleryItems = DOM.$openLocalGallery.find('li');
+    DOM.$openLocalGalleryItemThumbs = DOM.$openLocalGallery.find('.thumb');
+    DOM.$openLocalGalleryItemDelete = DOM.$openLocalGallery.find('.delete');
+    
+    DOM.$openLocalGalleryItemThumbs.click(function(){
+      var img = savedCanvasArray[$(this).parent('li').data('local')];
+      drawToCanvas(img, 0, 0, true);
+      DOM.$openLocalModalContainer.addClass(classes.hidden);
+    });
+    
+    // delete locally
+    DOM.$openLocalGalleryItemDelete.click(function() {
+      if ( window.confirm('Careful! This will permanently delete this thumbnail\'s art from your browser.') ) {
+        savedCanvasArray.splice($(this).parent('li').data('local'), 1);
+        localStorage.make8bitartSavedCanvasArray = JSON.stringify(savedCanvasArray);
+        savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
+        renderLocalGallery();
+      }
+    });
+  };
 
   var saveToLocalStorage = function() {
     if ( canStorage() ) {
       savedCanvas = DOM.$canvas[0].toDataURL('image/png');
       localStorage.make8bitartSavedCanvas = savedCanvas;
+    }
+  };
+  
+  var saveToLocalStorageArray = function() {
+    if ( canStorage() ) {
+      //parsejson
+      if ( localStorage.make8bitartSavedCanvasArray ) {
+        savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
+      }
+      else {
+        savedCanvasArray = [];
+      }
+
+      //push
+      savedCanvasArray.push(DOM.$canvas[0].toDataURL('image/png'));
+
+      //stringify
+      localStorage.make8bitartSavedCanvasArray = JSON.stringify(savedCanvasArray);
     }
   };
 
@@ -892,6 +972,14 @@ $(function() {
     resetCanvas( pixel.color );
     saveToLocalStorage();
   });
+  
+  // save locally
+  DOM.$buttonSaveLocal.click(function() {
+    saveToLocalStorageArray();
+    renderLocalGallery();
+    
+    alert('Your art has been saved locally to your browser. You can see all locally saved art by clicking the "open existing art" button!');
+  });
 
   // save full canvas
   DOM.$buttonSaveFull.click(function() {
@@ -914,6 +1002,11 @@ $(function() {
       ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
       DOM.$overlay.removeClass(classes.hidden);
     }
+  });
+  
+  // open import local modal
+  DOM.$buttonOpenLocal.click(function(){
+    DOM.$openLocalModalContainer.removeClass(classes.hidden);
   });
 
   // ensure elements are enabled before triggering a click event
@@ -959,7 +1052,7 @@ $(function() {
   key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
 
   // close save modal alias to esc
-  key('esc', function(){ DOM.$saveModalContainer.addClass(classes.hidden); });
+  key('esc', function(){ DOM.$modalContainers.addClass(classes.hidden); });
 
   // pencil tool (matches photoshop)
   key('B', triggerClickForEnabled(DOM.$pencil));
@@ -997,7 +1090,6 @@ $(function() {
 
   // choose color
   DOM.$color.click(bindColorClick);
-
 
   // custom color hover
   DOM.$8bitPicker.mouseover( function(e) {
@@ -1065,19 +1157,19 @@ $(function() {
   });
 
 
-  /* saving */
+  /* saving and opening */
 
   // hide save modal container if exit button clicked
-  DOM.$saveExit.click(function() {
-    DOM.$saveModalContainer.addClass(classes.hidden);
+  DOM.$modalExit.click(function() {
+    DOM.$modalContainers.addClass(classes.hidden);
     DOM.$linkImgur.attr('href', '').text('');
     DOM.$buttonSaveImgur.removeClass(classes.hidden);
   });
 
   // hide save modal container if clicking outside of modal
-  DOM.$saveModalContainer.click(function(e) {
-    var $target = $(e.target).context;
-    if ( $target == DOM.$saveModalContainer[0] ) {
+  DOM.$modalContainers.click(function(e) {
+    var target = $(e.target).context;
+    if ( target == DOM.$saveModalContainer[0] || target == DOM.$openLocalModalContainer[0] ) {
       $(this).addClass(classes.hidden);
     }
   });
@@ -1246,7 +1338,7 @@ $(function() {
   img.onload = function updateCanvasBackground() {
     DOM.$canvas.css('background','url(' + img.src + ')');
   };
-
+  
   // init hide toolboxes
   DOM.$whatbox.draggyBits('minimize');
   DOM.$filebox.draggyBits('minimize');
@@ -1255,7 +1347,20 @@ $(function() {
   if ( !canStorage() ) {
     $('.'+classes.local).addClass(classes.hidden);
   }
-
+  else {
+    if ( localStorage.make8bitartSavedCanvasArray && localStorage.make8bitartSavedCanvasArray != '[]' ) {
+      // draw local storage gallery
+      savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
+      renderLocalGallery();
+      
+      // open local storage gallery
+      DOM.$openLocalModalContainer.removeClass(classes.hidden);
+    }
+    else {
+      DOM.$openLocalForm.addClass(classes.hidden);
+    }
+  }
+  
   historyPointer = -1;
 
   DOM.$canvas.mousedown(onMouseDown).mouseup(onMouseUp);
