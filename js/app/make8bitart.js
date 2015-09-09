@@ -219,7 +219,7 @@ $(function() {
     if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
       ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
 
-      if ( background && background != 'rgba(0, 0, 0, 0)') {
+      if ( background && background !== 'rgba(0, 0, 0, 0)') {
         ctx.fillStyle = background;
         ctx.fillRect(0,0,DOM.$canvas.width(),DOM.$canvas.height());
       }
@@ -249,7 +249,7 @@ $(function() {
     ctx.fillStyle = color;
     ctx.lineHeight = 0;
 
-    if ( color == 'rgba(0, 0, 0, 0)' ) {
+    if ( color === 'rgba(0, 0, 0, 0)' ) {
       ctx.clearRect(xPos,yPos,size,size);
     }
     else {
@@ -337,19 +337,19 @@ $(function() {
           inRange = true;
         }
         else if(inRange && !empty) {
-          ranges.push([rMinX, x-pixel.size, newY, downwards, rMinX == minX, false]);
+          ranges.push([rMinX, x-pixel.size, newY, downwards, rMinX === minX, false]);
           inRange = false;
         }
         if(inRange) {
           markPixel(x, newY, paintColor, 1);
         }
         // skip
-        if(!isNext && x == current[0]) {
+        if(!isNext && x === current[0]) {
           x = current[1];
         }
       }
       if(inRange) {
-        ranges.push([rMinX, x-pixel.size, newY, downwards, rMinX == minX, true]);
+        ranges.push([rMinX, x-pixel.size, newY, downwards, rMinX === minX, true]);
       }
     }
 
@@ -461,7 +461,7 @@ $(function() {
       nextPointer = pointer + 1;
     }
 
-    if ( undoRedoHistory[pointer].action == action.fill && undoRedoHistory[nextPointer] && undoRedoHistory[pointer].index == undoRedoHistory[nextPointer].index ) {
+    if ( undoRedoHistory[pointer].action === action.fill && undoRedoHistory[nextPointer] && undoRedoHistory[pointer].index === undoRedoHistory[nextPointer].index ) {
       if ( undoFlag ) {
         historyPointer--;
       }
@@ -475,7 +475,7 @@ $(function() {
 
     if (undoRedoHistory[pointer].drawPathId &&
         undoRedoHistory[nextPointer] &&
-        undoRedoHistory[nextPointer].drawPathId == undoRedoHistory[pointer].drawPathId) {
+        undoRedoHistory[nextPointer].drawPathId === undoRedoHistory[pointer].drawPathId) {
       if (undoFlag) {
         undoRedo(--historyPointer, undoFlag);
       }
@@ -491,7 +491,7 @@ $(function() {
       DOM.$canvas.removeClass(classes.dropperMode);
       mode.dropper = false;
 
-      if ( pixel.color != 'rgba(0, 0, 0, 0)' ) {
+      if ( pixel.color !== 'rgba(0, 0, 0, 0)' ) {
         backgroundIMG = 'none';
       }
 
@@ -732,16 +732,16 @@ $(function() {
     else if ( rgb.charAt(0) === '#' && rgb.length === 7 ) {
       return rgb.slice(1,7);
     }
-    else if ( rgb == 'transparent' ) {
+    else if ( rgb === 'transparent' ) {
       return null;
     }
     else {
-      var startString = ( rgb.charAt(3) == 'a' ) ? 5 : 4;
+      var startString = ( rgb.charAt(3) === 'a' ) ? 5 : 4;
       var rgbArray = rgb.substr(startString, rgb.length - 5).split(',');
       var hex = '';
       for ( var i = 0; i <= 2; i++ ) {
         var hexUnit = parseInt(rgbArray[i],10).toString(16);
-        if ( hexUnit.length == 1 ) {
+        if ( hexUnit.length === 1 ) {
           hexUnit = '0' + hexUnit;
         }
         hex += hexUnit;
@@ -789,9 +789,9 @@ $(function() {
   };
 
   var areColorsEqual = function( alpha, beta ) {
-    if ( ( alpha == 'rgba(0, 0, 0, 0)' && ( beta == '#000000' || beta == 'rgba(0, 0, 0, 1)' ) ) ||
-      ( ( alpha == '#000000' || alpha == 'rgba(0, 0, 0, 1)' ) && beta == 'rgba(0, 0, 0, 0)' )  ||
-       rgbToHex(alpha) != rgbToHex(beta) ) {
+    if ( ( alpha === 'rgba(0, 0, 0, 0)' && ( beta === '#000000' || beta === 'rgba(0, 0, 0, 1)' ) ) ||
+      ( ( alpha === '#000000' || alpha === 'rgba(0, 0, 0, 1)' ) && beta === 'rgba(0, 0, 0, 0)' )  ||
+       rgbToHex(alpha) !== rgbToHex(beta) ) {
       return false;
     }
     else {
@@ -802,8 +802,8 @@ $(function() {
   var updateColorHistoryPalette = function() {
     var hexColor = rgbToHex(pixel.color);
     var colorHistoryPos = colorHistory.indexOf(hexColor);
-    if ( colorHistoryPos == -1 ) {
-      if ( colorHistory.length == 20 ) {
+    if ( colorHistoryPos === -1 ) {
+      if ( colorHistory.length === 20 ) {
         colorHistory.pop();
         DOM.$colorHistoryPalette.find('li').eq(19).remove();
       }
@@ -1040,7 +1040,7 @@ $(function() {
     undoRedo(historyPointer, false);
 
     DOM.$undo.removeAttr('disabled');
-    if ( historyPointer == undoRedoHistory.length - 1 ) {
+    if ( historyPointer === undoRedoHistory.length - 1 ) {
       DOM.$redo.attr('disabled', 'disabled');
     }
   });
@@ -1072,7 +1072,7 @@ $(function() {
     $newColor.addClass(classes.current);
     pixel.color = newColorLabel;
 
-    if ( pixel.color != 'rgba(0, 0, 0, 0)' ) {
+    if ( pixel.color !== 'rgba(0, 0, 0, 0)' ) {
       demoColor = pixel.color;
       DOM.$pixelSizeDemoDiv.css('background-image', 'none');
       DOM.$colorPickerDemo.css('background-image', 'none');
@@ -1169,7 +1169,7 @@ $(function() {
   // hide save modal container if clicking outside of modal
   DOM.$modalContainers.click(function(e) {
     var target = $(e.target).context;
-    if ( target == DOM.$saveModalContainer[0] || target == DOM.$openLocalModalContainer[0] ) {
+    if ( target === DOM.$saveModalContainer[0] || target === DOM.$openLocalModalContainer[0] ) {
       $(this).addClass(classes.hidden);
     }
   });
@@ -1348,7 +1348,7 @@ $(function() {
     $('.'+classes.local).addClass(classes.hidden);
   }
   else {
-    if ( localStorage.make8bitartSavedCanvasArray && localStorage.make8bitartSavedCanvasArray != '[]' ) {
+    if ( localStorage.make8bitartSavedCanvasArray && localStorage.make8bitartSavedCanvasArray !== '[]' ) {
       // draw local storage gallery
       savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
       renderLocalGallery();
