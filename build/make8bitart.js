@@ -71,7 +71,6 @@ $(function() {
 
     $minimizedToolsList : $('#minimized-tools-list'),
     $draggydivs : $('.draggy'),
-    $tips : $('.tip'),
     $saveInstruction : $('.instructions').slideUp(),
 
     $undo : $('#undo'),
@@ -242,13 +241,19 @@ $(function() {
     }
   };
 
-  var initpixel = function(size) {
-    pixel.size = size;
+  var initPixel = function(size) {
+    pixel.size = parseInt(size);
     DOM.$pixelSizeDemoDiv.css({
       width : pixel.size,
       height: pixel.size
     });
     DOM.$pixelSizeInput.val(pixel.size);
+    
+    var img = new Image();
+    img.src = generateBackgroundGrid(pixel.size);
+    img.onload = function updateCanvasBackground() {
+      DOM.$canvas.css('background','url(' + img.src + ')');
+    };
   };
 
   var drawPixel = function(xPos, yPos, color, size) {
@@ -859,7 +864,6 @@ $(function() {
           // draw image to reset canvas
           resetCanvas();
           pxon.pxif.pixels.forEach(function(e, i, a){
-            console.log(e);
             drawPixel(e.xPos, e.yPos, e.color, e.size );
           });
         }   
@@ -871,7 +875,6 @@ $(function() {
     }
   };
 
-  
   var importPXON = function(e) {
     var file = $(this).prop('files')[0];
     getFileData(file);  
@@ -1016,20 +1019,7 @@ $(function() {
 
   // pixel size slider changed
   DOM.$pixelSizeInput.change(function() {
-    pixel.size = $(this).val();
-    DOM.$pixelSizeDemoDiv.css({
-      width : pixel.size,
-      height : pixel.size
-    });
-
-    var img = new Image();
-    img.src = generateBackgroundGrid(pixel.size);
-    img.onload = function updateCanvasBackground() {
-      DOM.$canvas.css('background','url(' + img.src + ')');
-    };
-
-    // set both inputs to be equal
-    DOM.$pixelSizeInput.val(pixel.size);
+    initPixel( $(this).val() );
   });
 
   // reset canvas
@@ -1271,16 +1261,6 @@ $(function() {
     }
   });
 
-  // tooltip hover
-  DOM.$tips.hover(
-    function() {
-      $(this).find('.'+classes.tipText).stop().removeClass(classes.hidden);
-    },
-    function() {
-      $(this).find('.'+classes.tipText).stop().addClass(classes.hidden);
-    }
-  );
-
   // canvas window size changes
   DOM.$window.resize(function() {
     if ( DOM.$window.width() <= windowCanvas.width && DOM.$window.height() <= windowCanvas.height ) {
@@ -1401,14 +1381,7 @@ $(function() {
   }
 
   initColorHistoryPalette();
-  initpixel(15);
-
-  // init background
-  var img = new Image();
-  img.src = generateBackgroundGrid(pixel.size);
-  img.onload = function updateCanvasBackground() {
-    DOM.$canvas.css('background','url(' + img.src + ')');
-  };
+  initPixel(15);
   
   // init hide toolboxes
   DOM.$whatbox.draggyBits('minimize');
