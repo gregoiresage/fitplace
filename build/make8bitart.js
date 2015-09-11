@@ -63,6 +63,8 @@ $(function() {
     $buttonSaveImgur : $('#save-imgur'),
     $buttonOpenFile : $('#open-file'),
     $buttonOpenLocal : $('#open-local'),
+    $buttonImportPXON : $('#import-pxon'),
+    $buttonExportPXON : $('#export-pxon'),
 
     $pixelSizeInput : $('.pixel-size-input'),
     $pixelSizeDemoDiv : $('#pixel-size-demo'),
@@ -88,7 +90,6 @@ $(function() {
     $openLocal: $('#open-local'),
     $openLocalGallery : $('#open-modal .gallery'),
     $openLocalGalleryItems : $('#open-modal .gallery li'),
-
     $colorHistoryTools : {
       clearPalette: $('#color-history-tools .clear'),
       exportPalette: $('#color-history-tools .export'),
@@ -128,6 +129,15 @@ $(function() {
 
   var pixel = {
     color: 'rgba(0, 0, 0, 1)',
+  };
+  
+  var pxon = {
+    exif: {
+      software: 'http://make8bitart.com'
+    },
+    pxif: {
+      pixels: []
+    }
   };
 
   // to work, register your own imgur app here https://api.imgur.com/ and enter your info
@@ -433,15 +443,15 @@ $(function() {
   };
 
   var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew, pixelSize, drawPathId) {
-    // push to undoRedoHistory
+    // push to undoRedoHistory, will also become pxon.pxif.pixelse
     var pixelDrawn = {
-      index : actionIndex,
-      action : actionType,
-      xPos : x,
-      yPos : y,
-      originalColor : rgbOriginal,
-      newColor : rgbNew,
-      pixelSize: pixelSize,
+      index: actionIndex,
+      action: actionType,
+      xPos: x,
+      yPos: y,
+      originalColor: rgbOriginal,
+      color: rgbNew,
+      size: pixelSize,
       drawPathId: drawPathId,
     };
     undoRedoHistory.push(pixelDrawn);
@@ -457,7 +467,7 @@ $(function() {
       nextPointer = pointer - 1;
     }
     else {
-      undoRedoColor = undoRedoHistory[pointer].newColor;
+      undoRedoColor = undoRedoHistory[pointer].color;
       nextPointer = pointer + 1;
     }
 
@@ -471,7 +481,7 @@ $(function() {
       undoRedo(historyPointer, undoFlag);
     }
 
-    drawPixel(undoRedoHistory[pointer].xPos, undoRedoHistory[pointer].yPos, undoRedoColor, undoRedoHistory[pointer].pixelSize);
+    drawPixel(undoRedoHistory[pointer].xPos, undoRedoHistory[pointer].yPos, undoRedoColor, undoRedoHistory[pointer].size);
 
     if (undoRedoHistory[pointer].drawPathId &&
         undoRedoHistory[nextPointer] &&
@@ -540,7 +550,6 @@ $(function() {
     }
   };
 
-  // builds a 2x2 grid of grey and white "pixels" to match pixel size
   var generateBackgroundGrid = function(pixelSize) {
     var bgCanvas = document.createElement('canvas'),
       bgCtx = bgCanvas.getContext('2d'),
@@ -724,7 +733,6 @@ $(function() {
     return 'rgba(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ', ' + opacity + ')';
   };
 
-  // get hex without '#'
   var rgbToHex = function( rgb ) {
     if ( rgb.length === 6 ) {
       return rgb;
@@ -828,6 +836,63 @@ $(function() {
     if ( canStorage() ) {
       localStorage.colorHistory = colorHistory;
     }
+  };
+  
+  
+  /* pxon */
+  
+  var getFileData = function(file) {
+    if ( window.FileReader ) {
+      fileReader = new FileReader();
+      fileReader.readAsText(file);
+      fileReader.onload = function(data){
+        if (data) {
+          pxon = JSON.parse(data.target.result);
+          historyPointer = undoRedoHistory.length - 1;
+          
+          // prefill the export fields
+          /*$('.exif.artist').val(pxon.exif.artist);
+          $('.exif.imageDescription').val(pxon.exif.imageDescription);
+          $('.exif.userComment').val(pxon.exif.userComment);
+          $('.exif.copyright').val(pxon.exif.copyright);*/
+          
+          // draw image to reset canvas
+          resetCanvas();
+          pxon.pxif.pixels.forEach(function(e, i, a){
+            console.log(e);
+            drawPixel(e.xPos, e.yPos, e.color, e.size );
+          });
+        }   
+      };
+      fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
+    }
+    else {
+      alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
+    }
+  };
+
+  
+  var importPXON = function(e) {
+    var file = $(this).prop('files')[0];
+    getFileData(file);  
+  };
+  
+  var exportPXON = function(e) {
+    // FUTURE: show modal for form
+    /*pxon.exif.artist = $('.exif.artist').val();
+    pxon.exif.imageDescription = $('.exif.imageDescription').val();
+    pxon.exif.userComment = $('.exif.userComment').val();
+    pxon.exif.copyright = $('.exif.copyright').val();*/
+    
+    // other exif info
+    pxon.exif.dateTime = new Date();
+    pxon.exif.dateTimeOriginal = ( pxon.exif.dateTimeOriginal ) ? pxon.exif.dateTimeOriginal : pxon.exif.dateTime;
+    
+    // pxif
+    pxon.pxif.pixels = drawHistory;
+    pxon.pxif.dataURL = DOM.$canvas[0].toDataURL('image/png');
+        
+    window.open('data:text/json,' + encodeURIComponent(JSON.stringify(pxon)), '_blank');
   };
 
 
@@ -973,42 +1038,6 @@ $(function() {
     saveToLocalStorage();
   });
   
-  // save locally
-  DOM.$buttonSaveLocal.click(function() {
-    saveToLocalStorageArray();
-    renderLocalGallery();
-    
-    alert('Your art has been saved locally to your browser. You can see all locally saved art by clicking the "open existing art" button!');
-  });
-
-  // save full canvas
-  DOM.$buttonSaveFull.click(function() {
-    var savedPNG = DOM.$canvas[0].toDataURL('image/png');
-    displayFinishedArt(savedPNG);
-  });
-
-  // save selection of canvas button clicked
-  DOM.$buttonSaveSelection.click(function() {
-    if ( mode.save ) {
-      mode.save = false;
-      DOM.$saveInstruction.slideUp();
-      $(this).val(copy.selectionOn);
-      DOM.$overlay.addClass(classes.hidden);
-    }
-    else {
-      mode.save = true;
-      DOM.$saveInstruction.slideDown();
-      $(this).val(copy.selectionOff);
-      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-      DOM.$overlay.removeClass(classes.hidden);
-    }
-  });
-  
-  // open import local modal
-  DOM.$buttonOpenLocal.click(function(){
-    DOM.$openLocalModalContainer.removeClass(classes.hidden);
-  });
-
   // ensure elements are enabled before triggering a click event
   var triggerClickForEnabled = function(elem) {
     return function() {
@@ -1157,7 +1186,49 @@ $(function() {
   });
 
 
-  /* saving and opening */
+  /* importing and exporting */
+  
+  // save locally
+  DOM.$buttonSaveLocal.click(function() {
+    saveToLocalStorageArray();
+    renderLocalGallery();
+    
+    alert('Your art has been saved locally to your browser. You can see all locally saved art by clicking the "open existing art" button!');
+  });
+
+  // save full canvas
+  DOM.$buttonSaveFull.click(function() {
+    var savedPNG = DOM.$canvas[0].toDataURL('image/png');
+    displayFinishedArt(savedPNG);
+  });
+
+  // save selection of canvas button clicked
+  DOM.$buttonSaveSelection.click(function() {
+    if ( mode.save ) {
+      mode.save = false;
+      DOM.$saveInstruction.slideUp();
+      $(this).val(copy.selectionOn);
+      DOM.$overlay.addClass(classes.hidden);
+    }
+    else {
+      mode.save = true;
+      DOM.$saveInstruction.slideDown();
+      $(this).val(copy.selectionOff);
+      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
+      DOM.$overlay.removeClass(classes.hidden);
+    }
+  });
+  
+  // open import local modal
+  DOM.$buttonOpenLocal.click(function(){
+    DOM.$openLocalModalContainer.removeClass(classes.hidden);
+  });
+  
+  // import pxon
+  DOM.$buttonImportPXON.change(importPXON);
+  
+  // export pxon
+  DOM.$buttonExportPXON.click(exportPXON);
 
   // hide save modal container if exit button clicked
   DOM.$modalExit.click(function() {

@@ -189,21 +189,40 @@
       </label>
       -->
       
-      <label for="open-local" class="local" id="open-local-form">
-      
-            <h3>import art</h3> 
+      <h3>import art</h3> 
 
-        import from local storage:
-        <input type="submit" value="open existing art" id="open-local" />
+      <label for="open-local" class="local" id="open-local-form">
+        from local storage:
+        <input type="submit" value="import local art" id="open-local" name="open-local" />
       </label>
       
-      <h3>save your art</h3>
+      <label for="import-pxon" class="pxon" id="import-pxon-form">
+        import <a href="http://jennmoney.biz/pxon">pxon</a>:
+        <input type="file" id="import-pxon" name="import-pxon" />
+      </label>
       
-      <input type="submit" value="local to browser" id="save-local" class="local" />
+      <h3>export art</h3>
       
-      <input type="submit" value="full page" id="save-full" /> 
+      <label for="save-png" class="png" id="save-png-form">
+        to png:
+        <input type="submit" value="save full page" id="save-full" /> 
+        <input type="submit" value="save selection" id="save-selection" />
+      </label>
+      
+      <label for="save-local" class="local" id="save-local-form">
+        to local storage:
+        <input type="submit" value="save local to browser" id="save-local" class="local" />
+      </label>
+      
+      <label for="export-pxon" class="pxon" id="export-pxon-form">
+        export <a href="http://jennmoney.biz/pxon">pxon</a>:
+        <input type="submit" value="export pxon" id="export-pxon" class="pxon" />
+      </label>
+      
 
-      <input type="submit" value="selection" id="save-selection" />
+      <p>
+        
+      </p>
       
       <ul class="instructions">
         <li>click and drag to select the area of the canvas you want to save.</li>    
