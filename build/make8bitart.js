@@ -8,7 +8,7 @@ $(function() {
 
   /*** VARIABULLS ***/
 
-  var ctx, pickerPaletteCtx, leftSide, topSide, xPos, yPos, resetSelectStart, savedCanvas, savedCanvasArray, saveSelection, rect, historyPointer, drawPathId;
+  var ctx, pickerPaletteCtx, leftSide, topSide, x, y, resetSelectStart, savedCanvas, savedCanvasArray, saveSelection, rect, historyPointer, drawPathId;
   var undoRedoHistory = [];
   var drawHistory = [];
   var currentLocalArtId = 0;
@@ -256,19 +256,19 @@ $(function() {
     };
   };
 
-  var drawPixel = function(xPos, yPos, color, size) {
+  var drawPixel = function(x, y, color, size) {
     ctx.beginPath();
-    xPos = ( Math.ceil(xPos/size) * size ) - size;
-    yPos = ( Math.ceil(yPos/size) * size ) - size;
-    ctx.moveTo (xPos, yPos);
+    x = ( Math.ceil(x/size) * size ) - size;
+    y = ( Math.ceil(y/size) * size ) - size;
+    ctx.moveTo (x, y);
     ctx.fillStyle = color;
     ctx.lineHeight = 0;
 
     if ( color === 'rgba(0, 0, 0, 0)' ) {
-      ctx.clearRect(xPos,yPos,size,size);
+      ctx.clearRect(x,y,size,size);
     }
     else {
-      ctx.fillRect(xPos,yPos,size,size);
+      ctx.fillRect(x,y,size,size);
     }
 
   };
@@ -452,8 +452,8 @@ $(function() {
     var pixelDrawn = {
       index: actionIndex,
       action: actionType,
-      xPos: x,
-      yPos: y,
+      x: x,
+      y: y,
       originalColor: rgbOriginal,
       color: rgbNew,
       size: pixelSize,
@@ -486,7 +486,7 @@ $(function() {
       undoRedo(historyPointer, undoFlag);
     }
 
-    drawPixel(undoRedoHistory[pointer].xPos, undoRedoHistory[pointer].yPos, undoRedoColor, undoRedoHistory[pointer].size);
+    drawPixel(undoRedoHistory[pointer].x, undoRedoHistory[pointer].y, undoRedoColor, undoRedoHistory[pointer].size);
 
     if (undoRedoHistory[pointer].drawPathId &&
         undoRedoHistory[nextPointer] &&
@@ -814,16 +814,16 @@ $(function() {
 
   var updateColorHistoryPalette = function() {
     var hexColor = rgbToHex(pixel.color);
-    var colorHistoryPos = colorHistory.indexOf(hexColor);
-    if ( colorHistoryPos === -1 ) {
+    var colorHistory = colorHistory.indexOf(hexColor);
+    if ( colorHistory === -1 ) {
       if ( colorHistory.length === 20 ) {
         colorHistory.pop();
         DOM.$colorHistoryPalette.find('li').eq(19).remove();
       }
     }
     else {
-      colorHistory.splice(colorHistoryPos, 1);
-      DOM.$colorHistoryPalette.find('li').eq(colorHistoryPos).remove();
+      colorHistory.splice(colorHistory, 1);
+      DOM.$colorHistoryPalette.find('li').eq(colorHistory).remove();
     }
 
     colorHistory.unshift(hexColor);
@@ -864,7 +864,7 @@ $(function() {
           // draw image to reset canvas
           resetCanvas();
           pxon.pxif.pixels.forEach(function(e, i, a){
-            drawPixel(e.xPos, e.yPos, e.color, e.size );
+            drawPixel(e.x, e.y, e.color, e.size );
           });
         }   
       };
