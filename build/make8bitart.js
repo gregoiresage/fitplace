@@ -4,14 +4,15 @@
 * turn down for #butts
 */
 
-$(function() {
+ (function($, window, document) {
+
+  'use strict';
 
   /*** VARIABULLS ***/
 
-  var ctx, pickerPaletteCtx, leftSide, topSide, x, y, resetSelectStart, savedCanvas, savedCanvasArray, saveSelection, rect, historyPointer, drawPathId;
+  var ctx, pickerPaletteCtx, savedCanvas, savedCanvasArray, saveSelection, rect, historyPointer, drawPathId, ctxOverlay, colorHistory;
   var undoRedoHistory = [];
   var drawHistory = [];
-  var currentLocalArtId = 0;
 
   var classes = {
     selectionCanvas : 'selectionCanvas',
@@ -75,14 +76,14 @@ $(function() {
 
     $undo : $('#undo'),
     $redo : $('#redo'),
-    
+
     $modalContainers : $('.modal'),
     $modalExit : $('.modal .ui-hider'),
 
     $saveModalContainer : $('#save-modal-container'),
     $saveImg : $('#finished-art'),
     $linkImgur : $('#link-imgur'),
-    
+
     $openLocalModalContainer : $('#open-modal-container'),
     $openFile: $('#open-file'),
     $openLocalForm : $('#open-local-form'),
@@ -129,7 +130,7 @@ $(function() {
   var pixel = {
     color: 'rgba(0, 0, 0, 1)',
   };
-  
+
   var pxon = {
     exif: {
       software: 'http://make8bitart.com'
@@ -248,7 +249,7 @@ $(function() {
       height: pixel.size
     });
     DOM.$pixelSizeInput.val(pixel.size);
-    
+
     var img = new Image();
     img.src = generateBackgroundGrid(pixel.size);
     img.onload = function updateCanvasBackground() {
@@ -271,6 +272,10 @@ $(function() {
       ctx.fillRect(x,y,size,size);
     }
 
+    return {
+      x: x,
+      y: y
+    };
   };
 
   var drawOnMove = function(e) {
@@ -421,23 +426,17 @@ $(function() {
       return false;
     }
   };
-  
+
   var drawToCanvas = function(src, x, y, clear) {
     if ( clear ) {
       ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
     }
-    
+
     var img = new Image();
     img.onload = function() {
       ctx.drawImage(img, x, y);
     };
     img.src = src;
-  };
-  
-  var drawFromLocalStorageArray = function(id) {
-    if ( savedCanvasArray[id] ) {
-      drawToCanvas(savedCanvasArray[id], 0, 0, true);
-    }
   };
 
   var drawFromLocalStorage = function() {
@@ -505,7 +504,7 @@ $(function() {
       DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
       DOM.$canvas.removeClass(classes.dropperMode);
       mode.dropper = false;
-
+      var backgroundIMG;
       if ( pixel.color !== 'rgba(0, 0, 0, 0)' ) {
         backgroundIMG = 'none';
       }
@@ -640,33 +639,33 @@ $(function() {
     DOM.$saveImg.parent().attr('href', src);
     DOM.$saveModalContainer.removeClass(classes.hidden);
   };
-  
+
   var renderLocalGallery = function() {
-        
+
     if ( savedCanvasArray.length === 0 ) {
       DOM.$openLocalModalContainer.addClass(classes.hidden);
       DOM.$openLocalForm.addClass(classes.hidden);
       return;
     }
-    
+
     DOM.$openLocalForm.removeClass(classes.hidden);
     DOM.$openLocalGalleryItems.remove();
-    
+
     for( var i = 0; i < savedCanvasArray.length; i++ ) {
       var $li = $('<li data-local="' + i + '"><img class="thumb" src="' + savedCanvasArray[i] + '" /><img class="delete" src="assets/draggybits/hider2.png" alt="close"></li>');
       DOM.$openLocalGallery.append($li);
     }
-    
+
     DOM.$openLocalGalleryItems = DOM.$openLocalGallery.find('li');
     DOM.$openLocalGalleryItemThumbs = DOM.$openLocalGallery.find('.thumb');
     DOM.$openLocalGalleryItemDelete = DOM.$openLocalGallery.find('.delete');
-    
+
     DOM.$openLocalGalleryItemThumbs.click(function(){
       var img = savedCanvasArray[$(this).parent('li').data('local')];
       drawToCanvas(img, 0, 0, true);
       DOM.$openLocalModalContainer.addClass(classes.hidden);
     });
-    
+
     // delete locally
     DOM.$openLocalGalleryItemDelete.click(function() {
       if ( window.confirm('Careful! This will permanently delete this thumbnail\'s art from your browser.') ) {
@@ -684,7 +683,7 @@ $(function() {
       localStorage.make8bitartSavedCanvas = savedCanvas;
     }
   };
-  
+
   var saveToLocalStorageArray = function() {
     if ( canStorage() ) {
       //parsejson
@@ -814,16 +813,16 @@ $(function() {
 
   var updateColorHistoryPalette = function() {
     var hexColor = rgbToHex(pixel.color);
-    var colorHistory = colorHistory.indexOf(hexColor);
-    if ( colorHistory === -1 ) {
+    var colorHistoryPos = colorHistory.indexOf(hexColor);
+    if ( colorHistoryPos === -1 ) {
       if ( colorHistory.length === 20 ) {
         colorHistory.pop();
         DOM.$colorHistoryPalette.find('li').eq(19).remove();
       }
     }
     else {
-      colorHistory.splice(colorHistory, 1);
-      DOM.$colorHistoryPalette.find('li').eq(colorHistory).remove();
+      colorHistory.splice(colorHistoryPos, 1);
+      DOM.$colorHistoryPalette.find('li').eq(colorHistoryPos).remove();
     }
 
     colorHistory.unshift(hexColor);
@@ -842,31 +841,31 @@ $(function() {
       localStorage.colorHistory = colorHistory;
     }
   };
-  
-  
+
+
   /* pxon */
-  
+
   var getFileData = function(file) {
     if ( window.FileReader ) {
-      fileReader = new FileReader();
+      var fileReader = new FileReader();
       fileReader.readAsText(file);
       fileReader.onload = function(data){
         if (data) {
           pxon = JSON.parse(data.target.result);
           historyPointer = undoRedoHistory.length - 1;
-          
+
           // prefill the export fields
           /*$('.exif.artist').val(pxon.exif.artist);
           $('.exif.imageDescription').val(pxon.exif.imageDescription);
           $('.exif.userComment').val(pxon.exif.userComment);
           $('.exif.copyright').val(pxon.exif.copyright);*/
-          
+
           // draw image to reset canvas
           resetCanvas();
           pxon.pxif.pixels.forEach(function(e, i, a){
             drawPixel(e.x, e.y, e.color, e.size );
           });
-        }   
+        }
       };
       fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
     }
@@ -877,24 +876,24 @@ $(function() {
 
   var importPXON = function(e) {
     var file = $(this).prop('files')[0];
-    getFileData(file);  
+    getFileData(file);
   };
-  
+
   var exportPXON = function(e) {
     // FUTURE: show modal for form
     /*pxon.exif.artist = $('.exif.artist').val();
     pxon.exif.imageDescription = $('.exif.imageDescription').val();
     pxon.exif.userComment = $('.exif.userComment').val();
     pxon.exif.copyright = $('.exif.copyright').val();*/
-    
+
     // other exif info
     pxon.exif.dateTime = new Date();
     pxon.exif.dateTimeOriginal = ( pxon.exif.dateTimeOriginal ) ? pxon.exif.dateTimeOriginal : pxon.exif.dateTime;
-    
+
     // pxif
     pxon.pxif.pixels = drawHistory;
     pxon.pxif.dataURL = DOM.$canvas[0].toDataURL('image/png');
-        
+
     window.open('data:text/json,' + encodeURIComponent(JSON.stringify(pxon)), '_blank');
   };
 
@@ -905,7 +904,7 @@ $(function() {
 
   var onMouseDown = function(e) {
     e.preventDefault();
-    
+
     if ( e.which === 3 ) {
       return;
     }
@@ -986,17 +985,17 @@ $(function() {
       rect = {};
     }
   };
-  
+
   var onRightClick = function(e) {
     mode.dropper = false;
     var origData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
     var origRGB = getRGBColor(origData);
-    
+
     setDropperColor(origRGB);
-    
+
     DOM.$canvas.removeClass(classes.dropperMode);
     DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
-    
+
     return false;
   };
 
@@ -1027,7 +1026,7 @@ $(function() {
     resetCanvas( pixel.color );
     saveToLocalStorage();
   });
-  
+
   // ensure elements are enabled before triggering a click event
   var triggerClickForEnabled = function(elem) {
     return function() {
@@ -1177,12 +1176,12 @@ $(function() {
 
 
   /* importing and exporting */
-  
+
   // save locally
   DOM.$buttonSaveLocal.click(function() {
     saveToLocalStorageArray();
     renderLocalGallery();
-    
+
     alert('Your art has been saved locally to your browser. You can see all locally saved art by clicking the "open existing art" button!');
   });
 
@@ -1208,15 +1207,15 @@ $(function() {
       DOM.$overlay.removeClass(classes.hidden);
     }
   });
-  
+
   // open import local modal
   DOM.$buttonOpenLocal.click(function(){
     DOM.$openLocalModalContainer.removeClass(classes.hidden);
   });
-  
+
   // import pxon
   DOM.$buttonImportPXON.change(importPXON);
-  
+
   // export pxon
   DOM.$buttonExportPXON.click(exportPXON);
 
@@ -1352,8 +1351,7 @@ $(function() {
 
     // read the file if browser has the FileReader API
     if ( window.FileReader ) {
-
-      fileReader = new FileReader();
+      var fileReader = new FileReader();
       fileReader.readAsText(file);
       fileReader.onload = parseCSVData;
       fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
@@ -1382,11 +1380,11 @@ $(function() {
 
   initColorHistoryPalette();
   initPixel(15);
-  
+
   // init hide toolboxes
   DOM.$whatbox.draggyBits('minimize');
   DOM.$filebox.draggyBits('minimize');
-  
+
   // only show the following in draggy divs if local storage exists
   if ( !canStorage() ) {
     $('.'+classes.local).addClass(classes.hidden);
@@ -1396,7 +1394,7 @@ $(function() {
       // draw local storage gallery
       savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
       renderLocalGallery();
-      
+
       // open local storage gallery
       DOM.$openLocalModalContainer.removeClass(classes.hidden);
     }
@@ -1404,7 +1402,7 @@ $(function() {
       DOM.$openLocalForm.addClass(classes.hidden);
     }
   }
-  
+
   historyPointer = -1;
 
   DOM.$canvas.mousedown(onMouseDown).mouseup(onMouseUp);
@@ -1416,4 +1414,5 @@ $(function() {
   DOM.$canvas[0].addEventListener('touchend', onMouseUp, false);
   DOM.$overlay[0].addEventListener('touchstart', onMouseDown, false);
   DOM.$overlay[0].addEventListener('touchend', onMouseUp, false);
-});
+
+ }(window.jQuery, window, document));
