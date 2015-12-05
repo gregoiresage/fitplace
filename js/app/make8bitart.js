@@ -342,7 +342,7 @@
           imgData[k + 3] = alpha;
         }
       }
-      pushToHistory(action.index, action.fill, x + pixel.size, y + pixel.size, initColor, paintColor, pixel.size);
+      pushToHistory(action.index, action.fill, x + pixel.size - 1, y + pixel.size - 1, initColor, paintColor, pixel.size);
     }
 
     function addNextLine(newY, isNext, downwards) {
@@ -411,11 +411,8 @@
       }
     }
 
-    img.data = imgData;
-
     // replace entire canvas
     ctx.putImageData(img, 0, 0);
-
   };
 
   var canStorage = function() {
@@ -887,18 +884,19 @@
     pxon.exif.copyright = $('.exif.copyright').val();*/
 
     // other exif info
+    pxon.exif.software = 'make8bitart.com';
     pxon.exif.dateTime = new Date();
     pxon.exif.dateTimeOriginal = ( pxon.exif.dateTimeOriginal ) ? pxon.exif.dateTimeOriginal : pxon.exif.dateTime;
 
     // pxif
     pxon.pxif.pixels = drawHistory;
-    pxon.pxif.dataURL = DOM.$canvas[0].toDataURL('image/png');
 
+    // export pxon in new window
     window.open('data:text/json,' + encodeURIComponent(JSON.stringify(pxon)), '_blank');
   };
 
 
-  /*** EVENTS OH MAN ***/
+  /*** EVENTS ***/
 
   /* general */
 
@@ -1415,4 +1413,4 @@
   DOM.$overlay[0].addEventListener('touchstart', onMouseDown, false);
   DOM.$overlay[0].addEventListener('touchend', onMouseUp, false);
 
- }(window.jQuery, window, document));
+}(window.jQuery, window, document));
