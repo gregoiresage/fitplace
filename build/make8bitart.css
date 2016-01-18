@@ -11,11 +11,8 @@
 .draggy .controls img.ui-closer { cursor:pointer; }		
 .draggy .controls img.ui-hider { cursor:pointer; }	
 /**
-* make8bit art
+* make8bitart css
 * @author jenn schiffer
-* make8bitart.com
-* jenn.ws
-* @jennschiffer
 */
 
 /* fonts */
@@ -29,7 +26,7 @@
   font-family: '8bit Art Sans';
   src: url('../assets/fonts/8bit-Art-Sans.eot'); /* IE9 Compat Modes */
   src: url('../assets/fonts/8bit-Art-Sans.eot?#iefix') format('embedded-opentype'),
-       url('../assets/fonts/8bit-Art-Sans.woff') format('woff'), 
+       url('../assets/fonts/8bit-Art-Sans.woff') format('woff'),
        url('../assets/fonts/8bit-Art-Sans.ttf')  format('truetype'),
        url('../assets/fonts/8bit-Art-Sans.svg#2ae82d84241b90cc548b70af31921da5') format('svg');
   font-style:   normal;
@@ -37,7 +34,7 @@
 }
 
 body {
-  background: #efefef;
+  background: #fff;
   padding: 0;
   margin: 0;
   font-family: 'VT323', monospace;
@@ -49,8 +46,9 @@ a {
   color: blue;
 }
 
-h3 { 
+h3 {
   font-size: 1.5em;
+  margin: .1em 0;
 }
 
 img.icon-button {
@@ -58,23 +56,18 @@ img.icon-button {
   border: 3px dashed transparent;
 }
 
-.hidden {
-  display: none!important;
-}
-
 /* canvas */
 canvas {
-  background: #fff;
   cursor: crosshair;
   display: block;
 }
-  
+
 /* draggy "plugin" */
 .draggy {
   padding: 10px;
-  box-shadow: 7px 7px 0 #000;
+  box-shadow: 6px 6px 0 #000;
   border: 4px solid #000;
-  background: #ffeeff;
+  background: #eeffff;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -82,12 +75,12 @@ canvas {
 }
 
 img.ui-dragger {
-  width: 30px;
+  width: 25px;
 }
 
 img.ui-hider {
   width: 20px;
-  margin: 5px 5px 0 0;
+  margin: 3px 6px 0 0;
 }
 
 /* tabs */
@@ -98,17 +91,16 @@ img.ui-hider {
 }
 
 .tabs li {
-  width:100px;
   display: inline-block;
-  padding: 5px 10px;
-  margin: 2px 0;
+  padding: .5em 1em;
+  margin: 0 0 .5em 0;
   border: 1px solid #000;
   background-color: #ccc;
   box-shadow: 2px 2px 0px #000;
 }
 
 .tabs li.active {
-  background-color: magenta;
+  background-color: cyan;
   box-shadow: inset 3px 3px 0px #000;
 }
 
@@ -120,7 +112,7 @@ img.ui-hider {
 /* header */
 #header {
   font-size: 1em;
-  width: 210px;
+  width: 205px;
 }
 
 #header h1 {
@@ -157,41 +149,27 @@ img.ui-hider {
   width: 150px;
 }
 
-#subheader {
-  font-size: 1.3em;
-}
-
-#header h2 {
-  font-size: 1em;
-  margin: 0;
-  font-style: italic;
-  text-align: right;
-}
-
 /* canvas tools box */
 #toolbox {
   width: 145px;
 }
 
-#toolbox h3 {
-  margin: 5px 0;
-}
-
-#instruments {
-  margin: 15px 0;
+#toolbox .inner {
+  margin: 1em 0;
 }
 
 #paint, #pencil {
-  padding: 5px;
+  padding: .5em;
   vertical-align: middle;
 }
 
-#paint.current-tool, #pencil.current-tool {
+img.current-tool {
   border-color: #000;
 }
 
-#size {
-  margin: 20px 0 0;
+input[type="submit"] {
+  margin: .2em 0 .2em 0;
+  font-size: .8em;
 }
 
 #pixel-size {
@@ -208,11 +186,6 @@ img.ui-hider {
 
 #pixel-size-demo {
   background: black;
-  margin: 3px;
-}
-
-ul.instructions {
-  padding: 0 0 0 20px;
 }
 
 /* save box */
@@ -226,45 +199,29 @@ ul.instructions {
 
 #filebox label {
   display: block;
-  margin-bottom: 10px;
-}
-
-#filebox h3 {
-  margin: 1em 0 .5em;
+  margin: 1em .5em;
 }
 
 /* color picker/palette box */
 #colorbox {
-  width: 195px;
+  width: 225px;
 }
 
-#colorbox h3 {
-  margin: 5px 0;
-}
-
-.palettes {
-  margin-bottom: 10px;
-}
-
-.palettes ul,
-.palettes ul li {
+.colors,
+.colors li {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
+.colors {
+  margin: .5em 0;
+}
+
 .button {
   display: block;
   float: left;
-  background: #efefef;
   border: 2px solid rgba(255,255,255,.5);
-  margin: 5px 10px 5px 0;
-  padding: 3px 6px;
-  color: #333;
-  cursor: pointer;
-  width: 40px;
-  text-align: center;
-  font-weight: normal;
 }
 
 .button.save {
@@ -285,28 +242,16 @@ ul.instructions {
   margin: 4px;
 }
 
-.button.color.red {
-  background: red;
+.button.color.cyan {
+  background: cyan;
 }
 
-.button.color.orange {
-  background: orange;
+.button.color.magenta {
+  background: magenta;
 }
 
 .button.color.yellow {
   background: yellow;
-}
-
-.button.color.green {
-  background: green;
-}
-
-.button.color.blue {
-  background: blue;
-}
-
-.button.color.purple {
-  background: purple;
 }
 
 .button.color.black {
@@ -320,10 +265,6 @@ ul.instructions {
 .button.color.white {
   background: white;
   border: 2px solid rgba(0,0,0,.25);
-}
-
-.button.color.custom {
-  background: url('../assets/colorful.png');
 }
 
 .button.color.transparent {
@@ -340,23 +281,9 @@ ul.instructions {
   margin: 1px 8px 1px 0;
 }
 
-/* color history palette */
-#colorbox h3.color-history-label {
-  margin-top: 15px;
-}
-
-.palettes ul.color-history-list,
-.palettes ul.color-custom-list {
-  margin-bottom: 5px;
-}
-
-#color-history-tools {
-  display: block;
-}
-
 /* color picker */
 #eight-bit-colors {
-  margin: 0 auto; 
+  margin: 0 auto;
   background: transparent;
 }
 #eight-bit-picker {
@@ -388,18 +315,14 @@ ul.instructions {
   border: 2px solid #000;
 }
 
-.pound { 
+.pound {
   vertical-align: middle;
-  font-size: 2em; 
+  font-size: 2em;
 }
 
 #color-dropper {
   padding: 5px;
   vertical-align: middle;
-}
-
-#color-dropper.current-tool {
-  border-color: #000;
 }
 
 /* save and open modal */
@@ -428,8 +351,8 @@ ul.instructions {
 }
 
 .inside-modal h2 {
-  float: none;
   font-size: 2em;
+  margin: .25em 1em;
 }
 
 .inside-modal .ui-hider {
@@ -463,13 +386,12 @@ ul.instructions {
   height: 50px;
 }
 
-
 .gallery li img.delete {
   height: 10px;
   padding: 5px;
   background-color: #fff;
   border: 2px solid #000;
-  position: absolute; 
+  position: absolute;
   top: -10px;
   right: -10px;
 }
@@ -526,7 +448,11 @@ ul.instructions {
   }
 }
 
-/* clearfix */
+/* misc */
+.hidden {
+  display: none!important;
+}
+
 .clearfix:after {
   content: ".";
   display: block;

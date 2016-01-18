@@ -8,8 +8,6 @@
 
   'use strict';
 
-  /*** VARIABULLS ***/
-
   var ctx, pickerPaletteCtx, savedCanvas, savedCanvasArray, saveSelection, rect, historyPointer, drawPathId, ctxOverlay, colorHistory;
   var undoRedoHistory = [];
   var drawHistory = [];
@@ -123,8 +121,7 @@
 
   var copy = {
     selectionOff : 'turn off selection',
-    selectionOn : 'selection',
-    fullPage : 'full page'
+    selectionOn : 'save selection',
   };
 
   var pixel = {
@@ -1362,7 +1359,6 @@
 
 
   /*** INIT HA HA HA ***/
-  DOM.$pickers.addClass(classes.hidden);
   DOM.$customPalettes.addClass(classes.hidden);
   generateCanvas();
   init8bitPicker();

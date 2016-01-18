@@ -2,7 +2,6 @@
 <html lang="en">
 <meta charset="UTF-8">
 <!--
-
                                              ____
    ___                                      .-~. /_"-._
   `-._~-.                                  / /_ "~o\  :Y
@@ -20,11 +19,10 @@
   \  \     .      .-~   .-~   ~>--"  /
    \  ~---"            /     ./  _.-'
     "-.,_____.,_  _.--~\     _.-~
-                ~~     (   _}  
+                ~~     (   _}
                         `. ~(
                           )  \
                          /,`--'~\--'
-
 -->
 
 <head>
@@ -35,9 +33,7 @@
 
 <body id="welcome-to-the-space-jam">
 
-
-
-<!-- 
+<!--
                                                           .--.__
                                                       .~ (@)  ~~~---_
                                                      {     `-_~,,,,,,)
@@ -61,20 +57,17 @@
                       )  _________ -''                     ~~
                      / /  _ _
                     (_.-.'O'-'.        HEADER INFO  -->
-                    
+
   <div id="header" class="draggy" title="header">
-  
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
     </div>
-  
+
     <h1>make 8-bit art!</h1>
-    
     <div id="minimized-tools-list"></div>
-    
   </div>
-  
-<!-- 
+
+<!--
                        _..--+~/@-~--.
                    _-=~      (  .   '
                 _-~     _.--=.\ \'''' --- BOOTY HAD ME LIKE...
@@ -87,10 +80,10 @@
         ___=       \ ___ __     __..-...__           ___/__/__
            :        =_     _.-~~          ~~--.__
       _____ \         ~-+-~                   ___~=_______
-           ~@#~~ == ...______ __ ___ _--~~--_                  SOCIAL LINKS -->       
-  
+           ~@#~~ == ...______ __ ___ _--~~--_                  SOCIAL LINKS
+-->
+
   <div id="what" class="draggy" title="what is this even?" data-title="what">
-  
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="minimize">
@@ -98,12 +91,11 @@
 
     <h3>what is this even?</h3>
 
-    <p>this is an <a href="http://github.com/jennschiffer/make8bitart" target="_blank">open source</a> pixel art drawing tool by me, <a href="http://jennmoney.biz" target="_blank">jennmoneydollars</a>!</p>
-    
-    <p>if you make something cool, i wanna see it. tweet me at <a href="http://twitter.com/jennschiffer">@jennschiffer</a></p>
-     
+    <p>this is an <a href="http://github.com/jennschiffer/make8bitart" target="_blank">open source</a> pixel art drawing tool by <a href="http://jennmoney.biz" target="_blank">jennmoneydollars</a>!</p>
+
+    <p>if you make something cool, i wanna see it – tweet me at <a href="http://twitter.com/jennschiffer">@jennschiffer</a>!</p>
   </div>
-    
+
   <!--
                                  .       .
                                 / `.   .' \
@@ -120,40 +112,36 @@
                         / \   =/  ~~--~~{    ./|    ~-.     `-..__\\_//_.-'
                        {   \  +\         \  =\ (        ~ - . _ _ _..---~
                        |  | {   }         \   \_\
-                      '---.o___,'       .o___,      TOOLBOX -->                 
-              
-  <div id="toolbox" class="draggy" title="canvas/brush tools" data-title="tools">
+                      '---.o___,'       .o___,      TOOLBOX -->
 
+  <div id="toolbox" class="draggy" title="canvas/brush tools" data-title="tools">
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="minimize">
     </div>
-    
-    <div id="tools" class="inner">
-      <h3>canvas tools</h3>
-      
-      <div id="instruments">
-        <img class="current-tool icon-button" id="pencil" src="assets/pencil2.png" alt="draw" data-href="#draw" role="button" title="draw" />
-        <img id="paint" src="assets/paint.png" alt="paint" class="icon-button" data-href="#paint" role="button" title="paint/fill" />
-      </div>
-      
-      <h3>edit tools</h3>
-        <input type="submit" id="undo" title="ctrl+z" value="undo" disabled="disabled" />
-        <input type="submit" id="redo" title="ctrl+y" value="redo" disabled="disabled" />
-        
-        <br />  
-        <input type="submit" value="new canvas" id="new-canvas" />
+
+    <div id="instruments" class="inner">
+      <h3>tools</h3>
+      <img class="current-tool icon-button" id="pencil" src="assets/pencil2.png" alt="draw" data-href="#draw" role="button" title="draw" />
+      <img id="paint" src="assets/paint.png" alt="paint" class="icon-button" data-href="#paint" role="button" title="paint/fill" />
     </div>
-    
+
+    <div id="editing" class="inner">
+      <h3>editing</h3>
+      <input type="submit" id="undo" title="ctrl+z" value="undo" disabled="disabled" />
+      <input type="submit" id="redo" title="ctrl+y" value="redo" disabled="disabled" />
+      <input type="submit" value="new canvas" id="new-canvas" />
+    </div>
+
     <div id="size" class="inner">
-      <h3>brush tools</h3>
-      <input id="pixel-size" class="pixel-size-input" type="number" min="1" max="100" step="1" value="15" />
-      <input id="pixel-size-slider" class="pixel-size-input" type="range" min="1" max="100" step="1" value="15" />
+      <h3>brush size</h3>
+      <input id="pixel-size" class="pixel-size-input" type="number" min="3" max="100" step="1" value="15" />
+      <input id="pixel-size-slider" class="pixel-size-input" type="range" min="3" max="100" step="1" value="15" />
       <div id="pixel-size-demo" class="color-demo"> </div>
     </div>
   </div>
 
-  <!-- 
+  <!--
                                      _..-=~=-._
                                  _.-~'          ~.
                      __..---~~~~~                 ~.
@@ -172,154 +160,126 @@
       *|\|             (((|      -----     __|_|__
    _/(h8rs)|__            '''                 -----
      _||_|__              FILE BOX -->
-    
-  <div id="filebox" class="draggy" title="import/save" data-title="import-save">
 
+  <div id="filebox" class="draggy" title="import/save" data-title="import-save">
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="minimize">
     </div>
-    
-    <div id="save" class="inner">
-      
-      <!-- NOT YET 
-      <label for="open-file">
-        import an image:
-        <input type="file" value="import image" id="open-file" />
-      </label>
-      -->
-      
-      <h3>import art</h3> 
+
+    <div id="import" class="inner">
+      <h3>import art</h3>
 
       <label for="open-local" class="local" id="open-local-form">
         from local storage:
         <input type="submit" value="import local art" id="open-local" name="open-local" />
       </label>
-      
+
       <label for="import-pxon" class="pxon" id="import-pxon-form">
-        import <a href="http://jennmoney.biz/pxon">pxon</a>:
+        import <a href="http://pxon.github.io/">pxon</a>:
         <input type="file" id="import-pxon" name="import-pxon" />
       </label>
-      
+    </div>
+
+    <div id="export">
       <h3>export art</h3>
-      
+
       <label for="save-png" class="png" id="save-png-form">
         to png:
-        <input type="submit" value="save full page" id="save-full" /> 
+        <input type="submit" value="save full page" id="save-full" />
         <input type="submit" value="save selection" id="save-selection" />
       </label>
-      
+
       <label for="save-local" class="local" id="save-local-form">
         to local storage:
         <input type="submit" value="save local to browser" id="save-local" class="local" />
       </label>
-      
+
       <label for="export-pxon" class="pxon" id="export-pxon-form">
         export <a href="http://jennmoney.biz/pxon">pxon</a>:
         <input type="submit" value="export pxon" id="export-pxon" class="pxon" />
       </label>
-      
-
-      <p>
-        
-      </p>
-      
-      <ul class="instructions">
-        <li>click and drag to select the area of the canvas you want to save.</li>    
-      </ul>
     </div>
-    
+
+    <ul class="instructions">
+      <li>click and drag to select the area of the canvas you want to save.</li>
+    </ul>
   </div>
 
-  <!-- 
-                               <\              _                
-                                \\          _/{                  
-                         _       \\       _-   -_                
-                       /{        / `\   _-     - -_              
-                     _~  =      ( @  \ -        -  -_            
-                   _- -   ~-_   \( =\ \           -  -_          
-                 _~  -       ~_ | 1 :\ \      _-~-_ -  -_        
-               _-   -          ~  |V: \ \  _-~     ~-_-  -_      
-            _-~   -            /  | :  \ \            ~-_- -_    
-         _-~    -   _.._      {   | : _-``               ~- _-_  
-      _-~   -__..--~    ~-_  {   : \:}    --- hi h8rs                       
-    =~__.--~~              ~-_\  :  /                            
-                               \ : /__                           
-                              //`Y'--\\                          
-                             <+       \\                         
-                              \\      WWW                       
+  <!--
+                               <\              _
+                                \\          _/{
+                         _       \\       _-   -_
+                       /{        / `\   _-     - -_
+                     _~  =      ( @  \ -        -  -_
+                   _- -   ~-_   \( =\ \           -  -_
+                 _~  -       ~_ | 1 :\ \      _-~-_ -  -_
+               _-   -          ~  |V: \ \  _-~     ~-_-  -_
+            _-~   -            /  | :  \ \            ~-_- -_
+         _-~    -   _.._      {   | : _-``               ~- _-_
+      _-~   -__..--~    ~-_  {   : \:}    --- hi h8rs
+    =~__.--~~              ~-_\  :  /
+                               \ : /__
+                              //`Y'--\\
+                             <+       \\
+                              \\      WWW
                               MMM        COLORBOX -->
-                              
-  <div id="colorbox" class="draggy" title="color tools" data-title="colors">
 
+  <div id="colorbox" class="draggy" title="color tools" data-title="colors">
     <div class="controls">
       <img class="ui-dragger" src="assets/draggybits/dragger3.png" alt="drag">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="minimize">
     </div>
 
     <ul class="tabs">
-      <li class="default active" data-href="#default-palettes" role="button">default/history</li>
-      <li class="pickers" data-href="#pickers" role="button">color pickers</li>
-      <li class="custom" data-href="#custom-palettes" role="button">custom palettes</li>
+      <li class="pickers active" data-href="#pickers" role="button">color pickers</li>
+      <li class="palettes" data-href="#custom-palettes" role="button">history/custom palettes</li>
     </ul>
-    
-    <div id="default-palettes" class="inner palettes clearfix">
-      <h3>pick a color:</h3>
-      <ul class="clearfix">
-        <li><a class="button color primary red" title="red" data-color="rgba(255, 0, 0, 1)"> </a></li>
-        <li><a class="button color primary orange" title="orange" data-color="rgba(255, 165, 0, 1)"> </a></li>
+
+    <div id="pickers">
+      <div id="hex-picker">
+        <h3>hex value:</h3>
+        <span class="pound">#</span><input id="hex-color" type="text" value="000000" /> <img class="icon-button" id="color-dropper" src="assets/dropper2.png" alt="color dropper" data-href="#dropper" role="button" title="color dropper" />
+      </div>
+
+      <ul class="colors clearfix">
+        <li><a class="button color primary cyan" title="cyan" data-color="rgba(0, 255, 255, 1)"> </a></li>
+        <li><a class="button color primary magenta" title="magenta" data-color="rgba(255, 0, 255, 1)"> </a></li>
         <li><a class="button color primary yellow" title="yellow" data-color="rgba(255, 255, 0, 1)"> </a></li>
-        <li><a class="button color primary green" title="green" data-color="rgba(0, 128, 0, 1)"> </a></li>
-        <li><a class="button color primary blue" title="blue" data-color="rgba(0, 0, 255, 1)"> </a></li>
-        <li><a class="button color primary purple" title="purple" data-color="rgba(128, 0, 128, 1)"> </a></li>
         <li><a class="button color primary black" title="black" data-color="rgba(0, 0, 0, 1)"> </a></li>
         <li><a class="button color primary gray" title="gray" data-color="rgba(128, 128, 128, 1)"> </a></li>
         <li><a class="button color primary white" title="white" data-color="rgba(255, 255, 255, 1)"> </a></li>
         <li><a class="button color transparent" title="erase" data-color="rgba(0, 0, 0, 0)"> </a></li>
       </ul>
 
-      <div id="color-history">
-        <h3 class="color-history-label">history:</h3>
-        <ul class="color-history-list clearfix"></ul>
-
-        <div id="color-history-tools">
-          <button class="clear">clear</button>
-          <!--<button class="export">export</button>-->
-        </div>
-      </div>
-      
-    </div>
-    
-    <div id="pickers">
-      <div id="hex-picker">
-        <h3>hex value:</h3>
-
-        <span class="pound">#</span><input id="hex-color" type="text" value="000000" /> <img class="icon-button" id="color-dropper" src="assets/dropper2.png" alt="color dropper" data-href="#dropper" role="button" title="color dropper" />
-      </div>
-      
       <div id="eight-bit-picker">
         <h3 class="eightbit">click to pick:</h3>
         <canvas id="eight-bit-colors" width="195" height="195"></canvas>
         <div class="color-demo eightbit"></div>
       </div>
     </div>
-    
+
     <div id="custom-palettes">
-      <div id="color-custom" class="palettes">
-        <h3 class="color-upload-label">custom palette:</h3>        
-        
-
-        <ul class="color-custom-list clearfix"></ul>
-        
-        <div id="color-custom-tools">
-          <p>Upload file in "name,hex" csv format, like in <a href="assets/example.csv">example.csv</a>!</p>
-
-          <input type="file" name="upload-palette" class="import" /> 
-          <button class="clear">clear</button>
+      <div id="color-history" class="inner">
+        <h3 class="color-history-label">history:</h3>
+        <ul class="color-history-list colors clearfix"></ul>
+        <div id="color-history-tools">
+          <input type="submit" value="clear" class="clear" />
         </div>
       </div>
 
+      <div id="color-custom" class="palettes inner">
+        <h3 class="color-upload-label">custom palette:</h3>
+        <ul class="color-custom-list colors clearfix"></ul>
+        <div id="color-custom-tools">
+          <p>Upload file in "name,hex" csv format, like in <a href="assets/example.csv">example.csv</a>!</p>
+
+          <input type="file" name="upload-palette" class="import" />
+          <input type="submit" value="clear" class="clear" />
+        </div>
+      </div>
     </div>
+
   </div>
 
   <div id="save-modal-container" class="modal hidden">
@@ -328,26 +288,25 @@
 
       <h2>you saved your art!</h2>
       <a href="#" target="_blank"><img id="finished-art" /></a>
-    
-      <p>Click or drag your art to your desktop to save, <br />or <input type="submit" value="upload to imgur.com" id="save-imgur" /> <a id="link-imgur"></a>!</p> 
+
+      <p>Click or drag your art to your desktop to save, <br />or <input type="submit" value="upload to imgur.com" id="save-imgur" /> <a id="link-imgur"></a>!</p>
     </div>
   </div>
-  
+
   <div id="open-modal-container" class="modal hidden">
     <div id="open-modal" class="inside-modal">
       <img class="ui-hider" src="assets/draggybits/hider2.png" alt="close">
 
       <h2>you have some locally saved art!</h2>
       <h3>wanna open one? click a thumbnail...</h3>
-      
+
       <ul class="gallery"> </ul>
     </div>
   </div>
-  
+
 <script src="build/vendor.min.js"></script>
 <script src="build/make8bitart.js"></script>
 <script src="//pmetrics.performancing.com/js" type="text/javascript"></script>
 <script type="text/javascript">try{ clicky.init(15102); }catch(e){}</script>
 <noscript><p><img alt="Performancing Metrics" width="1" height="1" src="//pmetrics.performancing.com/15102ns.gif" /></p></noscript></body>
-
 </html>
