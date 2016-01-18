@@ -712,9 +712,11 @@
         description: 'made on make8bitart.com'
       },
       success: function(result) {
-        var id = result.data.id;
-        var url = 'https://imgur.com/gallery/' + id;
-        DOM.$linkImgur.attr('href', url).text('click: ' + url);
+        var directURL = result.data.link;
+        var shareURL = 'https://imgur.com/gallery/' + result.data.id;
+        var imgurHTML = '<p>imgur page: <a href="' + shareURL + '">' + shareURL + '</a><br />' +
+                            'direct image link: <a href="' + directURL + '">' + directURL + '</a></p>';
+        DOM.$linkImgur.html( imgurHTML);
         DOM.$buttonSaveImgur.addClass(classes.hidden);
       },
       error: function(result) {
@@ -1217,7 +1219,7 @@
   // hide save modal container if exit button clicked
   DOM.$modalExit.click(function() {
     DOM.$modalContainers.addClass(classes.hidden);
-    DOM.$linkImgur.attr('href', '').text('');
+    DOM.$linkImgur.html('');
     DOM.$buttonSaveImgur.removeClass(classes.hidden);
   });
 
