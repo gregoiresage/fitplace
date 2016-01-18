@@ -714,8 +714,8 @@
       success: function(result) {
         var directURL = result.data.link;
         var shareURL = 'https://imgur.com/gallery/' + result.data.id;
-        var imgurHTML = '<p>imgur page: <a href="' + shareURL + '">' + shareURL + '</a><br />' +
-                            'direct image link: <a href="' + directURL + '">' + directURL + '</a></p>';
+        var imgurHTML = '<p>imgur page: <a target="_blank" href="' + shareURL + '">' + shareURL + '</a><br />' +
+                            'direct image link: <a target="_blank" href="' + directURL + '">' + directURL + '</a></p>';
         DOM.$linkImgur.html( imgurHTML);
         DOM.$buttonSaveImgur.addClass(classes.hidden);
       },
