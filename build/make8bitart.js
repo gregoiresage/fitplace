@@ -70,7 +70,7 @@
 
     $minimizedToolsList : $('#minimized-tools-list'),
     $draggydivs : $('.draggy'),
-    $saveInstruction : $('.instructions').slideUp(),
+    $saveInstruction : $('.instructions'),
 
     $undo : $('#undo'),
     $redo : $('#redo'),
