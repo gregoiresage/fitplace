@@ -607,7 +607,8 @@
         DOM.$saveModalContainer.removeClass(classes.hidden);
       }
       else {
-        clipboard = img;
+        clipboard = new Image();
+        clipboard.src = img;
 
         // show that something's been copied
         console.log(clipboard);
@@ -927,7 +928,16 @@
       DOM.$canvas.removeClass(classes.dropperMode);
       DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
     }
-    else if ( !mode.save && !mode.copy && !mode.cut && !mode.paste ) {
+    else if ( mode.paste ) {
+      var x = ( Math.ceil(e.pageX/pixel.size) * pixel.size ) - pixel.size;
+      var y = ( Math.ceil(e.pageY/pixel.size) * pixel.size ) - pixel.size;
+      ctx.drawImage(clipboard, x, y);
+      // add action to undo/redo
+      console.log('you did a paste');
+
+      DOM.$paste.click();
+    }
+    else if ( !mode.save && !mode.copy && !mode.cut ) {
       // reset history
       undoRedoHistory = undoRedoHistory.slice(0, historyPointer+1);
       DOM.$redo.attr('disabled','disabled');
@@ -975,7 +985,11 @@
   };
 
   var onMouseUp = function(e) {
-    if ( !mode.save && !mode.copy && !mode.cut && !mode.paste ) {
+    if ( mode.paste ) {
+      return;
+    }
+
+    if ( !mode.save && !mode.copy && !mode.cut ) {
       DOM.$canvas.off('mousemove');
       mode.drawing = false;
       drawPathId = null;
@@ -988,18 +1002,12 @@
 
       if ( mode.save ) {
         generateSelection(e, 'save');
-        mode.save = false;
       }
       else if ( mode.copy ) {
         generateSelection(e, 'copy');
-        mode.copy = false;
       }
       else if ( mode.cut ) {
         generateSelection(e, 'cut');
-        mode.cut = false;
-      }
-      else if ( mode.paste ) {
-        mode.paste = false;
       }
     }
   };
@@ -1083,37 +1091,58 @@
 
   // cut
   DOM.$cut.click(function() {
+    resetModes();
     if ( mode.cut ) {
       mode.cut = false;
-      $(this).addClass(classes.currentTool);
+      $(this).removeClass(classes.currentTool);
       DOM.$overlay.addClass(classes.hidden);
     }
     else {
       mode.cut = true;
-      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-      $(this).removeClass(classes.currentTool);
+      ctxOverlay.fillRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
+      $(this).addClass(classes.currentTool);
       DOM.$overlay.removeClass(classes.hidden);
     }
   });
 
   // copy
   DOM.$copy.click(function() {
+    resetModes();
     if ( mode.copy ) {
       mode.copy = false;
-      $(this).addClass(classes.currentTool);
+      $(this).removeClass(classes.currentTool);
       DOM.$overlay.addClass(classes.hidden);
     }
     else {
       mode.copy = true;
-      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-      $(this).removeClass(classes.currentTool);
+      ctxOverlay.fillRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
+      $(this).addClass(classes.currentTool);
       DOM.$overlay.removeClass(classes.hidden);
     }
   });
 
   // paste
   DOM.$paste.click(function() {
-    console.log('paste');
+    if ( !clipboard ) {
+      return;
+    }
+
+    resetModes();
+    if ( mode.paste ) {
+      mode.paste = false;
+      $(this).removeClass(classes.currentTool);
+      DOM.$overlay.addClass(classes.hidden);
+
+      // hide instructions
+      console.log('you did it');
+    }
+    else {
+      mode.paste = true;
+      $(this).addClass(classes.currentTool);
+
+      // show instructions
+      console.log('click where the top left corner of the paste should be');
+    }
   });
 
   // undo alias to ctrl+z, macs aliased to cmd+z
