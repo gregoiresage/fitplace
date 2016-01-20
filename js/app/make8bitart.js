@@ -137,13 +137,14 @@
     }
   };
 
-  // to work, register your own imgur app here https://api.imgur.com/ and enter your info
+  // you should register your own imgur app here https://api.imgur.com/
   var imgur = {
     clientId: '11112830fafe58a',
   };
 
 
   /*** OUTSIDE LIBRARY STUFF - DRAGGYDIVS ***/
+
   var onMinimizeToolsListClick = function(e) {
     var $this = $(this);
     var $elm = $this.data('draggy');
@@ -222,7 +223,6 @@
   };
 
   var resetCanvas = function(background) {
-
     if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
       ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
 
