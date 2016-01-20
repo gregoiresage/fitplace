@@ -614,10 +614,16 @@
 
         if ( mode === 'cut' ) {
           ctx.clearRect(startX, startY, width, height);
+          DOM.$cut.click();
 
           // add "cut" action to undo/redo array
           console.log('cut');
+          return;
         }
+
+        // trigger copy click
+        DOM.$copy.click();
+
       }
     }
 
