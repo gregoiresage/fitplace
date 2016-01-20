@@ -4,11 +4,11 @@
 * turn down for #butts
 */
 
- (function($, window, document) {
+ (function($, key, window, document) {
 
   'use strict';
 
-  var ctx, pickerPaletteCtx, savedCanvas, savedCanvasArray, saveSelection, rect, historyPointer, drawPathId, ctxOverlay, colorHistory;
+  var ctx, pickerPaletteCtx, savedCanvas, savedCanvasArray, clipboard, rectangleSelection, historyPointer, drawPathId, ctxOverlay, colorHistory;
   var undoRedoHistory = [];
   var drawHistory = [];
 
@@ -74,6 +74,10 @@
 
     $undo : $('#undo'),
     $redo : $('#redo'),
+
+    $cut : $('#cut'),
+    $copy : $('#copy'),
+    $paste : $('#paste'),
 
     $modalContainers : $('.modal'),
     $modalExit : $('.modal .ui-hider'),
@@ -575,23 +579,9 @@
     return canRound ? Math.round(n / pixel.size) * pixel.size : n;
   };
 
-  var startSaveSelection = function(e) {
-    saveSelection = {
-      startX : roundToNearestPixel(e.pageX),
-      startY : roundToNearestPixel(e.pageY)
-    };
-  };
-
-  var generateSaveSelection = function(e) {
-
-    saveSelection.endX = roundToNearestPixel(e.pageX);
-    saveSelection.endY = roundToNearestPixel(e.pageY);
-
-    generateSelectionCanvas(saveSelection);
-    DOM.$buttonSaveSelection.click();
-  };
-
-  var generateSelectionCanvas = function(coords) {
+  var generateSelection = function(e, mode) {
+    rectangleSelection.endX = roundToNearestPixel(e.pageX);
+    rectangleSelection.endY = roundToNearestPixel(e.pageY);
 
     // temporary canvas to save image
     DOM.$body.append('<canvas id="' + classes.selectionCanvas + '"></canvas>');
@@ -599,20 +589,36 @@
     var tempCtx = tempCanvas[0].getContext('2d');
 
     // set dimensions and draw based on selection
-    var width = Math.abs(coords.endX - coords.startX);
-    var height = Math.abs(coords.endY - coords.startY);
+    var width = Math.abs(rectangleSelection.endX - rectangleSelection.startX);
+    var height = Math.abs(rectangleSelection.endY - rectangleSelection.startY);
     tempCanvas[0].width = width;
     tempCanvas[0].height = height;
 
-    var startX = Math.min( coords.startX, coords.endX );
-    var startY = Math.min( coords.startY, coords.endY );
+    var startX = Math.min( rectangleSelection.startX, rectangleSelection.endX );
+    var startY = Math.min( rectangleSelection.startY, rectangleSelection.endY );
 
     if ( width && height ) {
-      tempCtx.drawImage(DOM.$canvas[0],startX, startY, width, height, 0, 0, width, height);
-
-      // write on screen
+      tempCtx.drawImage(DOM.$canvas[0], startX, startY, width, height, 0, 0, width, height);
       var img = tempCanvas[0].toDataURL('image/png');
-      displayFinishedArt(img);
+
+      if ( mode === 'save' ) {
+        displayFinishedArt(img);
+        DOM.$buttonSaveSelection.click();
+        DOM.$saveModalContainer.removeClass(classes.hidden);
+      }
+      else {
+        clipboard = img;
+
+        // show that something's been copied
+        console.log(clipboard);
+
+        if ( mode === 'cut' ) {
+          ctx.clearRect(startX, startY, width, height);
+
+          // add "cut" action to undo/redo array
+          console.log('cut');
+        }
+      }
     }
 
     // remove tempCanvas
@@ -620,12 +626,12 @@
   };
 
   var drawSelection = function(e) {
-    rect.w = roundToNearestPixel((e.pageX - this.offsetLeft) - rect.startX);
-    rect.h = roundToNearestPixel((e.pageY - this.offsetTop) - rect.startY);
+    rectangleSelection.w = roundToNearestPixel((e.pageX - this.offsetLeft) - rectangleSelection.startX);
+    rectangleSelection.h = roundToNearestPixel((e.pageY - this.offsetTop) - rectangleSelection.startY);
     ctxOverlay.clearRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
     ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
     ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-    ctxOverlay.clearRect(rect.startX, rect.startY, rect.w, rect.h);
+    ctxOverlay.clearRect(rectangleSelection.startX, rectangleSelection.startY, rectangleSelection.w, rectangleSelection.h);
   };
 
   var displayFinishedArt = function(src) {
@@ -915,8 +921,7 @@
       DOM.$canvas.removeClass(classes.dropperMode);
       DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
     }
-    else if ( !mode.save ) {
-
+    else if ( !mode.save && !mode.copy && !mode.cut && !mode.paste ) {
       // reset history
       undoRedoHistory = undoRedoHistory.slice(0, historyPointer+1);
       DOM.$redo.attr('disabled','disabled');
@@ -952,10 +957,9 @@
     }
     else {
       // overlay stuff
-      rect = {};
-      startSaveSelection(e);
-      rect.startX = roundToNearestPixel(e.pageX - this.offsetLeft);
-      rect.startY = roundToNearestPixel(e.pageY - this.offsetTop);
+      rectangleSelection = {};
+      rectangleSelection.startX = roundToNearestPixel(e.pageX - this.offsetLeft);
+      rectangleSelection.startY = roundToNearestPixel(e.pageY - this.offsetTop);
       DOM.$overlay.on('mousemove', drawSelection);
 
       // touch
@@ -965,21 +969,32 @@
   };
 
   var onMouseUp = function(e) {
-    if ( !mode.save ) {
+    if ( !mode.save && !mode.copy && !mode.cut && !mode.paste ) {
       DOM.$canvas.off('mousemove');
       mode.drawing = false;
-
       drawPathId = null;
 
-      // save
       saveToLocalStorage();
     }
     else {
       DOM.$overlay.off('mousemove');
-      ctxOverlay.clearRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-      generateSaveSelection(e);
-      mode.save = false;
-      rect = {};
+      ctxOverlay.clearRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
+
+      if ( mode.save ) {
+        generateSelection(e, 'save');
+        mode.save = false;
+      }
+      else if ( mode.copy ) {
+        generateSelection(e, 'copy');
+        mode.copy = false;
+      }
+      else if ( mode.cut ) {
+        generateSelection(e, 'cut');
+        mode.cut = false;
+      }
+      else if ( mode.paste ) {
+        mode.paste = false;
+      }
     }
   };
 
@@ -1058,6 +1073,41 @@
     if ( historyPointer === undoRedoHistory.length - 1 ) {
       DOM.$redo.attr('disabled', 'disabled');
     }
+  });
+
+  // cut
+  DOM.$cut.click(function() {
+    if ( mode.cut ) {
+      mode.cut = false;
+      $(this).addClass(classes.currentTool);
+      DOM.$overlay.addClass(classes.hidden);
+    }
+    else {
+      mode.cut = true;
+      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
+      $(this).removeClass(classes.currentTool);
+      DOM.$overlay.removeClass(classes.hidden);
+    }
+  });
+
+  // copy
+  DOM.$copy.click(function() {
+    if ( mode.copy ) {
+      mode.copy = false;
+      $(this).addClass(classes.currentTool);
+      DOM.$overlay.addClass(classes.hidden);
+    }
+    else {
+      mode.copy = true;
+      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
+      $(this).removeClass(classes.currentTool);
+      DOM.$overlay.removeClass(classes.hidden);
+    }
+  });
+
+  // paste
+  DOM.$paste.click(function() {
+    console.log('paste');
   });
 
   // undo alias to ctrl+z, macs aliased to cmd+z
@@ -1412,4 +1462,4 @@
   DOM.$overlay[0].addEventListener('touchstart', onMouseDown, false);
   DOM.$overlay[0].addEventListener('touchend', onMouseUp, false);
 
-}(window.jQuery, window, document));
+}(window.jQuery, window.key, window, document));
