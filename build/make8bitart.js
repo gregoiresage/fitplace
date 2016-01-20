@@ -114,8 +114,8 @@
   };
 
   var windowCanvas = {
-    height: DOM.$window.height(),
-    width: DOM.$window.width(),
+    height: DOM.$window.height() - (DOM.$window.height() % 15),
+    width: DOM.$window.width() - (DOM.$window.width() % 15),
     background: 'url("assets/bg.png")'
   };
 
@@ -1259,7 +1259,7 @@
 
   // canvas window size changes
   DOM.$window.resize(function() {
-    if ( DOM.$window.width() <= windowCanvas.width && DOM.$window.height() <= windowCanvas.height ) {
+    if ( DOM.$window.width() - (DOM.$window.width() % pixel.size) <= windowCanvas.width && DOM.$window.height() - (DOM.$window.height() % pixel.size) <= windowCanvas.height ) {
       return;
     }
     else {
@@ -1268,8 +1268,9 @@
         return;
       }
       else {
-        var newWidth = DOM.$window.width();
-        var newHeight = DOM.$window.height();
+        console.log(DOM.$window.width() - (DOM.$window.width() % pixel.size), DOM.$window.width());
+        var newWidth = DOM.$window.width() - (DOM.$window.width() % pixel.size);
+        var newHeight = DOM.$window.height() - (DOM.$window.height() % pixel.size);
         windowCanvas.width = newWidth;
         windowCanvas.height = newHeight;
 
