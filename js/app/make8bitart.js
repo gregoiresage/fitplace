@@ -119,6 +119,7 @@
     fill : 'fill',
     cut : 'cut',
     paste : 'paste',
+    save : 'save',
     index : 0
   };
 
@@ -615,23 +616,23 @@
 
     // temporary canvas to save image
     DOM.$body.append('<canvas id="' + classes.selectionCanvas + '"></canvas>');
-    var tempCanvas = $('#' + classes.selectionCanvas);
-    var tempCtx = tempCanvas[0].getContext('2d');
+    var $tempCanvas = $('#' + classes.selectionCanvas);
+    var tempCtx = $tempCanvas[0].getContext('2d');
 
     // set dimensions and draw based on selection
     var width = Math.abs(rectangleSelection.endX - rectangleSelection.startX);
     var height = Math.abs(rectangleSelection.endY - rectangleSelection.startY);
-    tempCanvas[0].width = width;
-    tempCanvas[0].height = height;
+    $tempCanvas[0].width = width;
+    $tempCanvas[0].height = height;
 
     var startX = Math.min( rectangleSelection.startX, rectangleSelection.endX );
     var startY = Math.min( rectangleSelection.startY, rectangleSelection.endY );
 
     if ( width && height ) {
       tempCtx.drawImage(DOM.$canvas[0], startX, startY, width, height, 0, 0, width, height);
-      var img = tempCanvas[0].toDataURL('image/png');
+      var img = $tempCanvas[0].toDataURL('image/png');
 
-      if ( mode === 'save' ) {
+      if ( mode === action.save ) {
         displayFinishedArt(img);
         DOM.$buttonSaveSelection.click();
         DOM.$saveModalContainer.removeClass(classes.hidden);
@@ -640,7 +641,7 @@
         clipboard = new Image();
         clipboard.src = img;
 
-        if ( mode === 'cut' ) {
+        if ( mode === action.cut ) {
           var originalImage = DOM.$canvas[0].toDataURL('image/png');
           ctx.clearRect(startX, startY, width, height);
           DOM.$cut.click();
@@ -653,17 +654,17 @@
 
           // save to local storage
           saveToLocalStorage();
-
-          return;
         }
 
-        // trigger copy click
-        DOM.$copy.click();
+        if ( mode === action.copy ) {
+          // trigger copy click
+          DOM.$copy.click();
+        }
       }
     }
 
     // remove tempCanvas
-    tempCanvas.remove();
+    $tempCanvas.remove();
   };
 
   var drawSelection = function(e) {
@@ -1322,6 +1323,7 @@
       DOM.$overlay.addClass(classes.hidden);
     }
     else {
+      resetModes();
       mode.save = true;
       DOM.$saveInstruction.slideDown();
       $(this).val(copy.selectionOff);
