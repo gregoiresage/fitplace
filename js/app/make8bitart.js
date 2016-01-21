@@ -290,7 +290,7 @@
 
     if ( !areColorsEqual( hoverRGB, pixel.color, pixel.size) ) {
       drawPixel(e.pageX, e.pageY, pixel.color, pixel.size);
-      pushToHistory(action.index, action.draw, e.pageX, e.pageY, hoverRGB, pixel.color, pixel.size, drawPathId);
+      pushToHistory(action.index, action.draw, e.pageX, e.pageY, hoverRGB, pixel.color, pixel.size, drawPathId, null, null);
     }
   };
 
@@ -348,7 +348,7 @@
           imgData[k + 3] = alpha;
         }
       }
-      pushToHistory(action.index, action.fill, x + pixel.size - 1, y + pixel.size - 1, initColor, paintColor, pixel.size);
+      pushToHistory(action.index, action.fill, x + pixel.size - 1, y + pixel.size - 1, initColor, paintColor, pixel.size, null, null);
     }
 
     function addNextLine(newY, isNext, downwards) {
@@ -449,7 +449,7 @@
     }
   };
 
-  var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew, pixelSize, drawPathId) {
+  var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew, pixelSize, drawPathId, srcOriginal, srcNew) {
     // push to undoRedoHistory, will also become pxon.pxif.pixels
     var pixelDrawn = {
       index: actionIndex,
@@ -460,6 +460,8 @@
       color: rgbNew,
       size: pixelSize,
       drawPathId: drawPathId,
+      originalSrc: srcOriginal,
+      src: srcNew
     };
     undoRedoHistory.push(pixelDrawn);
     drawHistory.push(pixelDrawn);
@@ -481,10 +483,10 @@
     if ( undoRedoHistory[pointer].action === action.cut || undoRedoHistory[pointer].action === action.paste ) {
       // for cut and paste, original color is original canvas, color is new canvas lol sorry
       if ( undoFlag ) {
-        drawToCanvas(undoRedoColor, 0, 0, true);
+        drawToCanvas(undoRedoHistory[pointer].originalSrc, 0, 0, true);
       }
       else {
-        drawToCanvas(undoRedoHistory[pointer].color, 0, 0, true);
+        drawToCanvas(undoRedoHistory[pointer].src, 0, 0, true);
       }
       return;
     }
@@ -647,7 +649,7 @@
           var newImage = DOM.$canvas[0].toDataURL('image/png');
           action.index++;
           drawPathId = Date();
-          pushToHistory( action.index, action.cut, 0, 0, originalImage, newImage, null, drawPathId);
+          pushToHistory( action.index, action.cut, 0, 0, null, null, null, drawPathId, originalImage, newImage);
 
           // save to local storage
           saveToLocalStorage();
@@ -975,7 +977,7 @@
       var newImage = DOM.$canvas[0].toDataURL('image/png');
       action.index++;
       drawPathId = Date();
-      pushToHistory( action.index, action.paste, 0, 0, originalImage, newImage, null, drawPathId);
+      pushToHistory( action.index, action.paste, 0, 0, null, null, null, drawPathId, originalImage, newImage);
 
       // save to local storage
       saveToLocalStorage();
@@ -1001,7 +1003,7 @@
         drawPixel(e.pageX, e.pageY, pixel.color, pixel.size);
 
         if ( !areColorsEqual( origRGB, pixel.color) ) {
-          pushToHistory(action.index, action.draw, e.pageX, e.pageY, origRGB, pixel.color, pixel.size, drawPathId);
+          pushToHistory(action.index, action.draw, e.pageX, e.pageY, origRGB, pixel.color, pixel.size, drawPathId, null, null);
         }
 
         DOM.$canvas.on('mousemove', drawOnMove);
