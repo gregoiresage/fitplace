@@ -1061,7 +1061,7 @@
   };
 
   var onRightClick = function(e) {
-    mode.dropper = false;
+    resetModes();
     var origData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
     var origRGB = getRGBColor(origData);
 
