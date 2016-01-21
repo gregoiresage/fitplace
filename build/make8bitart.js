@@ -117,6 +117,8 @@
   var action = {
     draw : 'draw',
     fill : 'fill',
+    cut : 'cut',
+    paste : 'paste',
     index : 0
   };
 
@@ -448,7 +450,7 @@
   };
 
   var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew, pixelSize, drawPathId) {
-    // push to undoRedoHistory, will also become pxon.pxif.pixelse
+    // push to undoRedoHistory, will also become pxon.pxif.pixels
     var pixelDrawn = {
       index: actionIndex,
       action: actionType,
@@ -474,6 +476,17 @@
     else {
       undoRedoColor = undoRedoHistory[pointer].color;
       nextPointer = pointer + 1;
+    }
+
+    if ( undoRedoHistory[pointer].action === action.cut || undoRedoHistory[pointer].action === action.paste ) {
+      // for cut and paste, original color is original canvas, color is new canvas lol sorry
+      if ( undoFlag ) {
+        drawToCanvas(undoRedoColor, 0, 0, true);
+      }
+      else {
+        drawToCanvas(undoRedoHistory[pointer].color, 0, 0, true);
+      }
+      return;
     }
 
     if ( undoRedoHistory[pointer].action === action.fill && undoRedoHistory[nextPointer] && undoRedoHistory[pointer].index === undoRedoHistory[nextPointer].index ) {
@@ -626,11 +639,15 @@
         clipboard.src = img;
 
         if ( mode === 'cut' ) {
+          var originalImage = DOM.$canvas[0].toDataURL('image/png');
           ctx.clearRect(startX, startY, width, height);
           DOM.$cut.click();
 
           // add "cut" action to undo/redo array
-          console.log('cut');
+          var newImage = DOM.$canvas[0].toDataURL('image/png');
+          action.index++;
+          drawPathId = Date();
+          pushToHistory( action.index, action.cut, 0, 0, originalImage, newImage, null, drawPathId);
 
           // save to local storage
           saveToLocalStorage();
@@ -640,7 +657,6 @@
 
         // trigger copy click
         DOM.$copy.click();
-
       }
     }
 
@@ -948,9 +964,18 @@
       var x = ( Math.ceil(e.pageX/pixel.size) * pixel.size ) - pixel.size;
       var y = ( Math.ceil(e.pageY/pixel.size) * pixel.size ) - pixel.size;
 
+      var originalImage = DOM.$canvas[0].toDataURL('image/png');
       ctx.drawImage(clipboard, x, y);
+
+      // reset history
+      undoRedoHistory = undoRedoHistory.slice(0, historyPointer+1);
+      DOM.$redo.attr('disabled','disabled');
+
       // add action to undo/redo
-      console.log('you did a paste');
+      var newImage = DOM.$canvas[0].toDataURL('image/png');
+      action.index++;
+      drawPathId = Date();
+      pushToHistory( action.index, action.paste, 0, 0, originalImage, newImage, null, drawPathId);
 
       // save to local storage
       saveToLocalStorage();
