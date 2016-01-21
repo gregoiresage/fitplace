@@ -52,6 +52,8 @@
     $hex : $('#hex-color'),
     $dropper : $('#color-dropper'),
 
+    $toolButtons: $('.icon-button'),
+
     $pencil : $('#pencil'),
     $paint : $('#paint'),
 
@@ -70,7 +72,8 @@
 
     $minimizedToolsList : $('#minimized-tools-list'),
     $draggydivs : $('.draggy'),
-    $saveInstruction : $('.instructions'),
+    $saveInstruction : $('.instructions.save'),
+    $pasteInstructions : $('.instructions.paste'),
 
     $undo : $('#undo'),
     $redo : $('#redo'),
@@ -499,10 +502,11 @@
 
   var resetModes = function() {
     if ( mode.dropper ) {
-      DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
+      DOM.$dropper.removeAttr('style');
       DOM.$canvas.removeClass(classes.dropperMode);
       mode.dropper = false;
       var backgroundIMG;
+
       if ( pixel.color !== 'rgba(0, 0, 0, 0)' ) {
         backgroundIMG = 'none';
       }
@@ -517,9 +521,20 @@
     else if ( mode.save ) {
       DOM.$buttonSaveSelection.click();
     }
-    mode.paint = false;
-    DOM.$paint.removeClass(classes.currentTool);
-    DOM.$pencil.removeClass(classes.currentTool);
+    else if ( mode.copy || mode.cut ) {
+      DOM.$overlay.addClass(classes.hidden);
+    }
+    else if ( mode.paste ) {
+      DOM.$pasteInstructions.addClass(classes.hidden);
+    }
+
+    for (var prop in mode) {
+      if ( mode.hasOwnProperty(prop) ){
+        mode[prop] = false;
+      }
+    }
+
+    DOM.$toolButtons.removeClass(classes.currentTool);
   };
 
   var init8bitPicker = function() {
@@ -610,15 +625,16 @@
         clipboard = new Image();
         clipboard.src = img;
 
-        // show that something's been copied
-        console.log(clipboard);
-
         if ( mode === 'cut' ) {
           ctx.clearRect(startX, startY, width, height);
           DOM.$cut.click();
 
           // add "cut" action to undo/redo array
           console.log('cut');
+
+          // save to local storage
+          saveToLocalStorage();
+
           return;
         }
 
@@ -931,9 +947,13 @@
     else if ( mode.paste ) {
       var x = ( Math.ceil(e.pageX/pixel.size) * pixel.size ) - pixel.size;
       var y = ( Math.ceil(e.pageY/pixel.size) * pixel.size ) - pixel.size;
+
       ctx.drawImage(clipboard, x, y);
       // add action to undo/redo
       console.log('you did a paste');
+
+      // save to local storage
+      saveToLocalStorage();
 
       DOM.$paste.click();
     }
@@ -1126,23 +1146,16 @@
     if ( !clipboard ) {
       return;
     }
-
     resetModes();
-    if ( mode.paste ) {
-      mode.paste = false;
-      $(this).removeClass(classes.currentTool);
-      DOM.$overlay.addClass(classes.hidden);
 
-      // hide instructions
-      console.log('you did it');
-    }
-    else {
+    if ( !mode.paste ) {
       mode.paste = true;
       $(this).addClass(classes.currentTool);
 
       // show instructions
-      console.log('click where the top left corner of the paste should be');
+      DOM.$pasteInstructions.addClass(classes.hidden);
     }
+
   });
 
   // undo alias to ctrl+z, macs aliased to cmd+z
@@ -1353,7 +1366,6 @@
         return;
       }
       else {
-        console.log(DOM.$window.width() - (DOM.$window.width() % pixel.size), DOM.$window.width());
         var newWidth = DOM.$window.width() - (DOM.$window.width() % pixel.size);
         var newHeight = DOM.$window.height() - (DOM.$window.height() % pixel.size);
         windowCanvas.width = newWidth;

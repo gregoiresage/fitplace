@@ -152,9 +152,20 @@ img.ui-hider {
   margin: 1em 0;
 }
 
-#paint, #pencil {
-  padding: .5em;
+#toolbox ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#toolbox ul li {
+  display: inline-block;
+}
+
+#toolbox ul li img {
+  padding: .3em;
   vertical-align: middle;
+  max-height: 35px;
 }
 
 img.current-tool {
