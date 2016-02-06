@@ -694,7 +694,7 @@
     DOM.$openLocalGalleryItems.remove();
 
     for( var i = 0; i < savedCanvasArray.length; i++ ) {
-      var $li = $('<li data-local="' + i + '"><img class="thumb" src="' + savedCanvasArray[i] + '" /><img class="delete" src="assets/draggybits/hider2.png" alt="close"></li>');
+      var $li = $('<li data-local="' + i + '"><img class="thumb" src="' + savedCanvasArray[i] + '" /><img class="delete" src="assets/draggybits/hider.png" alt="close"></li>');
       DOM.$openLocalGallery.append($li);
     }
 
