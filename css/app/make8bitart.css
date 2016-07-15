@@ -39,11 +39,6 @@ h3 {
   margin: .1em 0;
 }
 
-img.icon-button {
-  max-height: 40px;
-  border: 3px dashed transparent;
-}
-
 /* canvas */
 canvas {
   cursor: crosshair;
@@ -68,11 +63,11 @@ canvas {
   overflow: hidden;
 }
 
-img.ui-dragger {
+.ui-dragger img {
   width: 25px;
 }
 
-img.ui-hider {
+.ui-hider img {
   width: 20px;
   margin: 3px 6px 0 0;
 }
@@ -84,16 +79,18 @@ img.ui-hider {
   padding: 0;
 }
 
-.tabs li {
+.tabs button {
+  font-family: 'VT323', monospace;
+  font-size: 1em;
   display: inline-block;
   padding: .5em 1em;
-  margin: 0 0 .5em 0;
+  margin: 0 0 .5em;
   border: 1px solid #000;
   background-color: #ccc;
   box-shadow: 2px 2px 0px #000;
 }
 
-.tabs li.active {
+.tabs button.active {
   background-color: cyan;
   box-shadow: inset 3px 3px 0px #000;
 }
@@ -104,12 +101,12 @@ img.ui-hider {
 
 
 /* header */
-#header {
+header {
   font-size: 1em;
   width: 205px;
 }
 
-#header h1 {
+header h1 {
   font-family: '8bit Art Sans';
   font-size: 2.5em;
   line-height: 1em;
@@ -152,6 +149,13 @@ img.ui-hider {
   margin: 1em 0;
 }
 
+#toolbox button {
+  padding: 0;
+  margin: 0;
+  background: 0;
+  border: 0;
+}
+
 #toolbox ul {
   list-style: none;
   margin: 0;
@@ -168,8 +172,8 @@ img.ui-hider {
   max-height: 35px;
 }
 
-img.current-tool {
-  border-color: #000;
+#toolbox .icon-button {
+  border: 3px dashed transparent;
 }
 
 input[type="submit"] {
@@ -216,6 +220,17 @@ input[type="submit"] {
   width: 225px;
 }
 
+#hex-picker button {
+  background: none;
+  border-color: transparent;
+}
+
+#hex-picker img {
+  padding: .3em;
+  vertical-align: middle;
+  max-height: 35px;
+}
+
 .colors,
 .colors li {
   list-style: none;
@@ -245,10 +260,10 @@ input[type="submit"] {
 .button.color {
   background: #fff;
   border: 5px solid none;
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   padding: 0;
-  margin: 4px;
+  margin: 3px;
 }
 
 .button.color.cyan {
@@ -281,9 +296,10 @@ input[type="submit"] {
   background: url('../assets/bg.png');
 }
 
-.button.color.current, .button.current, .button.custom.current {
+.button.color.current,
+.button.current,
+.button.custom.current {
   border: 5px solid #333;
-  margin: 1px;
 }
 
 .button.brush.current {
@@ -332,6 +348,12 @@ input[type="submit"] {
 #color-dropper {
   padding: 5px;
   vertical-align: middle;
+}
+
+#hex-picker button.icon-button.current-tool,
+#toolbox button.icon-button.current-tool {
+  border-color: #000;
+  border-style: dashed;
 }
 
 /* save and open modal */
@@ -423,7 +445,7 @@ input[type="submit"] {
     font-size: .6em;
   }
 
-  #header {
+  header {
     width: 600px;
   }
 

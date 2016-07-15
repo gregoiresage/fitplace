@@ -31,9 +31,9 @@
   var methods = {
 
     init : function (opts) {
-      
-      return this.each(function() {    
-      
+
+      return this.each(function() {
+
         var $this = $(this).addClass(pluginName);
         var $dragger = $this.find('.' + draggerClass);
         var $closer = $this.find('.' + closerClass).click(onCloseClick);
@@ -55,6 +55,7 @@
         $this.data(pluginName, data);
 
         $dragger.attr('aria-grabbed', false);
+        $dragger.mousedown(onMouseDown);
 
         numDraggers++;
 
@@ -65,9 +66,9 @@
         };
 
         $this.css(css);
-        
+
         options.onInit($this);
-      }); 
+      });
     },
 
     minimize : function () {
@@ -78,13 +79,13 @@
 
     restore : function () {
       var $this = $(this).removeClass(hiddenClass).css("z-index", zIndex++);
-      var data = $this.data(pluginName);      
+      var data = $this.data(pluginName);
       data.onRestore($this);
     },
 
     close : function () {
       var $this = $(this);
-      var data = $this.data(pluginName);      
+      var data = $this.data(pluginName);
       data.onClose($this);
       $this.remove();
     }
@@ -104,7 +105,7 @@
         } else {
             $.error('Method ' + method + ' does not exist');
         }
-    };  
+    };
 
 
 
@@ -134,15 +135,14 @@
 
     $window.off('mousemove');
     isMoving = false;
-    
+
     // touch
     window.removeEventListener('touchmove', onMove, false);
   };
 
   var onMouseDown = function (e) {
-    var $this = $(e.target);
+    var $this = $(e.target).parent('button');
     var isDragger = $this.hasClass(draggerClass);
-    
     $this.parents('.'+ pluginName).css("z-index", zIndex++);
 
     if (!isDragger) {
@@ -157,7 +157,7 @@
     $window.on('mousemove', onMove);
 
     isMoving = true;
-    
+
     // touch
     window.addEventListener('touchmove', onMove, false);
   };
@@ -175,14 +175,13 @@
   };
 
   /*** GLOBAL EVENTS ***/
+  $(window).mouseup(onMouseUp);
 
-  $(window).mousedown(onMouseDown).mouseup(onMouseUp);
-  
   // touch
-  window.addEventListener('touchstart', onMouseDown, false);
   window.addEventListener('touchend', onMouseUp, false);
 
 })( jQuery );
+
 //     keymaster.js
 //     (c) 2011-2013 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.

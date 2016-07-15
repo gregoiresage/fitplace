@@ -38,7 +38,7 @@
     $colorbox : $('#colorbox'),
     $waiting : $('#wait'),
 
-    $tabs : $('.tabs'),
+    $tabs : $('.tabs button'),
 
     $color : $('.color'),
     $colorHistoryModule : $('#color-history'),
@@ -157,13 +157,13 @@
 
   var onMinimizeToolsListClick = function(e) {
     var $this = $(this);
-    var $elm = $this.data('draggy');
-    $elm.draggyBits('restore');
+    var $elem = $this.data('draggy');
+    $elem.draggyBits('restore');
     $this.parent().remove();
   };
 
-  var onMinimize = function($elm) {
-    var $a = $('<a href="#' + $elm.attr('data-title') + '">').html($elm.attr('title')).on('click', onMinimizeToolsListClick).data('draggy', $elm);
+  var onMinimize = function($elem) {
+    var $a = $('<a href="#' + $elem.attr('data-title') + '">').html($elem.attr('title')).on('click', onMinimizeToolsListClick).data('draggy', $elem);
     $('<li></li>').append($a).appendTo(DOM.$minimizedToolsList);
   };
 
@@ -573,7 +573,7 @@
       var sanitizedColors = sanitizeColorArray(colorHistory);
 
       sanitizedColors.forEach(function(color){
-        var latestColorButton = $('<li><a class="button color" style="background-color:#' + color + '" title="history:#' + color + '" data-color="#' + color + '" /> </a></li>');
+        var latestColorButton = $('<li><button role="button" class="button color" style="background-color:#' + color + '" title="history:#' + color + '" data-color="#' + color + '" /> </button></li>');
         DOM.$colorHistoryPalette.append(latestColorButton);
       });
 
@@ -871,7 +871,7 @@
 
     colorHistory.unshift(hexColor);
 
-    var latestColorButton = $('<li><a class="button color" style="background-color:#' + hexColor + '" title="history:#' + hexColor + '" data-color="#' + hexColor + '" /> </a></li>');
+    var latestColorButton = $('<li><button role="button" class="button color" style="background-color:#' + hexColor + '" title="history:#' + hexColor + '" data-color="#' + hexColor + '" /> </button></li>');
     DOM.$colorHistoryPalette.prepend(latestColorButton);
     latestColorButton.find('a').addClass(classes.current);
 
@@ -1367,7 +1367,7 @@
   /* misc */
 
   // tabs
-  DOM.$tabs.children('li').click(function(e){
+  DOM.$tabs.click(function(e){
     var activeTab = $(this);
     var href = activeTab.attr('data-href');
     activeTab.siblings().removeClass(classes.activeTab);

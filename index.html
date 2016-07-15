@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<meta charset="UTF-8">
 <!--
                                              ____
    ___                                      .-~. /_"-._
@@ -26,12 +25,13 @@
 -->
 
 <head>
+  <meta charset="UTF-8">
   <title>make 8-bit art!</title>
   <link rel="stylesheet" href="build/make8bitart.min.css" />
   <link rel="icon" href="assets/favicon.png" />
 </head>
 
-<body id="welcome-to-the-space-jam">
+<body id="gravity-and-time-are-social-constructs">
 
 <!--
                                                           .--.__
@@ -58,14 +58,16 @@
                      / /  _ _
                     (_.-.'O'-'.        HEADER INFO  -->
 
-  <div id="header" class="draggy" title="header">
+  <header class="draggy" role="banner">
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger.png" alt="drag">
+      <button role="button" class="ui-dragger">
+        <img src="assets/draggybits/dragger.png" alt="move controls window">
+      </button>
     </div>
 
     <h1>make 8-bit art!</h1>
-    <div id="minimized-tools-list"></div>
-  </div>
+    <ul id="minimized-tools-list" role="navigation"></ul>
+  </header>
 
 <!--
                        _..--+~/@-~--.
@@ -83,18 +85,22 @@
            ~@#~~ == ...______ __ ___ _--~~--_                  SOCIAL LINKS
 -->
 
-  <div id="what" class="draggy" title="what is this even?" data-title="what">
+  <section id="what" class="draggy" title="what is this?" data-title="what">
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger.png" alt="drag">
-      <img class="ui-hider" src="assets/draggybits/hider.png" alt="minimize">
+      <button role="button" class="ui-dragger">
+        <img src="assets/draggybits/dragger.png" alt="move controls window">
+      </button>
+      <button role="button" class="ui-hider">
+        <img src="assets/draggybits/hider.png" alt="move controls window">
+      </button>
     </div>
 
-    <h3>what is this even?</h3>
+    <h2>what is this?</h2>
 
-    <p>this is an <a href="http://github.com/jennschiffer/make8bitart" target="_blank">open source</a> pixel art drawing tool by <a href="http://jennmoney.biz" target="_blank">jennmoneydollars</a>!</p>
+    <p>this is an <a href="http://github.com/jennschiffer/make8bitart" title="link to make8bitart repo on github" target="_blank">open source</a> pixel art drawing tool by <a href="http://jennmoney.biz" title="official website of" target="_blank">jennmoneydollars</a>!</p>
 
     <p>if you make something cool, i wanna see it – tweet me at <a href="http://twitter.com/jennschiffer">@jennschiffer</a>!</p>
-  </div>
+  </section>
 
   <!--
                                  .       .
@@ -114,26 +120,51 @@
                        |  | {   }         \   \_\
                       '---.o___,'       .o___,      TOOLBOX -->
 
-  <div id="toolbox" class="draggy" title="canvas/brush tools" data-title="tools">
+  <section id="toolbox" class="draggy" title="canvas/brush tools" data-title="tools">
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger.png" alt="drag">
-      <img class="ui-hider" src="assets/draggybits/hider.png" alt="minimize">
+      <button role="button" class="ui-dragger">
+        <img src="assets/draggybits/dragger.png" alt="move controls window">
+      </button>
+      <button role="button" class="ui-hider">
+        <img src="assets/draggybits/hider.png" alt="move controls window">
+      </button>
     </div>
 
     <div id="instruments" class="inner">
-      <h3>tools</h3>
-      <ul>
-        <li><img class="current-tool icon-button" id="pencil" src="assets/pencil.png" alt="draw" data-href="#draw" role="button" title="draw" /></li>
-        <li><img id="paint" src="assets/paint.png" alt="paint" class="icon-button" data-href="#paint" role="button" title="paint/fill" /></li>
+      <h2>tools</h2>
+      <h3>instruments</h3>
+      <ul role="toolbar">
+        <li>
+          <button id="pencil" role="button" class="current-tool icon-button">
+            <img src="assets/pencil.png" alt="draw" />
+          </button>
+        </li>
+        <li>
+          <button id="paint" role="button" class="icon-button">
+            <img src="assets/paint.png" alt="paint/fill" />
+          </button>
+        </li>
       </ul>
     </div>
 
     <div id="editing" class="inner">
       <h3>editing</h3>
-      <ul>
-        <li><img id="cut" src="assets/cut.png" alt="cut" class="icon-button" data-href="#cut" role="button" title="cut" /></li>
-        <li><img id="copy" src="assets/copy.png" alt="copy" class="icon-button" data-href="#copy" role="button" title="copy" /></li>
-        <li><img id="paste" src="assets/paste.png" alt="paste" class="icon-button" data-href="#paste" role="button" title="paste" /></li>
+      <ul role="toolbar">
+        <li>
+          <button id="cut" role="button" class="icon-button">
+            <img src="assets/cut.png" alt="cut" />
+          </button>
+        </li>
+        <li>
+          <button id="copy" role="button" class="icon-button">
+            <img src="assets/copy.png" alt="copy" />
+          </button>
+        </li>
+        <li>
+          <button id="paste" role="button" class="icon-button">
+            <img src="assets/paste.png" alt="paste" />
+          </button>
+        </li>
       </ul>
 
       <ul class="instructions paste">
@@ -151,7 +182,7 @@
       <input id="pixel-size-slider" class="pixel-size-input" type="range" min="2" max="100" step="1" value="15" />
       <div id="pixel-size-demo" class="color-demo"> </div>
     </div>
-  </div>
+  </section>
 
   <!--
                                      _..-=~=-._
@@ -173,10 +204,14 @@
    _/(h8rs)|__            '''                 -----
      _||_|__              FILE BOX -->
 
-  <div id="filebox" class="draggy" title="import/save" data-title="import-save">
+  <section id="filebox" class="draggy" title="import/save" data-title="import-save">
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger.png" alt="drag">
-      <img class="ui-hider" src="assets/draggybits/hider.png" alt="minimize">
+      <button role="button" class="ui-dragger">
+        <img src="assets/draggybits/dragger.png" alt="move controls window">
+      </button>
+      <button role="button" class="ui-hider">
+        <img src="assets/draggybits/hider.png" alt="move controls window">
+      </button>
     </div>
 
     <div id="import" class="inner">
@@ -216,7 +251,7 @@
     <ul class="instructions save">
       <li>click and drag to select the area of the canvas you want to save.</li>
     </ul>
-  </div>
+  </section>
 
   <!--
                                <\              _
@@ -237,31 +272,39 @@
                               \\      WWW
                               MMM        COLORBOX -->
 
-  <div id="colorbox" class="draggy" title="color tools" data-title="colors">
+  <section id="colorbox" class="draggy" title="color tools" data-title="colors">
     <div class="controls">
-      <img class="ui-dragger" src="assets/draggybits/dragger.png" alt="drag">
-      <img class="ui-hider" src="assets/draggybits/hider.png" alt="minimize">
+      <button role="button" class="ui-dragger">
+        <img src="assets/draggybits/dragger.png" alt="move controls window">
+      </button>
+      <button role="button" class="ui-hider">
+        <img src="assets/draggybits/hider.png" alt="move controls window">
+      </button>
     </div>
 
-    <ul class="tabs">
-      <li class="pickers active" data-href="#pickers" role="button">color pickers</li>
-      <li class="palettes" data-href="#custom-palettes" role="button">history/custom palettes</li>
-    </ul>
+    <div class="tabs" role="navigation">
+        <button role="button" class="pickers active" data-href="#pickers">color pickers</button>
+        <button role="button" class="palettes" data-href="#custom-palettes">history/custom palettes</button>
+    </div>
 
     <div id="pickers">
       <div id="hex-picker">
         <h3>hex value:</h3>
-        <span class="pound">#</span><input id="hex-color" type="text" value="000000" /> <img class="icon-button" id="color-dropper" src="assets/dropper.png" alt="color dropper" data-href="#dropper" role="button" title="color dropper" />
+        <span class="pound">#</span><input id="hex-color" type="text" value="000000" />
+
+        <button role="button" id="color-dropper" class="icon-button">
+          <img src="assets/dropper.png" alt="color dropper" />
+        </button>
       </div>
 
       <ul class="colors clearfix">
-        <li><a class="button color primary cyan" title="cyan" data-color="rgba(0, 255, 255, 1)"> </a></li>
-        <li><a class="button color primary magenta" title="magenta" data-color="rgba(255, 0, 255, 1)"> </a></li>
-        <li><a class="button color primary yellow" title="yellow" data-color="rgba(255, 255, 0, 1)"> </a></li>
-        <li><a class="button color primary black" title="black" data-color="rgba(0, 0, 0, 1)"> </a></li>
-        <li><a class="button color primary gray" title="gray" data-color="rgba(128, 128, 128, 1)"> </a></li>
-        <li><a class="button color primary white" title="white" data-color="rgba(255, 255, 255, 1)"> </a></li>
-        <li><a class="button color transparent" title="erase" data-color="rgba(0, 0, 0, 0)"> </a></li>
+        <li><button role="button" class="button color primary cyan" title="cyan" data-color="rgba(0, 255, 255, 1)"> </button></li>
+        <li><button role="button" class="button color primary magenta" title="magenta" data-color="rgba(255, 0, 255, 1)"> </button></li>
+        <li><button role="button" class="button color primary yellow" title="yellow" data-color="rgba(255, 255, 0, 1)"> </button></li>
+        <li><button role="button" class="button color primary black" title="black" data-color="rgba(0, 0, 0, 1)"> </button></li>
+        <li><button role="button" class="button color primary gray" title="gray" data-color="rgba(128, 128, 128, 1)"> </button></li>
+        <li><button role="button" class="button color primary white" title="white" data-color="rgba(255, 255, 255, 1)"> </button></li>
+        <li><button role="button" class="button color transparent" title="erase" data-color="rgba(0, 0, 0, 0)"> </button></li>
       </ul>
 
       <div id="eight-bit-picker">
@@ -292,7 +335,7 @@
       </div>
     </div>
 
-  </div>
+  </section>
 
   <div id="save-modal-container" class="modal hidden">
     <div id="save-modal" class="inside-modal">
