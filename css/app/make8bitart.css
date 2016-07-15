@@ -103,7 +103,7 @@ canvas {
 /* header */
 header {
   font-size: 1em;
-  width: 205px;
+  width: 200px;
 }
 
 header h1 {
@@ -117,21 +117,25 @@ header h1 {
   list-style: none;
   font-size: 1.2em;
   margin-top: 10px;
+  padding: 0;
 }
 
-#minimized-tools-list li {
+#minimized-tools-list button {
   display: inline-block;
   padding: 3px 10px;
   background: lime;
   margin: 3px;
+  border: none;
+  font-family: 'VT323', monospace;
+  font-size: 1em;
 }
 
-#minimized-tools-list li a:hover {
+#minimized-tools-list li button:hover {
   color: green;
   cursor: pointer;
 }
 
-#minimized-tools-list li a:after {
+#minimized-tools-list li button:after {
   content: ' +';
 }
 
@@ -149,13 +153,6 @@ header h1 {
   margin: 1em 0;
 }
 
-#toolbox button {
-  padding: 0;
-  margin: 0;
-  background: 0;
-  border: 0;
-}
-
 #toolbox ul {
   list-style: none;
   margin: 0;
@@ -164,16 +161,34 @@ header h1 {
 
 #toolbox ul li {
   display: inline-block;
+  margin: .2em;
 }
 
-#toolbox ul li img {
+.icon-button {
+  border: 3px dashed transparent;
+  padding: 0;
+  margin: 0;
+  background: 0;
+}
+
+.icon-button img {
   padding: .3em;
   vertical-align: middle;
   max-height: 35px;
 }
 
-#toolbox .icon-button {
-  border: 3px dashed transparent;
+.icon-button.current-tool {
+  border-color: black;
+}
+
+.text-button {
+  background: #efefef;
+  border: 2px solid #ccc;
+  padding: .3em .5em;
+  margin: .2em;
+  font-family: monospace;
+  font-size: .8em;
+  font-weight: bold;
 }
 
 input[type="submit"] {
@@ -218,17 +233,6 @@ input[type="submit"] {
 /* color picker/palette box */
 #colorbox {
   width: 225px;
-}
-
-#hex-picker button {
-  background: none;
-  border-color: transparent;
-}
-
-#hex-picker img {
-  padding: .3em;
-  vertical-align: middle;
-  max-height: 35px;
 }
 
 .colors,
@@ -336,10 +340,6 @@ input[type="submit"] {
   padding: 5px 3px 3px;
 }
 
-#hex-color.current {
-  border: 2px solid #000;
-}
-
 .pound {
   vertical-align: middle;
   font-size: 2em;
@@ -348,12 +348,6 @@ input[type="submit"] {
 #color-dropper {
   padding: 5px;
   vertical-align: middle;
-}
-
-#hex-picker button.icon-button.current-tool,
-#toolbox button.icon-button.current-tool {
-  border-color: #000;
-  border-style: dashed;
 }
 
 /* save and open modal */

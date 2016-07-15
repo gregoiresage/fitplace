@@ -171,9 +171,9 @@
         <li>click on the canvas where you want the top left corner of your copied clip to be pasted.</li>
       </ul>
 
-      <input type="submit" id="undo" title="ctrl+z" value="undo" disabled="disabled" />
-      <input type="submit" id="redo" title="ctrl+y" value="redo" disabled="disabled" />
-      <input type="submit" value="new canvas" id="new-canvas" />
+      <button role="button" class="text-button" id="undo" disabled="disabled">undo</button>
+      <button role="button" class="text-button" id="redo" disabled="disabled" />redo</button>
+      <button role="button" class="text-button" id="new-canvas">new canvas</button>
     </div>
 
     <div id="size" class="inner">
@@ -219,7 +219,7 @@
 
       <label for="open-local" class="local" id="open-local-form">
         from local storage:
-        <input type="submit" value="import local art" id="open-local" name="open-local" />
+        <button role="button" class="text-button" id="open-local">import local art</button>
       </label>
 
       <label for="import-pxon" class="pxon" id="import-pxon-form">
@@ -232,19 +232,19 @@
       <h3>export art</h3>
 
       <label for="save-png" class="png" id="save-png-form">
-        to png:
-        <input type="submit" value="save full page" id="save-full" />
-        <input type="submit" value="save selection" id="save-selection" />
+        to png:<br />
+        <button role="button" class="text-button" id="save-full">full page</button>
+        <button role="button" class="text-button" id="save-selection">selection</button>
       </label>
 
       <label for="save-local" class="local" id="save-local-form">
-        to local storage:
-        <input type="submit" value="save local to browser" id="save-local" class="local" />
+        to local storage:<br />
+        <button role="button" class="text-button" id="save-local" class="local">local store</button>
       </label>
 
       <label for="export-pxon" class="pxon" id="export-pxon-form">
-        export <a href="http://jennmoney.biz/pxon">pxon</a>:
-        <input type="submit" value="export pxon" id="export-pxon" class="pxon" />
+        export <a href="http://jennmoney.biz/pxon">pxon</a>:<br />
+        <button role="button" class="text-button" id="export-pxon" class="pxon">export pxon</button>
       </label>
     </div>
 
@@ -290,7 +290,7 @@
     <div id="pickers">
       <div id="hex-picker">
         <h3>hex value:</h3>
-        <span class="pound">#</span><input id="hex-color" type="text" value="000000" />
+        <span class="pound">#</span><input type="text" id="hex-color" value="000000" />
 
         <button role="button" id="color-dropper" class="icon-button">
           <img src="assets/dropper.png" alt="color dropper" />
@@ -319,7 +319,7 @@
         <h3 class="color-history-label">history:</h3>
         <ul class="color-history-list colors clearfix"></ul>
         <div id="color-history-tools">
-          <input type="submit" value="clear" class="clear" />
+          <button role="button" class="text-button clear">clear history</button>
         </div>
       </div>
 
@@ -330,7 +330,7 @@
           <p>Upload file in "name,hex" csv format, like in <a href="assets/example.csv">example.csv</a>!</p>
 
           <input type="file" name="upload-palette" class="import" />
-          <input type="submit" value="clear" class="clear" />
+          <button role="button" class="text-button clear">clear palette</button>
         </div>
       </div>
     </div>

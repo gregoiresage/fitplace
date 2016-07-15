@@ -163,7 +163,7 @@
   };
 
   var onMinimize = function($elem) {
-    var $a = $('<a href="#' + $elem.attr('data-title') + '">').html($elem.attr('title')).on('click', onMinimizeToolsListClick).data('draggy', $elem);
+    var $a = $('<button role="button" tabindex="0" data-section="#' + $elem.attr('data-title') + '">').html($elem.attr('title')).on('click', onMinimizeToolsListClick).data('draggy', $elem);
     $('<li></li>').append($a).appendTo(DOM.$minimizedToolsList);
   };
 
