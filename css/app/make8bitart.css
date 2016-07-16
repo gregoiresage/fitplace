@@ -34,7 +34,7 @@ a {
   color: blue;
 }
 
-h3 {
+h2 {
   font-size: 1.5em;
   margin: .1em 0;
 }
@@ -482,7 +482,7 @@ input[type="submit"] {
     display: none;
   }
 
-  h3 {
+  h2 {
     margin: .5em 0;
   }
 }
