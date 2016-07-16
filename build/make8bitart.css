@@ -398,6 +398,15 @@ input[type="submit"] {
   position: absolute;
   top: 10px;
   right: 10px;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.inside-modal .ui-hider img {
+  padding: 0;
+  margin: 0;
 }
 
 .inside-modal .ui-hider:hover {
@@ -417,22 +426,27 @@ input[type="submit"] {
   position: relative;
 }
 
-.gallery li:hover {
-  cursor: pointer;
+.gallery button {
+  background: none;
+  border: 0;
+  padding: 0;
 }
 
 .gallery li img {
   height: 50px;
 }
 
-.gallery li img.delete {
+.gallery button.delete {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+
+.gallery li .delete img {
   height: 10px;
   padding: 5px;
   background-color: #fff;
   border: 2px solid #000;
-  position: absolute;
-  top: -10px;
-  right: -10px;
 }
 
 #finished-art {

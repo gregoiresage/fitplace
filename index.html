@@ -337,29 +337,37 @@
 
   </section>
 
-  <div id="save-modal-container" class="modal hidden">
+  <section id="save-modal-container" class="modal hidden">
     <div id="save-modal" class="inside-modal">
-      <img class="ui-hider" src="assets/draggybits/hider.png" alt="close">
-
+      <div class="controls">
+        <button role="button" class="ui-hider">
+          <img src="assets/draggybits/hider.png" alt="move controls window">
+        </button>
+      </div>
       <h2>you saved your art!</h2>
       <a href="#" target="_blank"><img id="finished-art" /></a>
 
       <p>Click or drag your art to your desktop to save!<br />
-         <input type="submit" value="Or upload to imgur.com!" id="save-imgur" /></p>
+        <button role="button" class="text-button"id="save-imgur">Or upload to imgur.com!</button>
+      </p>
       <p id="link-imgur"></p>
     </div>
-  </div>
+  </section>
 
-  <div id="open-modal-container" class="modal hidden">
+  <section id="open-modal-container" class="modal hidden">
     <div id="open-modal" class="inside-modal">
-      <img class="ui-hider" src="assets/draggybits/hider.png" alt="close">
+      <div class="controls">
+        <button role="button" class="ui-hider">
+          <img src="assets/draggybits/hider.png" alt="move controls window">
+        </button>
+      </div>
 
       <h2>you have some locally saved art!</h2>
       <h3>wanna open one? click a thumbnail...</h3>
 
       <ul class="gallery"> </ul>
     </div>
-  </div>
+  </section>
 
 <script src="build/vendor.min.js"></script>
 <script src="build/make8bitart.js"></script>

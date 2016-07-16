@@ -680,10 +680,10 @@
     DOM.$saveImg.attr('src', src);
     DOM.$saveImg.parent().attr('href', src);
     DOM.$saveModalContainer.removeClass(classes.hidden);
+    DOM.$saveModalContainer.find('.ui-hider').focus();
   };
 
   var renderLocalGallery = function() {
-
     if ( savedCanvasArray.length === 0 ) {
       DOM.$openLocalModalContainer.addClass(classes.hidden);
       DOM.$openLocalForm.addClass(classes.hidden);
@@ -694,7 +694,10 @@
     DOM.$openLocalGalleryItems.remove();
 
     for( var i = 0; i < savedCanvasArray.length; i++ ) {
-      var $li = $('<li data-local="' + i + '"><img class="thumb" src="' + savedCanvasArray[i] + '" /><img class="delete" src="assets/draggybits/hider.png" alt="close"></li>');
+      var $li = $('<li data-local="' + i + '">' +
+        '<button role="button" class="thumb"><img src="' + savedCanvasArray[i] + '" alt="open thumbnail #' + i + '" /></button>' +
+        '<button role="button" class="delete"><img class="delete" src="assets/draggybits/hider.png" alt="delete thumbnail #' + i + '"></button>' +
+      '</li>');
       DOM.$openLocalGallery.append($li);
     }
 
@@ -1335,6 +1338,7 @@
   // open import local modal
   DOM.$buttonOpenLocal.click(function(){
     DOM.$openLocalModalContainer.removeClass(classes.hidden);
+    DOM.$openLocalModalContainer.find('.ui-hider').focus();
   });
 
   // import pxon
@@ -1519,7 +1523,7 @@
       renderLocalGallery();
 
       // open local storage gallery
-      DOM.$openLocalModalContainer.removeClass(classes.hidden);
+      DOM.$buttonOpenLocal.trigger('click');
     }
     else {
       DOM.$openLocalForm.addClass(classes.hidden);
