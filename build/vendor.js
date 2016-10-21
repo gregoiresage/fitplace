@@ -141,7 +141,8 @@
   };
 
   var onMouseDown = function (e) {
-    var $this = $(e.target).parent('button');
+    var $target = $(e.target);
+    var $this = ( $target.is('button') ) ? $target : $target.parent('button');
     var isDragger = $this.hasClass(draggerClass);
     $this.parents('.'+ pluginName).css("z-index", zIndex++);
 

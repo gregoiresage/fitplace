@@ -6,8 +6,8 @@
 .draggy.ui-hidden { display: none;}
 
 /** controls **/
-.draggy .controls { float:right; }
+.draggy .controls { float: right; }
 .draggy .controls button { width: auto; height: auto; padding: 0; margin: 0; background: none; border: none; }
-.draggy .controls .ui-dragger img { cursor:move; }
-.draggy .controls .ui-closer img { cursor:pointer; }
-.draggy .controls .ui-hider img { cursor:pointer; }
+.draggy .controls .ui-dragger { cursor: move; }
+.draggy .controls .ui-closer,
+.draggy .controls .ui-hider { cursor: pointer; }
