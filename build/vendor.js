@@ -145,6 +145,7 @@
     var isDragger = $this.hasClass(draggerClass);
     $this.parents('.'+ pluginName).css("z-index", zIndex++);
 
+    console.log($this) // TODO testing why this doesn't drag in ff
     if (!isDragger) {
       return;
     }
