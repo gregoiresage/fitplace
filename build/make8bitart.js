@@ -64,8 +64,10 @@
     $buttonSaveImgur : $('#save-imgur'),
     $buttonOpenFile : $('#open-file'),
     $buttonOpenLocal : $('#open-local'),
+    
     $buttonImportPXON : $('#import-pxon'),
     $buttonExportPXON : $('#export-pxon'),
+    $pxonModalContainer : $('#pxon-modal-container'),
 
     $pixelSizeInput : $('.pixel-size-input'),
     $pixelSizeDemoDiv : $('#pixel-size-demo'),
@@ -940,9 +942,13 @@
 
     // pxif
     pxon.pxif.pixels = drawHistory;
-
-    // export pxon in new window
-    window.open('data:text/json,' + encodeURIComponent(JSON.stringify(pxon)), '_blank');
+    
+    // open pxon modal
+    DOM.$pxonModalContainer.removeClass(classes.hidden);
+    DOM.$pxonModalContainer.find('.ui-hider').focus();
+    
+    var pxonData = JSON.stringify(pxon);
+    DOM.$pxonModalContainer.find('textarea').html(pxonData);
   };
 
 
