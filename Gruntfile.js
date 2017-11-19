@@ -10,7 +10,7 @@ module.exports = function(grunt) {
     concat: {   
       dist: {
         src: [
-          'js/libs/jquery-2.1.1.min.js',
+          'js/libs/jquery-3.2.1.min.js',
           'js/libs/draggybits.js',
           'js/libs/keymaster.js',
         ],
