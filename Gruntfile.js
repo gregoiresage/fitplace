@@ -6,8 +6,8 @@ module.exports = function(grunt) {
     jshint: {
       all: ['Gruntfile.js','js/app/*']
     },
-    
-    concat: {   
+
+    concat: {
       dist: {
         src: [
           'js/libs/jquery-3.2.1.min.js',
@@ -30,14 +30,17 @@ module.exports = function(grunt) {
         dest: 'build/make8bitart.css',
       }
     },
-    
+
     uglify: {
       build: {
-        src: 'build/vendor.js',
-        dest: 'build/vendor.min.js'
+        src: [
+          'build/vendor.js',
+          'build/make8bitart.js'
+        ],
+        dest: 'build/app.min.js'
       }
     },
-    
+
     cssmin: {
       minify: {
         expand: true,
@@ -47,7 +50,7 @@ module.exports = function(grunt) {
         ext: '.min.css'
       },
     },
-    
+
     watch: {
       scripts: {
         files: ['js/*/*.js'],
