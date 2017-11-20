@@ -127,7 +127,6 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
     var $this = $(e.target);
 
     if (!isMoving) {
-      $this.removeClass(hiddenClass).css("z-index", zIndex++).focus();
       return;
     }
 

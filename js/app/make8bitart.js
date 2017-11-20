@@ -64,7 +64,7 @@
     $buttonSaveImgur : $('#save-imgur'),
     $buttonOpenFile : $('#open-file'),
     $buttonOpenLocal : $('#open-local'),
-    
+
     $buttonImportPXON : $('#import-pxon'),
     $buttonExportPXON : $('#export-pxon'),
     $pxonModalContainer : $('#pxon-modal-container'),
@@ -234,9 +234,25 @@
     }
   };
 
-  var resetCanvas = function(background) {
+  var resetCanvas = function(background, isNew) {
     if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
       ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
+
+      if ( isNew ) {
+        // reset canvas width and height
+        DOM.$canvas
+          .attr('width', DOM.$body.prop('clientWidth'))
+          .attr('height', DOM.$window.height());
+        DOM.$overlay
+          .attr('width', DOM.$body.prop('clientWidth'))
+          .attr('height', DOM.$window.height());
+        ctx = DOM.$canvas[0].getContext('2d');
+        ctxOverlay = DOM.$overlay[0].getContext('2d');
+        ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
+
+        windowCanvas.height = DOM.$window.height() - (DOM.$window.height() % 15);
+        windowCanvas.width = DOM.$window.width() - (DOM.$window.width() % 15);
+      }
 
       if ( background && background !== 'rgba(0, 0, 0, 0)') {
         ctx.fillStyle = background;
@@ -440,6 +456,23 @@
 
     var img = new Image();
     img.onload = function() {
+
+      // increase canvas size in case image is bigger
+      var newWidth = (DOM.$canvas.width() < this.width) ? this.width : DOM.$canvas.width();
+      var newHeight = (DOM.$canvas.height() < this.height) ? this.height : DOM.$canvas.height();
+      windowCanvas.width = newWidth;
+      windowCanvas.height = newHeight;
+
+      DOM.$canvas
+        .attr('width', newWidth)
+        .attr('height', newHeight);
+      DOM.$overlay
+        .attr('width', newWidth)
+        .attr('height', newHeight);
+      ctx = DOM.$canvas[0].getContext('2d');
+      ctxOverlay = DOM.$overlay[0].getContext('2d');
+      ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
+
       ctx.drawImage(img, x, y);
     };
     img.src = src;
@@ -942,11 +975,11 @@
 
     // pxif
     pxon.pxif.pixels = drawHistory;
-    
+
     // open pxon modal
     DOM.$pxonModalContainer.removeClass(classes.hidden);
     DOM.$pxonModalContainer.find('.ui-hider').focus();
-    
+
     var pxonData = JSON.stringify(pxon);
     DOM.$pxonModalContainer.find('textarea').html(pxonData);
   };
@@ -1106,7 +1139,7 @@
 
   // reset canvas
   DOM.$buttonNewCanvas.click(function() {
-    resetCanvas( pixel.color );
+    resetCanvas( pixel.color, true );
     saveToLocalStorage();
   });
 
