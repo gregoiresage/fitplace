@@ -236,8 +236,8 @@
 
   var setCanvasSize = function(width, height) {
     // sets canvas width and height
-    windowCanvas.width = width;
-    windowCanvas.height = height;
+    windowCanvas.width = width % pixel.size;
+    windowCanvas.height = height % pixel.size;
 
     DOM.$canvas
       .attr('width', width)
@@ -250,14 +250,13 @@
     ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
   };
 
-  var resetCanvas = function(background, isNew) {
+  var resetCanvas = function(background, sizeToViewport) {
     if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
       ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
 
-      if ( isNew ) {
+      if ( sizeToViewport ) {
+        // set the canvas to viewport size if new
         setCanvasSize(DOM.$body.prop('clientWidth'), DOM.$window.height());
-        windowCanvas.height = DOM.$window.height() - (DOM.$window.height() % pixel.size);
-        windowCanvas.width = DOM.$window.width() - (DOM.$window.width() % pixel.size);
       }
 
       if ( background && background !== 'rgba(0, 0, 0, 0)') {
