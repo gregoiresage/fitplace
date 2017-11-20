@@ -73,7 +73,7 @@
     },
 
     restore : function () {
-      var $this = $(this).removeClass(hiddenClass).css("z-index", zIndex++);
+      var $this = $(this).removeClass(hiddenClass).css("z-index", zIndex++).focus();
       var data = $this.data(pluginName);
       data.onRestore($this);
     },
@@ -122,6 +122,7 @@
     var $this = $(e.target);
 
     if (!isMoving) {
+      $this.removeClass(hiddenClass).css("z-index", zIndex++).focus();
       return;
     }
 
