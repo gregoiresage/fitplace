@@ -234,24 +234,30 @@
     }
   };
 
+  var setCanvasSize = function(width, height) {
+    // sets canvas width and height
+    windowCanvas.width = width;
+    windowCanvas.height = height;
+
+    DOM.$canvas
+      .attr('width', width)
+      .attr('height', height);
+    DOM.$overlay
+      .attr('width', width)
+      .attr('height', height);
+    ctx = DOM.$canvas[0].getContext('2d');
+    ctxOverlay = DOM.$overlay[0].getContext('2d');
+    ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
+  };
+
   var resetCanvas = function(background, isNew) {
     if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
       ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
 
       if ( isNew ) {
-        // reset canvas width and height
-        DOM.$canvas
-          .attr('width', DOM.$body.prop('clientWidth'))
-          .attr('height', DOM.$window.height());
-        DOM.$overlay
-          .attr('width', DOM.$body.prop('clientWidth'))
-          .attr('height', DOM.$window.height());
-        ctx = DOM.$canvas[0].getContext('2d');
-        ctxOverlay = DOM.$overlay[0].getContext('2d');
-        ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
-
-        windowCanvas.height = DOM.$window.height() - (DOM.$window.height() % 15);
-        windowCanvas.width = DOM.$window.width() - (DOM.$window.width() % 15);
+        setCanvasSize(DOM.$body.prop('clientWidth'), DOM.$window.height());
+        windowCanvas.height = DOM.$window.height() - (DOM.$window.height() % pixel.size);
+        windowCanvas.width = DOM.$window.width() - (DOM.$window.width() % pixel.size);
       }
 
       if ( background && background !== 'rgba(0, 0, 0, 0)') {
@@ -460,18 +466,8 @@
       // increase canvas size in case image is bigger
       var newWidth = (DOM.$canvas.width() < this.width) ? this.width : DOM.$canvas.width();
       var newHeight = (DOM.$canvas.height() < this.height) ? this.height : DOM.$canvas.height();
-      windowCanvas.width = newWidth;
-      windowCanvas.height = newHeight;
 
-      DOM.$canvas
-        .attr('width', newWidth)
-        .attr('height', newHeight);
-      DOM.$overlay
-        .attr('width', newWidth)
-        .attr('height', newHeight);
-      ctx = DOM.$canvas[0].getContext('2d');
-      ctxOverlay = DOM.$overlay[0].getContext('2d');
-      ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
+      setCanvasSize(newWidth, newHeight);
 
       ctx.drawImage(img, x, y);
     };
@@ -1440,20 +1436,12 @@
       else {
         var newWidth = DOM.$window.width() - (DOM.$window.width() % pixel.size);
         var newHeight = DOM.$window.height() - (DOM.$window.height() % pixel.size);
-        windowCanvas.width = newWidth;
-        windowCanvas.height = newHeight;
 
         // save image
         saveToLocalStorage();
 
-        DOM.$canvas
-          .attr('width',newWidth)
-          .attr('height',newHeight);
-        DOM.$overlay
-          .attr('width',newWidth)
-          .attr('height',newHeight);
-        ctxOverlay = DOM.$overlay[0].getContext('2d');
-        ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
+        // set canvas size
+        setCanvasSize(newWidth, newHeight);
 
         // draw image
         drawFromLocalStorage();
