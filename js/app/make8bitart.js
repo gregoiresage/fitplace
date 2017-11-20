@@ -64,7 +64,7 @@
     $buttonSaveImgur : $('#save-imgur'),
     $buttonOpenFile : $('#open-file'),
     $buttonOpenLocal : $('#open-local'),
-    
+
     $buttonImportPXON : $('#import-pxon'),
     $buttonExportPXON : $('#export-pxon'),
     $pxonModalContainer : $('#pxon-modal-container'),
@@ -234,9 +234,30 @@
     }
   };
 
-  var resetCanvas = function(background) {
+  var setCanvasSize = function(width, height) {
+    // sets canvas width and height
+    windowCanvas.width = width % pixel.size;
+    windowCanvas.height = height % pixel.size;
+
+    DOM.$canvas
+      .attr('width', width)
+      .attr('height', height);
+    DOM.$overlay
+      .attr('width', width)
+      .attr('height', height);
+    ctx = DOM.$canvas[0].getContext('2d');
+    ctxOverlay = DOM.$overlay[0].getContext('2d');
+    ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
+  };
+
+  var resetCanvas = function(background, sizeToViewport) {
     if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
       ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
+
+      if ( sizeToViewport ) {
+        // set the canvas to viewport size if new
+        setCanvasSize(DOM.$body.prop('clientWidth'), DOM.$window.height());
+      }
 
       if ( background && background !== 'rgba(0, 0, 0, 0)') {
         ctx.fillStyle = background;
@@ -440,6 +461,13 @@
 
     var img = new Image();
     img.onload = function() {
+
+      // increase canvas size in case image is bigger
+      var newWidth = (DOM.$canvas.width() < this.width) ? this.width : DOM.$canvas.width();
+      var newHeight = (DOM.$canvas.height() < this.height) ? this.height : DOM.$canvas.height();
+
+      setCanvasSize(newWidth, newHeight);
+
       ctx.drawImage(img, x, y);
     };
     img.src = src;
@@ -942,11 +970,11 @@
 
     // pxif
     pxon.pxif.pixels = drawHistory;
-    
+
     // open pxon modal
     DOM.$pxonModalContainer.removeClass(classes.hidden);
     DOM.$pxonModalContainer.find('.ui-hider').focus();
-    
+
     var pxonData = JSON.stringify(pxon);
     DOM.$pxonModalContainer.find('textarea').html(pxonData);
   };
@@ -1106,7 +1134,7 @@
 
   // reset canvas
   DOM.$buttonNewCanvas.click(function() {
-    resetCanvas( pixel.color );
+    resetCanvas( pixel.color, true );
     saveToLocalStorage();
   });
 
@@ -1407,20 +1435,12 @@
       else {
         var newWidth = DOM.$window.width() - (DOM.$window.width() % pixel.size);
         var newHeight = DOM.$window.height() - (DOM.$window.height() % pixel.size);
-        windowCanvas.width = newWidth;
-        windowCanvas.height = newHeight;
 
         // save image
         saveToLocalStorage();
 
-        DOM.$canvas
-          .attr('width',newWidth)
-          .attr('height',newHeight);
-        DOM.$overlay
-          .attr('width',newWidth)
-          .attr('height',newHeight);
-        ctxOverlay = DOM.$overlay[0].getContext('2d');
-        ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
+        // set canvas size
+        setCanvasSize(newWidth, newHeight);
 
         // draw image
         drawFromLocalStorage();

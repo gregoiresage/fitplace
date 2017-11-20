@@ -122,7 +122,6 @@
     var $this = $(e.target);
 
     if (!isMoving) {
-      $this.removeClass(hiddenClass).css("z-index", zIndex++).focus();
       return;
     }
 
