@@ -236,8 +236,8 @@
 
   var setCanvasSize = function(width, height) {
     // sets canvas width and height
-    windowCanvas.width = width % pixel.size;
-    windowCanvas.height = height % pixel.size;
+    windowCanvas.width = width - width % pixel.size;
+    windowCanvas.height = height - width % pixel.size;
 
     DOM.$canvas
       .attr('width', width)

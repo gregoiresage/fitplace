@@ -20,16 +20,16 @@
 /* fonts */
 @font-face {
   font-family: 'VT323';
-  src: url('../assets/fonts/VT323-Regular-subset.woff2') format('woff2'),
-    url('../assets/fonts/VT323-Regular-subset.zopfli.woff') format('woff'),
-    url('../assets/fonts/VT323-Regular-subset.ttf') format('truetype');
+  src: url('/assets/fonts/VT323-Regular-subset.woff2') format('woff2'),
+    url('/assets/fonts/VT323-Regular-subset.zopfli.woff') format('woff'),
+    url('/assets/fonts/VT323-Regular-subset.ttf') format('truetype');
   font-display: swap;
 }
 @font-face {
   font-family: '8bit Art Sans';
-  src: url('../assets/fonts/8bit-Art-Sans-subset.woff2') format('woff2'),
-    url('../assets/fonts/8bit-Art-Sans-subset.zopfli.woff') format('woff'),
-    url('../assets/fonts/8bit-Art-Sans-subset.ttf')  format('truetype');
+  src: url('/assets/fonts/8bit-Art-Sans-subset.woff2') format('woff2'),
+    url('/assets/fonts/8bit-Art-Sans-subset.zopfli.woff') format('woff'),
+    url('/assets/fonts/8bit-Art-Sans-subset.ttf')  format('truetype');
   font-display: swap;
 }
 
