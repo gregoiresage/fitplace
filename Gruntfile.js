@@ -16,6 +16,12 @@ module.exports = function(grunt) {
         ],
         dest: 'build/vendor.js',
       },
+      sw: {
+        src: [
+          'js/app/service-worker.js',
+        ],
+        dest: 'build/service-worker.js'
+      },
       app: {
         src: [
           'js/app/make8bitart.js',
