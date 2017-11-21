@@ -4,7 +4,7 @@ this.addEventListener('install', function(event) {
       return cache.addAll([
         '/',
         '/index.html',
-        '/build',
+        '/build/',
         '/build/app.min.js',
         '/build/make8bitart.min.css',
         '/assets/bg.png',

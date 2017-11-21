@@ -4,7 +4,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     jshint: {
-      all: ['Gruntfile.js','js/app/*']
+      all: ['Gruntfile.js', 'service-worker.js', 'js/app/*']
     },
 
     concat: {
@@ -15,12 +15,6 @@ module.exports = function(grunt) {
           'js/libs/keymaster.js',
         ],
         dest: 'build/vendor.js',
-      },
-      sw: {
-        src: [
-          'js/app/service-worker.js',
-        ],
-        dest: 'build/service-worker.js'
       },
       app: {
         src: [
