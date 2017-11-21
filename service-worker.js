@@ -20,11 +20,8 @@ this.addEventListener('install', function(event) {
         '/assets/example.csv',
         '/assets/draggybits/dragger.png',
         '/assets/draggybits/hider.png',
-        '/assets/fonts/8bit-Art-Sans.eot',
-        '/assets/fonts/8bit-Art-Sans.svg',
-        '/assets/fonts/8bit-Art-Sans.ttf',
-        '/assets/fonts/8bit-Art-Sans.woff',
-        '/assets/fonts/VT323-Regular.ttf',
+        '/assets/fonts/8bit-Art-Sans-subset.woff2',
+        '/assets/fonts/VT323-Regular-subset.woff2',
       ]);
     })
   );
