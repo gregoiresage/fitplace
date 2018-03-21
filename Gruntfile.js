@@ -4,7 +4,10 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     jshint: {
-      all: ['Gruntfile.js', 'service-worker.js', 'js/app/*']
+      all: ['Gruntfile.js', 'service-worker.js', 'js/app/*'],
+      options: {
+        reporterOutput: ''
+      }
     },
 
     concat: {

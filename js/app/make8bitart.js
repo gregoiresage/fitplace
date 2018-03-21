@@ -185,7 +185,7 @@
     top : '20px'
   });
   DOM.$whatbox.css({
-    left : '560px',
+    left : '500px',
     top : '120px'
   });
   DOM.$toolbox.css({
