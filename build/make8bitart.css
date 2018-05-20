@@ -54,6 +54,7 @@ h2 {
 /* canvas */
 canvas {
   cursor: crosshair;
+  touch-action: none;
   display: block;
   image-rendering: optimizeSpeed;
   image-rendering: -moz-crisp-edges;
@@ -206,6 +207,10 @@ header h1 {
 input[type="submit"] {
   margin: .2em 0 .2em 0;
   font-size: .8em;
+}
+
+input[type="file"] {
+  max-width: 100%;
 }
 
 #pixel-size {
