@@ -1,18 +1,4 @@
 /**
-* draggybits
-* by css perverts aka nick & jenn
-*/
-
-.draggy.ui-hidden { display: none;}
-
-/** controls **/
-.draggy .controls { float: right; }
-.draggy .controls button { width: auto; height: auto; padding: 0; margin: 0; background: none; border: none; }
-.draggy .controls .ui-dragger { cursor: move; }
-.draggy .controls .ui-closer,
-.draggy .controls .ui-hider { cursor: pointer; }
-
-/**
 * make8bitart css
 * @author jenn schiffer
 */
