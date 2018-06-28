@@ -5,7 +5,6 @@ dependencies:
   grunt-contrib-cssmin: 2.2.1
   grunt-contrib-jshint: 1.1.0
   grunt-contrib-uglify: 3.3.0
-  grunt-contrib-watch: 1.1.0
 packages:
   /abbrev/1.1.1:
     dev: false
@@ -60,12 +59,6 @@ packages:
     dev: false
     resolution:
       integrity: sha1-7GphrlZIDAw8skHJVhjiCJL5Zyo=
-  /async/2.6.1:
-    dependencies:
-      lodash: 4.17.10
-    dev: false
-    resolution:
-      integrity: sha512-fNEiL2+AZt6AlAw/29Cr0UDe4sRAHCpEHh54WMz+Bb7QfNcFw4h3loofyJpLeQs4Yx7yuqu/2dLgM5hKOs6HlQ==
   /balanced-match/1.0.0:
     dev: false
     resolution:
@@ -87,15 +80,6 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha1-h2eKGdhLR9hZuDGZvVm84iKxBFQ=
-  /body/5.1.0:
-    dependencies:
-      continuable-cache: 0.3.1
-      error: 7.0.2
-      raw-body: 1.1.7
-      safe-json-parse: 1.0.1
-    dev: false
-    resolution:
-      integrity: sha1-5LoM5BCkaTYyM2dgnstOZVMSUGk=
   /brace-expansion/1.1.11:
     dependencies:
       balanced-match: 1.0.0
@@ -119,10 +103,6 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-Jw8HbFpywC9bZaR9+Uxf46J4iS8=
-  /bytes/1.0.0:
-    dev: false
-    resolution:
-      integrity: sha1-NWnt6Lo0MV+rmcPpLLBMciDeH6g=
   /bytes/3.0.0:
     dev: false
     engines:
@@ -242,10 +222,6 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha512-hIP3EEPs8tB9AT1L+NUqtwOAps4mk2Zob89MWXMHjHWg9milF/j4osnnQLXBCBFBk/tvIG/tUc9mOUJiPBhPXA==
-  /continuable-cache/0.3.1:
-    dev: false
-    resolution:
-      integrity: sha1-vXJ6f67XfnH/OYWskzUakSczrQ8=
   /cookie-signature/1.0.6:
     dev: false
     resolution:
@@ -285,12 +261,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==
-  /debug/3.1.0:
-    dependencies:
-      ms: 2.0.0
-    dev: false
-    resolution:
-      integrity: sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
   /decamelize/1.2.0:
     dev: false
     engines:
@@ -369,13 +339,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==
-  /error/7.0.2:
-    dependencies:
-      string-template: 0.2.1
-      xtend: 4.0.1
-    dev: false
-    resolution:
-      integrity: sha1-pfdf/02ZJhJt2sDqXcOOaJFTywI=
   /escape-html/1.0.3:
     dev: false
     resolution:
@@ -445,14 +408,6 @@ packages:
       node: '>= 0.10.0'
     resolution:
       integrity: sha1-avilAjUNsyRuzEvs9rWjTSL37VM=
-  /faye-websocket/0.10.0:
-    dependencies:
-      websocket-driver: 0.7.0
-    dev: false
-    engines:
-      node: '>=0.4.0'
-    resolution:
-      integrity: sha1-TkkvjQTftviQA1B/btvy1QHnxvQ=
   /figures/1.7.0:
     dependencies:
       escape-string-regexp: 1.0.5
@@ -509,14 +464,6 @@ packages:
     dev: false
     resolution:
       integrity: sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
-  /gaze/1.1.3:
-    dependencies:
-      globule: 1.2.1
-    dev: false
-    engines:
-      node: '>= 4.0.0'
-    resolution:
-      integrity: sha512-BRdNm8hbWzFzWHERTrejLqwHDfS4GibPoq5wjTPIoJHoBtKGPg3xAFfxmM+9ztbXelxcf2hwQcaz1PtmFeue8g==
   /get-stdin/4.0.1:
     dev: false
     engines:
@@ -561,16 +508,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-MJTUg1kjuLeQCJ+ccE4Vpa6kKVXkPYJ2mOCQyUuKLcLQsdrMCpBPUi8qVE6+YuaJkozeA9NusTAw3hLr8Xe5EQ==
-  /globule/1.2.1:
-    dependencies:
-      glob: 7.1.2
-      lodash: 4.17.10
-      minimatch: 3.0.4
-    dev: false
-    engines:
-      node: '>= 0.10'
-    resolution:
-      integrity: sha512-g7QtgWF4uYSL5/dn71WxubOrS7JVGCnFPEnoeChJmBnyR9Mw8nGoEwOgJL/RC2Te0WhbsEUCejfH8SZNJ+adYQ==
   /graceful-fs/4.1.11:
     dev: false
     engines:
@@ -632,17 +569,6 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-W9O7lJE3PlD8VCc5fyaf98QV7f5wEDiU4PBIh0+/6UBbk2LhgzEFS0/p+taH5UD3+PlEn7QPN0o06Z0To6SqXw==
-  /grunt-contrib-watch/1.1.0:
-    dependencies:
-      async: 2.6.1
-      gaze: 1.1.3
-      lodash: 4.17.10
-      tiny-lr: 1.1.1
-    dev: false
-    engines:
-      node: '>=0.10.0'
-    resolution:
-      integrity: sha512-yGweN+0DW5yM+oo58fRu/XIRrPcn3r4tQx+nL7eMRwjpvk+rQY6R8o94BPK0i2UhTg9FN21hS+m8vR8v9vXfeg==
   /grunt-known-options/1.1.0:
     dev: false
     engines:
@@ -778,10 +704,6 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha1-i1VoC7S+KDoLW/TqLjhYC+HZMg0=
-  /http-parser-js/0.4.13:
-    dev: false
-    resolution:
-      integrity: sha1-O9bW/ebjFyyTNMOzO2wZPYD+ETc=
   /iconv-lite/0.4.19:
     dev: false
     engines:
@@ -877,10 +799,6 @@ packages:
     dev: false
     resolution:
       integrity: sha1-HnJSkVzmgbQIJ+4UJIxG006apiw=
-  /livereload-js/2.3.0:
-    dev: false
-    resolution:
-      integrity: sha512-j1R0/FeGa64Y+NmqfZhyoVRzcFlOZ8sNlKzHjh4VvLULFACZhn68XrX5DFg2FhMvSMJmROuFxRSa560ECWKBMg==
   /load-json-file/1.1.0:
     dependencies:
       graceful-fs: 4.1.11
@@ -1162,27 +1080,12 @@ packages:
       node: '>=0.6'
     resolution:
       integrity: sha512-eRzhrN1WSINYCDCbrz796z37LOe3m5tmW7RQf6oBntukAG1nmovJvhnwHHRMAfeoItc1m2Hk02WER2aQ/iqs+A==
-  /qs/6.5.2:
-    dev: false
-    engines:
-      node: '>=0.6'
-    resolution:
-      integrity: sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
   /range-parser/1.2.0:
     dev: false
     engines:
       node: '>= 0.6'
     resolution:
       integrity: sha1-9JvmtIeJTdxA3MlKMi9hEJLgDV4=
-  /raw-body/1.1.7:
-    dependencies:
-      bytes: 1.0.0
-      string_decoder: 0.10.31
-    dev: false
-    engines:
-      node: '>= 0.8.0'
-    resolution:
-      integrity: sha1-HQJ8K/oRasxmI7yo8AAWVyqH1CU=
   /raw-body/2.3.2:
     dependencies:
       bytes: 3.0.0
@@ -1269,10 +1172,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
-  /safe-json-parse/1.0.1:
-    dev: false
-    resolution:
-      integrity: sha1-PnZyPjjf3aE8mx0poeB//uSzC1c=
   /safer-buffer/2.1.2:
     dev: false
     resolution:
@@ -1384,10 +1283,6 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
-  /string-template/0.2.1:
-    dev: false
-    resolution:
-      integrity: sha1-QpMuWYo1LQH8IuwzZ9nYTuxsmt0=
   /string_decoder/0.10.31:
     dev: false
     resolution:
@@ -1442,17 +1337,6 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-zjaXglF5nnWpsq470jSv6P9DwPvgLkuapYmfDm3JWOm0vkNTVF2tI4UrN2r6jH1qM/uc/WtxYY1hYoA2dOKj5w==
-  /tiny-lr/1.1.1:
-    dependencies:
-      body: 5.1.0
-      debug: 3.1.0
-      faye-websocket: 0.10.0
-      livereload-js: 2.3.0
-      object-assign: 4.1.1
-      qs: 6.5.2
-    dev: false
-    resolution:
-      integrity: sha512-44yhA3tsaRoMOjQQ+5v5mVdqef+kH6Qze9jTpqtVufgYjYt08zyZAwNwwVBj3i1rJMnR52IxOW0LK0vBzgAkuA==
   /trim-newlines/1.0.0:
     dev: false
     engines:
@@ -1523,21 +1407,6 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
-  /websocket-driver/0.7.0:
-    dependencies:
-      http-parser-js: 0.4.13
-      websocket-extensions: 0.1.3
-    dev: false
-    engines:
-      node: '>=0.8.0'
-    resolution:
-      integrity: sha1-DK+dLXVdk67gSdS90NP+LMoqJOs=
-  /websocket-extensions/0.1.3:
-    dev: false
-    engines:
-      node: '>=0.8.0'
-    resolution:
-      integrity: sha512-nqHUnMXmBzT0w570r2JpJxfiSD1IzoI+HGVdd3aZ0yNi3ngvQ4jv1dtHt5VGxfI2yj5yqImPhOK4vmIh2xMbGg==
   /which/1.3.1:
     dependencies:
       isexe: 2.0.0
@@ -1548,12 +1417,6 @@ packages:
     dev: false
     resolution:
       integrity: sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
-  /xtend/4.0.1:
-    dev: false
-    engines:
-      node: '>=0.4'
-    resolution:
-      integrity: sha1-pcbVMr5lbiPbgg77lDofBJmNY68=
 registry: 'https://registry.npmjs.org/'
 shrinkwrapMinorVersion: 7
 shrinkwrapVersion: 3
@@ -1564,4 +1427,3 @@ specifiers:
   grunt-contrib-cssmin: ^2.2.1
   grunt-contrib-jshint: ^1.1.0
   grunt-contrib-uglify: ^3.3.0
-  grunt-contrib-watch: ^1.1.0

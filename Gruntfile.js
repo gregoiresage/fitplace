@@ -52,23 +52,6 @@ module.exports = function(grunt) {
         dest: 'build',
         ext: '.min.css'
       },
-    },
-
-    watch: {
-      scripts: {
-        files: ['js/*/*.js'],
-        tasks: ['jshint','concat:dist','concat:app','uglify'],
-        options: {
-          spawn: false
-        }
-      },
-      css: {
-        files: ['css/*/*.css'],
-        tasks: ['concat:css','cssmin'],
-        options: {
-          spawn: false
-        }
-      }
     }
   });
 
@@ -76,7 +59,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', ['concat','uglify','cssmin','jshint']);
 
