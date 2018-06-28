@@ -20,16 +20,16 @@
 /* fonts */
 @font-face {
   font-family: 'VT323';
-  src: url('/assets/fonts/VT323-Regular-subset.woff2') format('woff2'),
-    url('/assets/fonts/VT323-Regular-subset.zopfli.woff') format('woff'),
-    url('/assets/fonts/VT323-Regular-subset.ttf') format('truetype');
+  src: url('/fonts/VT323-Regular-subset.woff2') format('woff2'),
+    url('/fonts/VT323-Regular-subset.zopfli.woff') format('woff'),
+    url('/fonts/VT323-Regular-subset.ttf') format('truetype');
   font-display: swap;
 }
 @font-face {
   font-family: '8bit Art Sans';
-  src: url('/assets/fonts/8bit-Art-Sans-subset.woff2') format('woff2'),
-    url('/assets/fonts/8bit-Art-Sans-subset.zopfli.woff') format('woff'),
-    url('/assets/fonts/8bit-Art-Sans-subset.ttf')  format('truetype');
+  src: url('/fonts/8bit-Art-Sans-subset.woff2') format('woff2'),
+    url('/fonts/8bit-Art-Sans-subset.zopfli.woff') format('woff'),
+    url('/fonts/8bit-Art-Sans-subset.ttf')  format('truetype');
   font-display: swap;
 }
 
@@ -314,7 +314,7 @@ input[type="file"] {
 
 .button.color.transparent {
   border-color: #ccc;
-  background: url('../assets/bg.png');
+  background: url('/assets/bg.png');
 }
 
 .button.color.current,
@@ -457,7 +457,7 @@ input[type="file"] {
   display: block;
   border: 5px solid #000;
   margin: 10px auto;
-  background: url('../assets/bg.png');
+  background: url('/assets/bg.png');
 }
 
 #pxon-modal-container textarea {
