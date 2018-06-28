@@ -6,7 +6,10 @@
   <link rel="preload" href="/assets/fonts/8bit-Art-Sans-subset.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/VT323-Regular-subset.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="build/make8bitart.min.css" />
-  <link rel="icon" href="assets/favicon.png" />
+  <link rel="icon" href="/assets/favicon.png" />
+  
+  <script src="build/app.min.js" defer></script>
+
 </head>
 
 <!--
@@ -175,7 +178,7 @@
       </ul>
 
       <button role="button" class="text-button" id="undo" disabled="disabled">undo</button>
-      <button role="button" class="text-button" id="redo" disabled="disabled" />redo</button>
+      <button role="button" class="text-button" id="redo" disabled="disabled">redo</button>
       <button role="button" class="text-button" id="new-canvas">new canvas</button>
     </div>
 
@@ -242,12 +245,12 @@
 
       <label for="save-local" class="local" id="save-local-form">
         to local storage:<br />
-        <button role="button" class="text-button" id="save-local" class="local">local store</button>
+        <button role="button" class="text-button local" id="save-local">local store</button>
       </label>
 
       <label for="export-pxon" class="pxon" id="export-pxon-form">
         export <a href="http://jennmoney.biz/pxon">pxon</a>:<br />
-        <button role="button" class="text-button" id="export-pxon" class="pxon">export pxon</button>
+        <button role="button" class="text-button pxon" id="export-pxon" >export pxon</button>
       </label>
     </div>
 
@@ -351,7 +354,7 @@
       <a href="#" target="_blank" download="art.png"><img id="finished-art" /></a>
 
       <p>Click or drag your art to your desktop to save!<br />
-        <button role="button" class="text-button"id="save-imgur">Or upload to imgur.com!</button>
+        <button role="button" class="text-button" id="save-imgur">Or upload to imgur.com!</button>
       </p>
       <p id="link-imgur"></p>
     </div>
@@ -402,8 +405,8 @@
              });
   }
 </script>
-<script src="build/app.min.js"></script>
 <script src="https://pmetrics.performancing.com/js" type="text/javascript"></script>
 <script type="text/javascript">try{ clicky.init(15102); }catch(e){}</script>
-<noscript><p><img alt="Performancing Metrics" width="1" height="1" src="//pmetrics.performancing.com/15102ns.gif" /></p></noscript></body>
+<noscript><p><img alt="Performancing Metrics" width="1" height="1" src="//pmetrics.performancing.com/15102ns.gif" /></p></noscript>
+  </body>
 </html>
