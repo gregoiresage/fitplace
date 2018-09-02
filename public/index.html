@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Socket Paint</title>
+
+  <style media="screen">
+    body {
+      background-color: rgb(200,200,200);
+      padding: 0;
+      margin: 0;
+    }
+    .palette {
+      display: flex;
+      justify-content: space-between;
+      padding: 1em;
+      background-color: #FFF;
+    }
+    .color {
+      display: inline-block;
+      height: 30px;
+      width: 30px;
+      border: 1px solid black;
+    }
+    .white {
+      background-color: #FFF;
+    }
+    .light-grey {
+      background-color: #E4E4E4;
+    }
+    .dark-grey {
+      background-color: #888888;
+    }
+    .black {
+      background-color: black;
+    }
+    .pink {
+      background-color: pink;
+    }
+    .red {
+      background-color: red;
+    }
+    .orange {
+      background-color: orange;
+    }
+    .brown {
+      background-color: #A36942;
+    }
+    .yellow {
+      background-color: yellow;
+    }
+    .light-green {
+      background-color: #90E149;
+    }
+    .green {
+      background-color: green;
+    }
+    .light-blue {
+      background-color: #02D3DA;
+    }
+    .dark-blue {
+      background-color: #0083C7;
+    }
+    .blue {
+      background-color: blue;
+    }
+    .navy {
+      background-color: navy;
+    }
+    .light-purple {
+      background-color: #CD6EE4;
+    }
+    .purple {
+      background-color: purple;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="p5canvas"></div>
+  <div class="palette">
+    <div class="color white"></div>
+    <div class="color light-grey"></div>
+    <div class="color dark-grey"></div>
+    <div class="color black"></div>
+    <div class="color pink"></div>
+    <div class="color red"></div>
+    <div class="color orange"></div>
+    <div class="color brown"></div>
+    <div class="color yellow"></div>
+    <div class="color light-green"></div>
+    <div class="color green"></div>
+    <div class="color light-blue"></div>
+    <div class="color dark-blue"></div>
+    <div class="color blue"></div>
+    <div class="color navy"></div>
+    <div class="color light-purple"></div>
+    <div class="color purple"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+  </script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.3/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.3/addons/p5.dom.min.js"></script>
+  <script type="text/javascript" src="paint.js"></script>
+  <script type="text/javascript" src="cell.js"></script>
+
+</body>
+</html>
