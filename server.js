@@ -9,7 +9,7 @@ var savePixels = require('save-pixels')
 var colorHistory = [];
 io.on('connection', function(socket){
 
-  if (colorHistory.length){
+  if(colorHistory.length){
     colorHistory.forEach(function(color){
       io.emit('newPaint', color)
     })
@@ -29,15 +29,15 @@ app.use(express.static('public'))
 
 app.get('/image', (request, response) => {
 
-  var image = zeros([20, 20, 3])
+  var image = zeros([20, 20, 4])
 
   colorHistory.forEach(e => {
     const color = e.color.match(/\d+/g)
     image.set(e.i, e.j, 0, color[0])
     image.set(e.i, e.j, 1, color[1])
     image.set(e.i, e.j, 2, color[2])
-
-  });
+    image.set(e.i, e.j, 3, 255)
+  })
  
   //Save to a file
   savePixels(image, 'png').pipe(response)
