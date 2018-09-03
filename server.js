@@ -7,16 +7,23 @@ var fs = require('fs');
 const zeros = require('zeros')
 const savePixels = require('save-pixels')
 
-
+const S3_BUCKET = process.env.S3_BUCKET;
 const aws = require('aws-sdk');
 aws.config.region = 'us-east-2';
 
 const s3 = new aws.S3()
+const historyfile = 'history.json'
 // var s3Stream = require('s3-upload-stream')(new aws.S3())
 
 var image = zeros([20, 20, 4])
 
 var colorHistory = [];
+
+s3.getObject({Bucket: S3_BUCKET, Key: historyfile}, (err, data) => {
+  if (err) console.log(err, err.stack); // an error occurred
+  else     console.log(data);           // successful response
+})
+
 io.on('connection', function(socket){
 
   if(colorHistory.length){
@@ -53,8 +60,6 @@ server.listen(process.env.PORT || 3000, () => {
   console.log('listening on *:3000')
 })
 
-const S3_BUCKET = process.env.S3_BUCKET;
-
 app.get('/upload', (request, response) => {
   // const s3Params = {
   //   Bucket: S3_BUCKET,
@@ -70,7 +75,7 @@ app.get('/upload', (request, response) => {
 
   s3.putObject({
     Bucket: S3_BUCKET,
-    Key: 'colorHistory.json',
+    Key: historyfile,
     Body: JSON.stringify(colorHistory), 
     ContentType: "application/json"
   },
