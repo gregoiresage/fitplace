@@ -54,6 +54,8 @@ server.listen(process.env.PORT || 3000, () => {
 
 const S3_BUCKET = process.env.S3_BUCKET;
 
+console.log(process.env.AWS_ACCESS_KEY_ID)
+
 app.get('/upload', (request, response) => {
   const s3Params = {
     Bucket: S3_BUCKET,
