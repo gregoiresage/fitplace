@@ -17,7 +17,7 @@ const s3 = new aws.S3()
 const objectConfig = {Bucket: S3_BUCKET, Key: 'history.json'}
 
 var colorHistory = []
-var image = zeros([SIZE, SIZE, 3], uint8)
+var image = zeros([SIZE, SIZE, 3], 'uint8')
 for(var i=0; i<SIZE; i++) {
   for(var j=0; ij<SIZE; j++) {
     image.set(i, j, 0, 0xFF)
