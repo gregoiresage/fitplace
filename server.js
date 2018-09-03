@@ -3,7 +3,7 @@ var app = express()
 var server = require('http').createServer(app)
 var io = require('socket.io')(server)
 
-const ndarray = require('ndarray')
+// const ndarray = require('ndarray')
 const zeros = require('zeros')
 const savePixels = require('save-pixels')
 
@@ -98,13 +98,13 @@ app.get('/upload', (request, response) => {
 
 process.on('SIGTERM', () => {
   console.log('Saving history')
+  const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
+  console.log(JSON.stringify(config))
   s3.putObject(
     { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
     (resp, error) => {
       console.log('History saved')
-      console.log(resp)
-      console.log(error)
-      server.close.bind(server)
     }
   )
+  server.close.bind(server)
 })
