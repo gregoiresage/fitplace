@@ -12,6 +12,7 @@ palette.forEach(function(color) {
     // update myColor
     var c = window.getComputedStyle(color, null).backgroundColor
     myColor = c;
+    console.log(myColor)
     ctn.style.backgroundColor = c;
   })
 })
