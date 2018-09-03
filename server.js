@@ -72,6 +72,9 @@ app.get('/upload', (request, response) => {
   // const ws = fs.createWriteStream(fileName)
   savePixels(image, 'png').pipe(upload)
 
+  console.log("Done");
+  return response.end();
+
   // const s3 = new aws.S3();
   // const s3Params = {
   //   Bucket: S3_BUCKET,
