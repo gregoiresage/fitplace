@@ -57,6 +57,12 @@ socket.on('newPaint', function(event){
   grid[event.i][event.j].updateColor(event.color)
 })
 
+socket.on('history', function(history){
+  history.forEach(event => {
+    grid[event.i][event.j].updateColor(event.color)
+  });
+})
+
 // socket.on('setup', function(event){
 //   // get initial grid state
 // })
