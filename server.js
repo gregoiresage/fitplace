@@ -103,7 +103,8 @@ process.on('SIGTERM', () => {
   console.log('Saving history')
   const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
   console.log(JSON.stringify(config))
-  s3.putObject(
+  const s2 = new aws.S3()
+  s2.putObject(
     { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
     (resp, error) => {
       console.log('History saved')
