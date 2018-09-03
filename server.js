@@ -26,6 +26,13 @@ for(var i=0; i<SIZE; i++) {
   }
 }
 
+const saveEvent = (event) => {
+  const color = event.color.match(/\d+/g)
+  image.set(event.i, event.j, 0, color[0])
+  image.set(event.i, event.j, 1, color[1])
+  image.set(event.i, event.j, 2, color[2])
+}
+
 s3.getObject(
   objectConfig,
   (err, data) => {
@@ -34,6 +41,7 @@ s3.getObject(
     }
     else {
       colorHistory = JSON.parse(data.Body.toString())
+      history.forEach(event => saveEvent(event))
     }
   }
 )
@@ -46,10 +54,7 @@ io.on('connection', function(socket){
 
   socket.on('color', (event) => {
     colorHistory.push(event)
-    const color = event.color.match(/\d+/g)
-    image.set(event.i, event.j, 0, color[0])
-    image.set(event.i, event.j, 1, color[1])
-    image.set(event.i, event.j, 2, color[2])
+    saveEvent(event)
     io.emit('newPaint', event)
   })
 
