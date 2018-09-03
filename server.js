@@ -68,14 +68,14 @@ app.get('/upload', (request, response) => {
   s3.getSignedUrl('putObject', s3Params, (err, data) => {
     if(err){
       console.log(err);
-      return res.end();
+      return response.end();
     }
     const returnData = {
       signedRequest: data,
       url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
     };
-    res.write(JSON.stringify(returnData));
-    res.end();
+    response.write(JSON.stringify(returnData));
+    response.end();
   });
 })
 
