@@ -18,7 +18,7 @@ var image = zeros([20, 20, 4])
 
 var colorHistory = [];
 
-const objectConfig = {Bucket: S3_BUCKET, Key: historyfile, ContentType: "application/json"}
+const objectConfig = {Bucket: S3_BUCKET, Key: historyfile}
 s3.getObject(objectConfig, 
   (err, data) => {
     if (err) {
@@ -67,11 +67,11 @@ server.listen(process.env.PORT || 3000, () => {
 })
 
 app.get('/upload', (request, response) => {
-  s3.putObject({ ...objectConfig, Body: JSON.stringify(colorHistory) })
+  s3.putObject({ ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' })
   return response.end()
 })
 
 process.on('SIGTERM', () => {
-  console.log("BYEBYEBYEBYEYBEY")
+  console.log('BYEBYEBYEBYEYBEY')
   server.close.bind(server)
 })
