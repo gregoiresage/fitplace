@@ -96,6 +96,9 @@ app.get('/upload', (request, response) => {
   return response.end()
 })
 
+process.on('SIGINT', () => {
+  console.log('SIGINT')
+})
 process.on('SIGTERM', () => {
   console.log('Saving history')
   const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
