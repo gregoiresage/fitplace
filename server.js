@@ -67,13 +67,6 @@ io.on('connection', function(socket){
 app.use(express.static('public'))
 
 app.get('/image', (request, response) => {
-  // history.forEach(event => {
-  //   const color = event.color.match(/\d+/g)
-  //   image.set(event.i, event.j, 0, color[0])
-  //   image.set(event.i, event.j, 1, color[1])
-  //   image.set(event.i, event.j, 2, color[2])
-  //   // image.set(event.i, event.j, 3, 255)
-  // });
   savePixels(image, 'png').pipe(response)
 })
 
@@ -96,15 +89,10 @@ app.get('/upload', (request, response) => {
   return response.end()
 })
 
-process.on('SIGINT', () => {
-  console.log('SIGINT')
-})
 process.on('SIGTERM', () => {
   console.log('Saving history')
   const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
-  console.log(JSON.stringify(config))
-  const s2 = new aws.S3()
-  s2.putObject(
+  s3.putObject(
     { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
     (resp, error) => {
       console.log('History saved')
