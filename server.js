@@ -11,7 +11,10 @@ const savePixels = require('save-pixels')
 const aws = require('aws-sdk');
 aws.config.region = 'us-east-2';
 
-var s3Stream = require('s3-upload-stream')(new aws.S3())
+var s3Stream = require('s3-upload-stream')(new aws.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+}))
 
 var image = zeros([20, 20, 4])
 
