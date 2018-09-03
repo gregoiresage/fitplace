@@ -41,7 +41,7 @@ s3.getObject(
     }
     else {
       colorHistory = JSON.parse(data.Body.toString())
-      history.forEach(event => saveEvent(event))
+      colorHistory.forEach(event => saveEvent(event))
     }
   }
 )
