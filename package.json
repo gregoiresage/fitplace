@@ -10,10 +10,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "2.x",
     "express": "^4.15.3",
+    "s3-upload-stream": "^1.0.7",
     "save-pixels": "^2.3.4",
     "socket.io": "^2.0.2",
-    "zeros": "^1.0.0",
-    "aws-sdk": "2.x"
+    "zeros": "^1.0.0"
   }
 }

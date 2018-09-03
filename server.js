@@ -7,8 +7,11 @@ var fs = require('fs');
 const zeros = require('zeros')
 const savePixels = require('save-pixels')
 
+
 const aws = require('aws-sdk');
 aws.config.region = 'us-east-2';
+
+var s3Stream = require('s3-upload-stream')(new aws.S3())
 
 var image = zeros([20, 20, 4])
 
@@ -52,11 +55,6 @@ server.listen(process.env.PORT || 3000, () => {
 const S3_BUCKET = process.env.S3_BUCKET;
 
 app.get('/upload', (request, response) => {
-  const fileName = 'image.png'
-  const ws = fs.createWriteStream(fileName)
-  savePixels(image, 'png').pipe(ws)
-
-  const s3 = new aws.S3();
   const s3Params = {
     Bucket: S3_BUCKET,
     Key: fileName,
@@ -64,19 +62,37 @@ app.get('/upload', (request, response) => {
     ContentType: 'image/png',
     ACL: 'public-read'
   };
+  var upload = s3Stream.upload(s3Params);
+   
+  // Optional configuration
+  upload.maxPartSize(20971520); // 20 MB
+  upload.concurrentParts(5);
 
-  s3.getSignedUrl('putObject', s3Params, (err, data) => {
-    if(err){
-      console.log(err);
-      return response.end();
-    }
-    const returnData = {
-      signedRequest: data,
-      url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
-    };
-    response.write(JSON.stringify(returnData));
-    response.end();
-  });
+  // const fileName = 'image.png'
+  // const ws = fs.createWriteStream(fileName)
+  savePixels(image, 'png').pipe(upload)
+
+  // const s3 = new aws.S3();
+  // const s3Params = {
+  //   Bucket: S3_BUCKET,
+  //   Key: fileName,
+  //   Expires: 60,
+  //   ContentType: 'image/png',
+  //   ACL: 'public-read'
+  // };
+
+  // s3.getSignedUrl('putObject', s3Params, (err, data) => {
+  //   if(err){
+  //     console.log(err);
+  //     return response.end();
+  //   }
+  //   const returnData = {
+  //     signedRequest: data,
+  //     url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+  //   };
+  //   response.write(JSON.stringify(returnData));
+  //   response.end();
+  // });
 })
 
 process.on('SIGTERM', () => {
