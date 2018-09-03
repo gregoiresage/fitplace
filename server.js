@@ -101,10 +101,10 @@ process.on('SIGTERM', () => {
   s3.putObject(
     { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
     (resp, error) => {
+      console.log('History saved')
       console.log(resp)
       console.log(error)
+      server.close.bind(server)
     }
   )
-  console.log('History saved')
-  server.close.bind(server)
 })
