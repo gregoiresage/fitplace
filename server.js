@@ -57,7 +57,7 @@ const S3_BUCKET = process.env.S3_BUCKET;
 app.get('/upload', (request, response) => {
   const s3Params = {
     Bucket: S3_BUCKET,
-    Key: fileName,
+    Key: "image.png",
     Expires: 60,
     ContentType: 'image/png',
     ACL: 'public-read'
