@@ -11,7 +11,8 @@ const savePixels = require('save-pixels')
 const aws = require('aws-sdk');
 aws.config.region = 'us-east-2';
 
-var s3Stream = require('s3-upload-stream')(new aws.S3())
+const s3 = new aws.S3()
+// var s3Stream = require('s3-upload-stream')(new aws.S3())
 
 var image = zeros([20, 20, 4])
 
@@ -54,50 +55,30 @@ server.listen(process.env.PORT || 3000, () => {
 
 const S3_BUCKET = process.env.S3_BUCKET;
 
-console.log(process.env.AWS_ACCESS_KEY_ID)
-
 app.get('/upload', (request, response) => {
-  const s3Params = {
-    Bucket: S3_BUCKET,
-    Key: "image.png",
-    Expires: 60,
-    ContentType: 'image/png',
-    ACL: 'public-read'
-  };
-  var upload = s3Stream.upload(s3Params);
-   
-  // Optional configuration
-  upload.maxPartSize(20971520); // 20 MB
-  upload.concurrentParts(5);
-
-  // const fileName = 'image.png'
-  // const ws = fs.createWriteStream(fileName)
-  savePixels(image, 'png').pipe(upload)
-
-  console.log("Done");
-  return response.end();
-
-  // const s3 = new aws.S3();
   // const s3Params = {
   //   Bucket: S3_BUCKET,
-  //   Key: fileName,
+  //   Key: "image.png",
   //   Expires: 60,
   //   ContentType: 'image/png',
   //   ACL: 'public-read'
   // };
+  // var upload = s3Stream.upload(s3Params);
+  // upload.maxPartSize(20971520); // 20 MB
+  // upload.concurrentParts(5);
+  // savePixels(image, 'png').pipe(upload)
 
-  // s3.getSignedUrl('putObject', s3Params, (err, data) => {
-  //   if(err){
-  //     console.log(err);
-  //     return response.end();
-  //   }
-  //   const returnData = {
-  //     signedRequest: data,
-  //     url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
-  //   };
-  //   response.write(JSON.stringify(returnData));
-  //   response.end();
-  // });
+  s3.putObject({
+    Bucket: S3_BUCKET,
+    Key: 'colorHistory.json',
+    Body: JSON.stringify(colorHistory), 
+    ContentType: "application/json"
+  },
+  function(err,data){
+    console.log(JSON.stringify(err)+" "+JSON.stringify(data));
+  });
+
+  return response.end();
 })
 
 process.on('SIGTERM', () => {
