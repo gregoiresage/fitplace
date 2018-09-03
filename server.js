@@ -13,15 +13,18 @@ aws.config.region = 'us-east-2';
 
 const s3 = new aws.S3()
 const historyfile = 'history.json'
-// var s3Stream = require('s3-upload-stream')(new aws.S3())
 
 var image = zeros([20, 20, 4])
 
 var colorHistory = [];
 
 s3.getObject({Bucket: S3_BUCKET, Key: historyfile}, (err, data) => {
-  if (err) console.log(err, err.stack); // an error occurred
-  else     console.log(data);           // successful response
+  if (err) {
+    console.log(err, err.stack); // an error occurred
+  }
+  else {
+    console.log(data.Body.toString());           // successful response
+  }
 })
 
 io.on('connection', function(socket){
@@ -61,18 +64,6 @@ server.listen(process.env.PORT || 3000, () => {
 })
 
 app.get('/upload', (request, response) => {
-  // const s3Params = {
-  //   Bucket: S3_BUCKET,
-  //   Key: "image.png",
-  //   Expires: 60,
-  //   ContentType: 'image/png',
-  //   ACL: 'public-read'
-  // };
-  // var upload = s3Stream.upload(s3Params);
-  // upload.maxPartSize(20971520); // 20 MB
-  // upload.concurrentParts(5);
-  // savePixels(image, 'png').pipe(upload)
-
   s3.putObject({
     Bucket: S3_BUCKET,
     Key: historyfile,
