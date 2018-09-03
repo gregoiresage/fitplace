@@ -8,7 +8,7 @@ const zeros = require('zeros')
 const savePixels = require('save-pixels')
 
 const aws = require('aws-sdk');
-aws.config.region = 'eu-west-1';
+aws.config.region = 'us-east-2';
 
 var image = zeros([20, 20, 4])
 
@@ -79,7 +79,7 @@ app.get('/upload', (request, response) => {
   });
 })
 
-// process.on('SIGTERM', () => {
-//   console.log("BYEBYEBYEBYEYBEY")
-//   server.close.bind(server)
-// })
+process.on('SIGTERM', () => {
+  console.log("BYEBYEBYEBYEYBEY")
+  server.close.bind(server)
+})
