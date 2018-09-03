@@ -18,25 +18,27 @@ var image = zeros([20, 20, 4])
 
 var colorHistory = [];
 
-s3.getObject({Bucket: S3_BUCKET, Key: historyfile}, (err, data) => {
-  if (err) {
-    // an error occurred
-    console.log(err, err.stack)
+const objectConfig = {Bucket: S3_BUCKET, Key: historyfile, ContentType: "application/json"}
+s3.getObject(objectConfig, 
+  (err, data) => {
+    if (err) {
+      console.log(err, err.stack)
+    }
+    else {
+      colorHistory = JSON.parse(data.Body.toString())
+    }
   }
-  else {
-    colorHistory = JSON.parse(data.Body.toString())
-  }
-})
+)
 
 io.on('connection', function(socket){
 
   if(colorHistory.length){
-    colorHistory.forEach(function(event){
+    colorHistory.forEach((event) => {
       io.emit('newPaint', event)
     })
   }
 
-  socket.on('color', function(event){
+  socket.on('color', (event) => {
     colorHistory.push(event)
 
     console.log(event)
@@ -50,7 +52,7 @@ io.on('connection', function(socket){
     io.emit('newPaint', event)
   })
 
-  socket.on('disconnect', function(){
+  socket.on('disconnect', () => {
     console.log('user disconnected')
   })
 
@@ -65,17 +67,8 @@ server.listen(process.env.PORT || 3000, () => {
 })
 
 app.get('/upload', (request, response) => {
-  s3.putObject({
-    Bucket: S3_BUCKET,
-    Key: historyfile,
-    Body: JSON.stringify(colorHistory), 
-    ContentType: "application/json"
-  },
-  function(err,data){
-    console.log(JSON.stringify(err)+" "+JSON.stringify(data));
-  });
-
-  return response.end();
+  s3.putObject({ ...objectConfig, Body: JSON.stringify(colorHistory) })
+  return response.end()
 })
 
 process.on('SIGTERM', () => {
