@@ -94,7 +94,13 @@ server.listen(process.env.PORT || 3000, () => {
 
 process.on('SIGTERM', () => {
   console.log('Saving history')
-  s3.putObject({ ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' })
+  s3.putObject(
+    { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
+    (resp, error) => {
+      console.log(resp)
+      console.log(error)
+    }
+  )
   console.log('History saved')
   server.close.bind(server)
 })
