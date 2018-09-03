@@ -20,10 +20,11 @@ var colorHistory = [];
 
 s3.getObject({Bucket: S3_BUCKET, Key: historyfile}, (err, data) => {
   if (err) {
-    console.log(err, err.stack); // an error occurred
+    // an error occurred
+    console.log(err, err.stack)
   }
   else {
-    console.log(data.Body.toString());           // successful response
+    colorHistory = JSON.parse(data.Body.toString())
   }
 })
 
