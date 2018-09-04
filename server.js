@@ -8,30 +8,29 @@ var redis_client = require('redis').createClient(process.env.REDISCLOUD_URL, {no
 const zeros = require('zeros')
 const savePixels = require('save-pixels')
 
-const SIZE   = 20
+const SIZE   = 300
+const GRID   = 20
+const RATIO  = SIZE / GRID
 
 var colorHistory = []
-var image = zeros([300, 300, 3], 'uint8')
-for(var i=0; i<300; i++) {
-  for(var j=0; j<300; j++) {
+var image = zeros([SIZE, SIZE, 3], 'uint8')
+for(var i=0; i<SIZE; i++) {
+  for(var j=0; j<SIZE; j++) {
     for(var c=0; c<3; c++){
-      image.set(i, j, 0, 0xFF)
+      image.set(i, j, c, 0xFF)
     }
   }
 }
 
 const saveEvent = (event) => {
   const color = event.color.match(/\d+/g)
-  for(var k=0; k<300/SIZE; k++) {
-    for(var l=0; l<300/SIZE; l++) {
+  for(var k=0; k<RATIO; k++) {
+    for(var l=0; l<RATIO; l++) {
       for(var c=0; c<3; c++){
-        image.set(event.i+k, event.j+l, c, color[c])
+        image.set(event.i*RATIO+k, event.j*RATIO+l, c, color[c])
       }
     }
   }
-  image.set(event.i, event.j, 0, color[0])
-  image.set(event.i, event.j, 1, color[1])
-  image.set(event.i, event.j, 2, color[2])
 }
 
 redis_client.get('history', function (err, reply) {
