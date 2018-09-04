@@ -14,10 +14,14 @@ const RATIO  = SIZE / GRID
 
 var colorHistory = []
 var image = zeros([SIZE, SIZE, 3], 'uint8')
-for(var i=0; i<SIZE; i++) {
-  for(var j=0; j<SIZE; j++) {
-    for(var c=0; c<3; c++){
-      image.set(i, j, c, 0xFF)
+
+const reset = () => {
+  colorHistory = []
+  for(var i=0; i<SIZE; i++) {
+    for(var j=0; j<SIZE; j++) {
+      for(var c=0; c<3; c++){
+        image.set(i, j, c, 0xFF)
+      }
     }
   }
 }
@@ -32,6 +36,8 @@ const saveEvent = (event) => {
     }
   }
 }
+
+reset()
 
 redis_client.get('history', function (err, reply) {
   console.log(err)
@@ -63,6 +69,10 @@ app.use(express.static('public'))
 
 app.get('/image', (request, response) => {
   savePixels(image, 'png').pipe(response)
+})
+
+app.get('/reset', (request, response) => {
+  reset()
 })
 
 server.listen(process.env.PORT || 3000, () => {
