@@ -2,22 +2,13 @@ const express = require('express')
 var app = express()
 var server = require('http').createServer(app)
 var io = require('socket.io')(server)
+var redis_client = require('redis').createClient(process.env.REDISCLOUD_URL, {no_ready_check: true});
 
 // const ndarray = require('ndarray')
 const zeros = require('zeros')
 const savePixels = require('save-pixels')
 
-// const S3_BUCKET = process.env.S3_BUCKET
-// const aws = require('aws-sdk')
-// aws.config.region = 'us-east-2'
-
-var redis = require('redis');
-var client = redis.createClient(process.env.REDISCLOUD_URL, {no_ready_check: true});
-
 const SIZE   = 20
-
-// const s3 = new aws.S3()
-// const objectConfig = {Bucket: S3_BUCKET, Key: 'history.json'}
 
 var colorHistory = []
 var image = zeros([SIZE, SIZE, 3], 'uint8')
@@ -36,26 +27,12 @@ const saveEvent = (event) => {
   image.set(event.i, event.j, 2, color[2])
 }
 
-client.get('history', function (err, reply) {
+redis_client.get('history', function (err, reply) {
   console.log(err)
-  console.log(reply); // Will print `bar`
   if(reply) {
     colorHistory = JSON.parse(reply)
   }
-});
-
-// s3.getObject(
-//   objectConfig,
-//   (err, data) => {
-//     if (err) {
-//       console.log(err, err.stack)
-//     }
-//     else {
-//       colorHistory = JSON.parse(data.Body.toString())
-//       colorHistory.forEach(event => saveEvent(event))
-//     }
-//   }
-// )
+})
 
 io.on('connection', function(socket){
 
@@ -85,36 +62,9 @@ server.listen(process.env.PORT || 3000, () => {
   console.log('listening on *:3000')
 })
 
-app.get('/upload', (request, response) => {
-  client.set('history', JSON.stringify(colorHistory));
-  // s3.putObject(
-  //   { 
-  //     ...objectConfig,
-  //     Body: JSON.stringify(colorHistory),
-  //     ContentType: 'application/json'
-  //   },
-  //   (resp, error) => {
-  //     console.log(resp)
-  //     console.log(error)
-  //   }
-  // )
-  return response.end()
-})
-
-process.on('exit', () => {
-  console.log('exiiiiiiiiiiiiiit')
-})
-
 process.on('SIGTERM', () => {
   console.log('Saving history')
-  console.log(JSON.stringify(colorHistory))
-  client.set('history', JSON.stringify(colorHistory));
-  // const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
-  // s3.putObject(
-  //   { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
-  //   (resp, error) => {
-  //     console.log('History saved')
-  //   }
-  // )
+  redis_client.set('history', JSON.stringify(colorHistory))
+  console.log('History saved')
   server.close.bind(server)
 })
