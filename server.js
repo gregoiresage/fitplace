@@ -73,6 +73,7 @@ app.get('/image', (request, response) => {
 
 app.get('/reset', (request, response) => {
   reset()
+  response.end()
 })
 
 server.listen(process.env.PORT || 3000, () => {
