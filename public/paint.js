@@ -1,6 +1,6 @@
 var cols;
 var rows;
-w = 30;
+w = 600/50;
 var grid;
 
 var myColor = 'rgb(255, 255, 255)'

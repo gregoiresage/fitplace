@@ -8,8 +8,8 @@ var redis_client = require('redis').createClient(process.env.REDISCLOUD_URL, {no
 const zeros = require('zeros')
 const savePixels = require('save-pixels')
 
-const SIZE   = 20
-const GRID   = 20
+const SIZE   = 50
+const GRID   = 50
 const RATIO  = SIZE / GRID
 
 var colorHistory = []
