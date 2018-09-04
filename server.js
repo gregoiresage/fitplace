@@ -8,7 +8,7 @@ var redis_client = require('redis').createClient(process.env.REDISCLOUD_URL, {no
 const zeros = require('zeros')
 const savePixels = require('save-pixels')
 
-const SIZE   = 300
+const SIZE   = 20
 const GRID   = 20
 const RATIO  = SIZE / GRID
 
