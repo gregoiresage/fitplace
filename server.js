@@ -36,9 +36,12 @@ const saveEvent = (event) => {
   image.set(event.i, event.j, 2, color[2])
 }
 
-client.get('history', function (err, reply) {
+client.get('history2', function (err, reply) {
   console.log(err)
   console.log(reply); // Will print `bar`
+  if(reply) {
+    colorHistory = reply
+  }
 });
 
 // s3.getObject(
@@ -83,7 +86,7 @@ server.listen(process.env.PORT || 3000, () => {
 })
 
 app.get('/upload', (request, response) => {
-  client.set('history', JSON.stringify(colorHistory));
+  client.set('history2', colorHistory);
   // s3.putObject(
   //   { 
   //     ...objectConfig,
@@ -105,7 +108,7 @@ process.on('exit', () => {
 process.on('SIGTERM', () => {
   console.log('Saving history')
   console.log(JSON.stringify(colorHistory))
-  client.set('history', JSON.stringify(colorHistory));
+  client.set('history2', colorHistory);
   // const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
   // s3.putObject(
   //   { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
