@@ -38,7 +38,7 @@ const saveEvent = (event) => {
 
 client.get('history', function (err, reply) {
   console.log(err)
-  console.log(reply.toString()); // Will print `bar`
+  console.log(reply); // Will print `bar`
 });
 
 // s3.getObject(
