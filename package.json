@@ -12,6 +12,7 @@
   "dependencies": {
     "aws-sdk": "2.x",
     "express": "^4.15.3",
+    "redis": "^2.8.0",
     "save-pixels": "^2.3.4",
     "socket.io": "^2.0.2",
     "zeros": "^1.0.0"

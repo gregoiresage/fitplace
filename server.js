@@ -7,9 +7,12 @@ var io = require('socket.io')(server)
 const zeros = require('zeros')
 const savePixels = require('save-pixels')
 
-const S3_BUCKET = process.env.S3_BUCKET
-const aws = require('aws-sdk')
-aws.config.region = 'us-east-2'
+// const S3_BUCKET = process.env.S3_BUCKET
+// const aws = require('aws-sdk')
+// aws.config.region = 'us-east-2'
+
+var redis = require('redis');
+var client = redis.createClient(process.env.REDISCLOUD_URL, {no_ready_check: true});
 
 const SIZE   = 20
 
@@ -33,18 +36,23 @@ const saveEvent = (event) => {
   image.set(event.i, event.j, 2, color[2])
 }
 
-s3.getObject(
-  objectConfig,
-  (err, data) => {
-    if (err) {
-      console.log(err, err.stack)
-    }
-    else {
-      colorHistory = JSON.parse(data.Body.toString())
-      colorHistory.forEach(event => saveEvent(event))
-    }
-  }
-)
+client.get('history', function (err, reply) {
+  console.log(err)
+  console.log(reply.toString()); // Will print `bar`
+});
+
+// s3.getObject(
+//   objectConfig,
+//   (err, data) => {
+//     if (err) {
+//       console.log(err, err.stack)
+//     }
+//     else {
+//       colorHistory = JSON.parse(data.Body.toString())
+//       colorHistory.forEach(event => saveEvent(event))
+//     }
+//   }
+// )
 
 io.on('connection', function(socket){
 
@@ -74,29 +82,29 @@ server.listen(process.env.PORT || 3000, () => {
   console.log('listening on *:3000')
 })
 
-app.get('/upload', (request, response) => {
-  s3.putObject(
-    { 
-      ...objectConfig,
-      Body: JSON.stringify(colorHistory),
-      ContentType: 'application/json'
-    },
-    (resp, error) => {
-      console.log(resp)
-      console.log(error)
-    }
-  )
-  return response.end()
-})
+// app.get('/upload', (request, response) => {
+//   s3.putObject(
+//     { 
+//       ...objectConfig,
+//       Body: JSON.stringify(colorHistory),
+//       ContentType: 'application/json'
+//     },
+//     (resp, error) => {
+//       console.log(resp)
+//       console.log(error)
+//     }
+//   )
+//   return response.end()
+// })
 
 process.on('SIGTERM', () => {
   console.log('Saving history')
-  const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
-  s3.putObject(
-    { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
-    (resp, error) => {
-      console.log('History saved')
-    }
-  )
+  // const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
+  // s3.putObject(
+  //   { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
+  //   (resp, error) => {
+  //     console.log('History saved')
+  //   }
+  // )
   server.close.bind(server)
 })
