@@ -16,8 +16,8 @@ var client = redis.createClient(process.env.REDISCLOUD_URL, {no_ready_check: tru
 
 const SIZE   = 20
 
-const s3 = new aws.S3()
-const objectConfig = {Bucket: S3_BUCKET, Key: 'history.json'}
+// const s3 = new aws.S3()
+// const objectConfig = {Bucket: S3_BUCKET, Key: 'history.json'}
 
 var colorHistory = []
 var image = zeros([SIZE, SIZE, 3], 'uint8')
