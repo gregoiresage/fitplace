@@ -22,8 +22,8 @@ for(var i=0; i<300; i++) {
 
 const saveEvent = (event) => {
   const color = event.color.match(/\d+/g)
-  for(var k=0; k<300/SIZE; j++) {
-    for(var l=0; l<300/SIZE; j++) {
+  for(var k=0; k<300/SIZE; k++) {
+    for(var l=0; l<300/SIZE; l++) {
       for(var c=0; c<3; c++){
         image.set(event.i+k, event.j+l, c, color[c])
       }
