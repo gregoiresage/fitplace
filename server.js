@@ -82,23 +82,25 @@ server.listen(process.env.PORT || 3000, () => {
   console.log('listening on *:3000')
 })
 
-// app.get('/upload', (request, response) => {
-//   s3.putObject(
-//     { 
-//       ...objectConfig,
-//       Body: JSON.stringify(colorHistory),
-//       ContentType: 'application/json'
-//     },
-//     (resp, error) => {
-//       console.log(resp)
-//       console.log(error)
-//     }
-//   )
-//   return response.end()
-// })
+app.get('/upload', (request, response) => {
+  client.set('history', JSON.stringify(colorHistory));
+  // s3.putObject(
+  //   { 
+  //     ...objectConfig,
+  //     Body: JSON.stringify(colorHistory),
+  //     ContentType: 'application/json'
+  //   },
+  //   (resp, error) => {
+  //     console.log(resp)
+  //     console.log(error)
+  //   }
+  // )
+  return response.end()
+})
 
 process.on('SIGTERM', () => {
   console.log('Saving history')
+  client.set('history', JSON.stringify(colorHistory));
   // const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
   // s3.putObject(
   //   { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' },
