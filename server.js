@@ -98,8 +98,13 @@ app.get('/upload', (request, response) => {
   return response.end()
 })
 
+process.on('exit', () => {
+  console.log('exiiiiiiiiiiiiiit')
+})
+
 process.on('SIGTERM', () => {
   console.log('Saving history')
+  console.log(JSON.stringify(colorHistory))
   client.set('history', JSON.stringify(colorHistory));
   // const config = { ...objectConfig, Body: JSON.stringify(colorHistory), ContentType: 'application/json' }
   // s3.putObject(
