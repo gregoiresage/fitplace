@@ -37,6 +37,7 @@ redis_client.get('history', function (err, reply) {
   console.log(err)
   if(reply) {
     colorHistory = JSON.parse(reply)
+    colorHistory.forEach(event => saveEvent(event))
   }
 })
 
