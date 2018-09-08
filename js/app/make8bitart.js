@@ -126,8 +126,8 @@
   };
 
   var windowCanvas = {
-    height: DOM.$window.height() - (DOM.$window.height() % 15),
-    width: DOM.$window.width() - (DOM.$window.width() % 15),
+    height: 900,//DOM.$window.height() - (DOM.$window.height() % 15),
+    width: 900,//DOM.$window.width() - (DOM.$window.width() % 15),
     background: 'url("assets/bg.png")'
   };
 
@@ -189,12 +189,12 @@
     top : '120px'
   });
   DOM.$toolbox.css({
-    left : '30px',
-    top : '120px'
+    left : '930px',
+    top : '30px'
   });
   DOM.$colorbox.css({
-    left : '750px',
-    top : '50px'
+    left : '930px',
+    top : '200px'
   });
   DOM.$filebox.css({
     top : '255px',
@@ -229,9 +229,9 @@
     ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
 
     // restore webstorage data
-    if ( canStorage() ) {
-      drawFromLocalStorage();
-    }
+    // if ( canStorage() ) {
+    //   drawFromLocalStorage();
+    // }
   };
 
   var setCanvasSize = function(width, height) {
@@ -250,27 +250,27 @@
     ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
   };
 
-  var resetCanvas = function(background, sizeToViewport) {
-    if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
-      ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
+  // var resetCanvas = function(background, sizeToViewport) {
+  //   if ( window.confirm('You cannot undo canvas resets. Are you sure you want to erase this entire drawing?') ) {
+  //     ctx.clearRect(0, 0, DOM.$canvas.width(), DOM.$canvas.height());
 
-      if ( sizeToViewport ) {
-        // set the canvas to viewport size if new
-        setCanvasSize(DOM.$body.prop('clientWidth'), DOM.$window.height());
-      }
+  //     if ( sizeToViewport ) {
+  //       // set the canvas to viewport size if new
+  //       setCanvasSize(DOM.$body.prop('clientWidth'), DOM.$window.height());
+  //     }
 
-      if ( background && background !== 'rgba(0, 0, 0, 0)') {
-        ctx.fillStyle = background;
-        ctx.fillRect(0,0,DOM.$canvas.width(),DOM.$canvas.height());
-      }
+  //     if ( background && background !== 'rgba(0, 0, 0, 0)') {
+  //       ctx.fillStyle = background;
+  //       ctx.fillRect(0,0,DOM.$canvas.width(),DOM.$canvas.height());
+  //     }
 
-      // reset history
-      undoRedoHistory = [];
-      historyPointer = -1;
-      DOM.$redo.attr('disabled', 'disabled');
-      DOM.$undo.attr('disabled', 'disabled');
-    }
-  };
+  //     // reset history
+  //     undoRedoHistory = [];
+  //     historyPointer = -1;
+  //     DOM.$redo.attr('disabled', 'disabled');
+  //     DOM.$undo.attr('disabled', 'disabled');
+  //   }
+  // };
 
   var initPixel = function(size) {
     pixel.size = parseInt(size);
@@ -466,85 +466,99 @@
       var newWidth = (DOM.$canvas.width() < this.width) ? this.width : DOM.$canvas.width();
       var newHeight = (DOM.$canvas.height() < this.height) ? this.height : DOM.$canvas.height();
 
-      setCanvasSize(newWidth, newHeight);
+      setCanvasSize(900,900);//newWidth, newHeight);
 
       ctx.drawImage(img, x, y);
     };
     img.src = src;
   };
 
-  var drawFromLocalStorage = function() {
-    var savedCanvas = localStorage.make8bitartSavedCanvas;
-    if ( savedCanvas ) {
-      drawToCanvas(savedCanvas, 0, 0, true);
-    }
-  };
+  // var drawFromLocalStorage = function() {
+  //   var savedCanvas = localStorage.make8bitartSavedCanvas;
+  //   if ( savedCanvas ) {
+  //     drawToCanvas(savedCanvas, 0, 0, true);
+  //   }
+  // };
+
+  function trim (str) {
+    return str.replace(/^\s+|\s+$/gm,'');
+  }
 
   var pushToHistory = function( actionIndex, actionType, x, y, rgbOriginal, rgbNew, pixelSize, drawPathId, srcOriginal, srcNew) {
     // push to undoRedoHistory, will also become pxon.pxif.pixels
-    var pixelDrawn = {
-      index: actionIndex,
-      action: actionType,
-      x: x,
-      y: y,
-      originalColor: rgbOriginal,
-      color: rgbNew,
-      size: pixelSize,
-      drawPathId: drawPathId,
-      originalSrc: srcOriginal,
-      src: srcNew
-    };
-    undoRedoHistory.push(pixelDrawn);
-    drawHistory.push(pixelDrawn);
-    historyPointer++;
-    DOM.$undo.removeAttr('disabled');
+    // var pixelDrawn = {
+    //   index: actionIndex,
+    //   action: actionType,
+    //   x: x,
+    //   y: y,
+    //   originalColor: rgbOriginal,
+    //   color: rgbNew,
+    //   size: pixelSize,
+    //   drawPathId: drawPathId,
+    //   originalSrc: srcOriginal,
+    //   src: srcNew
+    // };
+    var parts = rgbNew.substring(rgbNew.indexOf("(")).split(","),
+        r = parseInt(trim(parts[0].substring(1)), 10),
+        g = parseInt(trim(parts[1]), 10),
+        b = parseInt(trim(parts[2]), 10),
+        a = parseFloat(trim(parts[3].substring(0, parts[3].length - 1))).toFixed(2);
+
+    var rgb = (r << 24) + (g << 16) + (b << 8) + (a * 255);
+    // console.log({x: x, y: y,color:rgb});
+
+    socket.emit('color', {i: Math.floor(x/pixel.size), j: Math.floor(y/pixel.size), color:rgb});
+    // undoRedoHistory.push(pixelDrawn);
+    // drawHistory.push(pixelDrawn);
+    // historyPointer++;
+    // DOM.$undo.removeAttr('disabled');
   };
 
-  var undoRedo = function(pointer, undoFlag) {
-    var undoRedoColor, nextPointer;
-    if ( undoFlag ) {
-      undoRedoColor = undoRedoHistory[pointer].originalColor;
-      nextPointer = pointer - 1;
-    }
-    else {
-      undoRedoColor = undoRedoHistory[pointer].color;
-      nextPointer = pointer + 1;
-    }
+  // var undoRedo = function(pointer, undoFlag) {
+  //   var undoRedoColor, nextPointer;
+  //   if ( undoFlag ) {
+  //     undoRedoColor = undoRedoHistory[pointer].originalColor;
+  //     nextPointer = pointer - 1;
+  //   }
+  //   else {
+  //     undoRedoColor = undoRedoHistory[pointer].color;
+  //     nextPointer = pointer + 1;
+  //   }
 
-    if ( undoRedoHistory[pointer].action === action.cut || undoRedoHistory[pointer].action === action.paste ) {
-      // for cut and paste, original color is original canvas, color is new canvas lol sorry
-      if ( undoFlag ) {
-        drawToCanvas(undoRedoHistory[pointer].originalSrc, 0, 0, true);
-      }
-      else {
-        drawToCanvas(undoRedoHistory[pointer].src, 0, 0, true);
-      }
-      return;
-    }
+  //   if ( undoRedoHistory[pointer].action === action.cut || undoRedoHistory[pointer].action === action.paste ) {
+  //     // for cut and paste, original color is original canvas, color is new canvas lol sorry
+  //     if ( undoFlag ) {
+  //       drawToCanvas(undoRedoHistory[pointer].originalSrc, 0, 0, true);
+  //     }
+  //     else {
+  //       drawToCanvas(undoRedoHistory[pointer].src, 0, 0, true);
+  //     }
+  //     return;
+  //   }
 
-    if ( undoRedoHistory[pointer].action === action.fill && undoRedoHistory[nextPointer] && undoRedoHistory[pointer].index === undoRedoHistory[nextPointer].index ) {
-      if ( undoFlag ) {
-        historyPointer--;
-      }
-      else {
-        historyPointer++;
-      }
-      undoRedo(historyPointer, undoFlag);
-    }
+  //   if ( undoRedoHistory[pointer].action === action.fill && undoRedoHistory[nextPointer] && undoRedoHistory[pointer].index === undoRedoHistory[nextPointer].index ) {
+  //     if ( undoFlag ) {
+  //       historyPointer--;
+  //     }
+  //     else {
+  //       historyPointer++;
+  //     }
+  //     undoRedo(historyPointer, undoFlag);
+  //   }
 
-    drawPixel(undoRedoHistory[pointer].x, undoRedoHistory[pointer].y, undoRedoColor, undoRedoHistory[pointer].size);
+  //   drawPixel(undoRedoHistory[pointer].x, undoRedoHistory[pointer].y, undoRedoColor, undoRedoHistory[pointer].size);
 
-    if (undoRedoHistory[pointer].drawPathId &&
-        undoRedoHistory[nextPointer] &&
-        undoRedoHistory[nextPointer].drawPathId === undoRedoHistory[pointer].drawPathId) {
-      if (undoFlag) {
-        undoRedo(--historyPointer, undoFlag);
-      }
-      else {
-        undoRedo(++historyPointer, undoFlag);
-      }
-    }
-  };
+  //   if (undoRedoHistory[pointer].drawPathId &&
+  //       undoRedoHistory[nextPointer] &&
+  //       undoRedoHistory[nextPointer].drawPathId === undoRedoHistory[pointer].drawPathId) {
+  //     if (undoFlag) {
+  //       undoRedo(--historyPointer, undoFlag);
+  //     }
+  //     else {
+  //       undoRedo(++historyPointer, undoFlag);
+  //     }
+  //   }
+  // };
 
   var resetModes = function() {
     if ( mode.dropper ) {
@@ -635,176 +649,176 @@
 
   /* saving */
 
-  var roundToNearestPixel = function(n) {
-    var canRound = (0 === pixel.size || void(0) !== pixel.size);
-    return canRound ? Math.round(n / pixel.size) * pixel.size : n;
-  };
+  // var roundToNearestPixel = function(n) {
+  //   var canRound = (0 === pixel.size || void(0) !== pixel.size);
+  //   return canRound ? Math.round(n / pixel.size) * pixel.size : n;
+  // };
 
-  var generateSelection = function(e, mode) {
-    rectangleSelection.endX = roundToNearestPixel(e.pageX);
-    rectangleSelection.endY = roundToNearestPixel(e.pageY);
+  // var generateSelection = function(e, mode) {
+  //   rectangleSelection.endX = roundToNearestPixel(e.pageX);
+  //   rectangleSelection.endY = roundToNearestPixel(e.pageY);
 
-    // temporary canvas to save image
-    DOM.$body.append('<canvas id="' + classes.selectionCanvas + '"></canvas>');
-    var $tempCanvas = $('#' + classes.selectionCanvas);
-    var tempCtx = $tempCanvas[0].getContext('2d');
+  //   // temporary canvas to save image
+  //   DOM.$body.append('<canvas id="' + classes.selectionCanvas + '"></canvas>');
+  //   var $tempCanvas = $('#' + classes.selectionCanvas);
+  //   var tempCtx = $tempCanvas[0].getContext('2d');
 
-    // set dimensions and draw based on selection
-    var width = Math.abs(rectangleSelection.endX - rectangleSelection.startX);
-    var height = Math.abs(rectangleSelection.endY - rectangleSelection.startY);
-    $tempCanvas[0].width = width;
-    $tempCanvas[0].height = height;
+  //   // set dimensions and draw based on selection
+  //   var width = Math.abs(rectangleSelection.endX - rectangleSelection.startX);
+  //   var height = Math.abs(rectangleSelection.endY - rectangleSelection.startY);
+  //   $tempCanvas[0].width = width;
+  //   $tempCanvas[0].height = height;
 
-    var startX = Math.min( rectangleSelection.startX, rectangleSelection.endX );
-    var startY = Math.min( rectangleSelection.startY, rectangleSelection.endY );
+  //   var startX = Math.min( rectangleSelection.startX, rectangleSelection.endX );
+  //   var startY = Math.min( rectangleSelection.startY, rectangleSelection.endY );
 
-    if ( width && height ) {
-      tempCtx.drawImage(DOM.$canvas[0], startX, startY, width, height, 0, 0, width, height);
-      var img = $tempCanvas[0].toDataURL('image/png');
+  //   if ( width && height ) {
+  //     tempCtx.drawImage(DOM.$canvas[0], startX, startY, width, height, 0, 0, width, height);
+  //     var img = $tempCanvas[0].toDataURL('image/png');
 
-      if ( mode === action.save ) {
-        displayFinishedArt(img);
-        DOM.$buttonSaveSelection.click();
-        DOM.$saveModalContainer.removeClass(classes.hidden);
-      }
-      else {
-        clipboard = new Image();
-        clipboard.src = img;
+  //     if ( mode === action.save ) {
+  //       displayFinishedArt(img);
+  //       DOM.$buttonSaveSelection.click();
+  //       DOM.$saveModalContainer.removeClass(classes.hidden);
+  //     }
+  //     else {
+  //       clipboard = new Image();
+  //       clipboard.src = img;
 
-        if ( mode === action.cut ) {
-          var originalImage = DOM.$canvas[0].toDataURL('image/png');
-          ctx.clearRect(startX, startY, width, height);
-          DOM.$cut.click();
+  //       if ( mode === action.cut ) {
+  //         var originalImage = DOM.$canvas[0].toDataURL('image/png');
+  //         ctx.clearRect(startX, startY, width, height);
+  //         DOM.$cut.click();
 
-          // add "cut" action to undo/redo array
-          var newImage = DOM.$canvas[0].toDataURL('image/png');
-          action.index++;
-          drawPathId = Date();
-          pushToHistory( action.index, action.cut, 0, 0, null, null, null, drawPathId, originalImage, newImage);
+  //         // add "cut" action to undo/redo array
+  //         var newImage = DOM.$canvas[0].toDataURL('image/png');
+  //         action.index++;
+  //         drawPathId = Date();
+  //         pushToHistory( action.index, action.cut, 0, 0, null, null, null, drawPathId, originalImage, newImage);
 
-          // save to local storage
-          saveToLocalStorage();
-        }
+  //         // save to local storage
+  //         saveToLocalStorage();
+  //       }
 
-        if ( mode === action.copy ) {
-          // trigger copy click
-          DOM.$copy.click();
-        }
-      }
-    }
+  //       if ( mode === action.copy ) {
+  //         // trigger copy click
+  //         DOM.$copy.click();
+  //       }
+  //     }
+  //   }
 
-    // remove tempCanvas
-    $tempCanvas.remove();
-  };
+  //   // remove tempCanvas
+  //   $tempCanvas.remove();
+  // };
 
-  var drawSelection = function(e) {
-    rectangleSelection.w = roundToNearestPixel((e.pageX - this.offsetLeft) - rectangleSelection.startX);
-    rectangleSelection.h = roundToNearestPixel((e.pageY - this.offsetTop) - rectangleSelection.startY);
-    ctxOverlay.clearRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-    ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
-    ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-    ctxOverlay.clearRect(rectangleSelection.startX, rectangleSelection.startY, rectangleSelection.w, rectangleSelection.h);
-  };
+  // var drawSelection = function(e) {
+  //   rectangleSelection.w = roundToNearestPixel((e.pageX - this.offsetLeft) - rectangleSelection.startX);
+  //   rectangleSelection.h = roundToNearestPixel((e.pageY - this.offsetTop) - rectangleSelection.startY);
+  //   ctxOverlay.clearRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
+  //   ctxOverlay.fillStyle = 'rgba(0,0,0,.5)';
+  //   ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
+  //   ctxOverlay.clearRect(rectangleSelection.startX, rectangleSelection.startY, rectangleSelection.w, rectangleSelection.h);
+  // };
 
-  var displayFinishedArt = function(src) {
-    DOM.$saveImg.attr('src', src);
-    DOM.$saveImg.parent().attr('href', src);
-    DOM.$saveModalContainer.removeClass(classes.hidden);
-    DOM.$saveModalContainer.find('.ui-hider').focus();
-  };
+  // var displayFinishedArt = function(src) {
+  //   DOM.$saveImg.attr('src', src);
+  //   DOM.$saveImg.parent().attr('href', src);
+  //   DOM.$saveModalContainer.removeClass(classes.hidden);
+  //   DOM.$saveModalContainer.find('.ui-hider').focus();
+  // };
 
-  var renderLocalGallery = function() {
-    if ( savedCanvasArray.length === 0 ) {
-      DOM.$openLocalModalContainer.addClass(classes.hidden);
-      DOM.$openLocalForm.addClass(classes.hidden);
-      return;
-    }
+  // var renderLocalGallery = function() {
+  //   if ( savedCanvasArray.length === 0 ) {
+  //     DOM.$openLocalModalContainer.addClass(classes.hidden);
+  //     DOM.$openLocalForm.addClass(classes.hidden);
+  //     return;
+  //   }
 
-    DOM.$openLocalForm.removeClass(classes.hidden);
-    DOM.$openLocalGalleryItems.remove();
+  //   DOM.$openLocalForm.removeClass(classes.hidden);
+  //   DOM.$openLocalGalleryItems.remove();
 
-    for( var i = 0; i < savedCanvasArray.length; i++ ) {
-      var $li = $('<li data-local="' + i + '">' +
-        '<button role="button" class="thumb"><img src="' + savedCanvasArray[i] + '" alt="open thumbnail #' + i + '" /></button>' +
-        '<button role="button" class="delete"><img class="delete" src="assets/draggybits/hider.png" alt="delete thumbnail #' + i + '"></button>' +
-      '</li>');
-      DOM.$openLocalGallery.append($li);
-    }
+  //   for( var i = 0; i < savedCanvasArray.length; i++ ) {
+  //     var $li = $('<li data-local="' + i + '">' +
+  //       '<button role="button" class="thumb"><img src="' + savedCanvasArray[i] + '" alt="open thumbnail #' + i + '" /></button>' +
+  //       '<button role="button" class="delete"><img class="delete" src="assets/draggybits/hider.png" alt="delete thumbnail #' + i + '"></button>' +
+  //     '</li>');
+  //     DOM.$openLocalGallery.append($li);
+  //   }
 
-    DOM.$openLocalGalleryItems = DOM.$openLocalGallery.find('li');
-    DOM.$openLocalGalleryItemThumbs = DOM.$openLocalGallery.find('.thumb');
-    DOM.$openLocalGalleryItemDelete = DOM.$openLocalGallery.find('.delete');
+  //   DOM.$openLocalGalleryItems = DOM.$openLocalGallery.find('li');
+  //   DOM.$openLocalGalleryItemThumbs = DOM.$openLocalGallery.find('.thumb');
+  //   DOM.$openLocalGalleryItemDelete = DOM.$openLocalGallery.find('.delete');
 
-    DOM.$openLocalGalleryItemThumbs.click(function(){
-      var img = savedCanvasArray[$(this).parent('li').data('local')];
-      drawToCanvas(img, 0, 0, true);
-      DOM.$openLocalModalContainer.addClass(classes.hidden);
-    });
+  //   DOM.$openLocalGalleryItemThumbs.click(function(){
+  //     var img = savedCanvasArray[$(this).parent('li').data('local')];
+  //     drawToCanvas(img, 0, 0, true);
+  //     DOM.$openLocalModalContainer.addClass(classes.hidden);
+  //   });
 
-    // delete locally
-    DOM.$openLocalGalleryItemDelete.click(function() {
-      if ( window.confirm('Careful! This will permanently delete this thumbnail\'s art from your browser.') ) {
-        savedCanvasArray.splice($(this).parent('li').data('local'), 1);
-        localStorage.make8bitartSavedCanvasArray = JSON.stringify(savedCanvasArray);
-        savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
-        renderLocalGallery();
-      }
-    });
-  };
+  //   // delete locally
+  //   DOM.$openLocalGalleryItemDelete.click(function() {
+  //     if ( window.confirm('Careful! This will permanently delete this thumbnail\'s art from your browser.') ) {
+  //       savedCanvasArray.splice($(this).parent('li').data('local'), 1);
+  //       localStorage.make8bitartSavedCanvasArray = JSON.stringify(savedCanvasArray);
+  //       savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
+  //       renderLocalGallery();
+  //     }
+  //   });
+  // };
 
-  var saveToLocalStorage = function() {
-    if ( canStorage() ) {
-      savedCanvas = DOM.$canvas[0].toDataURL('image/png');
-      localStorage.make8bitartSavedCanvas = savedCanvas;
-    }
-  };
+  // var saveToLocalStorage = function() {
+  //   if ( canStorage() ) {
+  //     savedCanvas = DOM.$canvas[0].toDataURL('image/png');
+  //     localStorage.make8bitartSavedCanvas = savedCanvas;
+  //   }
+  // };
 
-  var saveToLocalStorageArray = function() {
-    if ( canStorage() ) {
-      //parsejson
-      if ( localStorage.make8bitartSavedCanvasArray ) {
-        savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
-      }
-      else {
-        savedCanvasArray = [];
-      }
+  // var saveToLocalStorageArray = function() {
+  //   if ( canStorage() ) {
+  //     //parsejson
+  //     if ( localStorage.make8bitartSavedCanvasArray ) {
+  //       savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
+  //     }
+  //     else {
+  //       savedCanvasArray = [];
+  //     }
 
-      //push
-      savedCanvasArray.push(DOM.$canvas[0].toDataURL('image/png'));
+  //     //push
+  //     savedCanvasArray.push(DOM.$canvas[0].toDataURL('image/png'));
 
-      //stringify
-      localStorage.make8bitartSavedCanvasArray = JSON.stringify(savedCanvasArray);
-    }
-  };
+  //     //stringify
+  //     localStorage.make8bitartSavedCanvasArray = JSON.stringify(savedCanvasArray);
+  //   }
+  // };
 
-  var uploadToImgur = function() {
-    var imgDataURL = DOM.$saveImg.attr('src').replace(/^data:image\/(png|jpg);base64,/, '');
-    $.ajax({
-      method: 'POST',
-      url: 'https://api.imgur.com/3/image',
-      headers: {
-        Authorization: 'Client-ID ' + imgur.clientId,
-      },
-      dataType: 'json',
-      data: {
-        image: imgDataURL,
-        type: 'base64',
-        title: 'made on make8bitart.com',
-        description: 'made on make8bitart.com'
-      },
-      success: function(result) {
-        var directURL = result.data.link;
-        var shareURL = 'https://imgur.com/gallery/' + result.data.id;
-        var imgurHTML = '<p>imgur page: <a target="_blank" href="' + shareURL + '">' + shareURL + '</a><br />' +
-                            'direct image link: <a target="_blank" href="' + directURL + '">' + directURL + '</a></p>';
-        DOM.$linkImgur.html( imgurHTML);
-        DOM.$buttonSaveImgur.addClass(classes.hidden);
-      },
-      error: function(result) {
-        DOM.$linkImgur.text('There was an error saving to Imgur.');
-      }
-    });
-  };
+  // var uploadToImgur = function() {
+  //   var imgDataURL = DOM.$saveImg.attr('src').replace(/^data:image\/(png|jpg);base64,/, '');
+  //   $.ajax({
+  //     method: 'POST',
+  //     url: 'https://api.imgur.com/3/image',
+  //     headers: {
+  //       Authorization: 'Client-ID ' + imgur.clientId,
+  //     },
+  //     dataType: 'json',
+  //     data: {
+  //       image: imgDataURL,
+  //       type: 'base64',
+  //       title: 'made on make8bitart.com',
+  //       description: 'made on make8bitart.com'
+  //     },
+  //     success: function(result) {
+  //       var directURL = result.data.link;
+  //       var shareURL = 'https://imgur.com/gallery/' + result.data.id;
+  //       var imgurHTML = '<p>imgur page: <a target="_blank" href="' + shareURL + '">' + shareURL + '</a><br />' +
+  //                           'direct image link: <a target="_blank" href="' + directURL + '">' + directURL + '</a></p>';
+  //       DOM.$linkImgur.html( imgurHTML);
+  //       DOM.$buttonSaveImgur.addClass(classes.hidden);
+  //     },
+  //     error: function(result) {
+  //       DOM.$linkImgur.text('There was an error saving to Imgur.');
+  //     }
+  //   });
+  // };
 
 
   /* colors */
@@ -922,62 +936,62 @@
 
   /* pxon */
 
-  var getFileData = function(file) {
-    if ( window.FileReader ) {
-      var fileReader = new FileReader();
-      fileReader.readAsText(file);
-      fileReader.onload = function(data){
-        if (data) {
-          pxon = JSON.parse(data.target.result);
-          historyPointer = undoRedoHistory.length - 1;
+  // var getFileData = function(file) {
+  //   if ( window.FileReader ) {
+  //     var fileReader = new FileReader();
+  //     fileReader.readAsText(file);
+  //     fileReader.onload = function(data){
+  //       if (data) {
+  //         pxon = JSON.parse(data.target.result);
+  //         historyPointer = undoRedoHistory.length - 1;
 
-          // prefill the export fields
-          /*$('.exif.artist').val(pxon.exif.artist);
-          $('.exif.imageDescription').val(pxon.exif.imageDescription);
-          $('.exif.userComment').val(pxon.exif.userComment);
-          $('.exif.copyright').val(pxon.exif.copyright);*/
+  //         // prefill the export fields
+  //         /*$('.exif.artist').val(pxon.exif.artist);
+  //         $('.exif.imageDescription').val(pxon.exif.imageDescription);
+  //         $('.exif.userComment').val(pxon.exif.userComment);
+  //         $('.exif.copyright').val(pxon.exif.copyright);*/
 
-          // draw image to reset canvas
-          resetCanvas();
-          pxon.pxif.pixels.forEach(function(e, i, a){
-            drawPixel(e.x, e.y, e.color, e.size );
-          });
-        }
-      };
-      fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
-    }
-    else {
-      alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
-    }
-  };
+  //         // draw image to reset canvas
+  //         resetCanvas();
+  //         pxon.pxif.pixels.forEach(function(e, i, a){
+  //           drawPixel(e.x, e.y, e.color, e.size );
+  //         });
+  //       }
+  //     };
+  //     fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
+  //   }
+  //   else {
+  //     alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
+  //   }
+  // };
 
-  var importPXON = function(e) {
-    var file = $(this).prop('files')[0];
-    getFileData(file);
-  };
+  // var importPXON = function(e) {
+  //   var file = $(this).prop('files')[0];
+  //   getFileData(file);
+  // };
 
-  var exportPXON = function(e) {
-    // FUTURE: show modal for form
-    /*pxon.exif.artist = $('.exif.artist').val();
-    pxon.exif.imageDescription = $('.exif.imageDescription').val();
-    pxon.exif.userComment = $('.exif.userComment').val();
-    pxon.exif.copyright = $('.exif.copyright').val();*/
+  // var exportPXON = function(e) {
+  //   // FUTURE: show modal for form
+  //   /*pxon.exif.artist = $('.exif.artist').val();
+  //   pxon.exif.imageDescription = $('.exif.imageDescription').val();
+  //   pxon.exif.userComment = $('.exif.userComment').val();
+  //   pxon.exif.copyright = $('.exif.copyright').val();*/
 
-    // other exif info
-    pxon.exif.software = 'make8bitart.com';
-    pxon.exif.dateTime = new Date();
-    pxon.exif.dateTimeOriginal = ( pxon.exif.dateTimeOriginal ) ? pxon.exif.dateTimeOriginal : pxon.exif.dateTime;
+  //   // other exif info
+  //   pxon.exif.software = 'make8bitart.com';
+  //   pxon.exif.dateTime = new Date();
+  //   pxon.exif.dateTimeOriginal = ( pxon.exif.dateTimeOriginal ) ? pxon.exif.dateTimeOriginal : pxon.exif.dateTime;
 
-    // pxif
-    pxon.pxif.pixels = drawHistory;
+  //   // pxif
+  //   pxon.pxif.pixels = drawHistory;
 
-    // open pxon modal
-    DOM.$pxonModalContainer.removeClass(classes.hidden);
-    DOM.$pxonModalContainer.find('.ui-hider').focus();
+  //   // open pxon modal
+  //   DOM.$pxonModalContainer.removeClass(classes.hidden);
+  //   DOM.$pxonModalContainer.find('.ui-hider').focus();
 
-    var pxonData = JSON.stringify(pxon);
-    DOM.$pxonModalContainer.find('textarea').html(pxonData);
-  };
+  //   var pxonData = JSON.stringify(pxon);
+  //   DOM.$pxonModalContainer.find('textarea').html(pxonData);
+  // };
 
 
   /*** EVENTS ***/
@@ -1000,28 +1014,28 @@
       DOM.$canvas.removeClass(classes.dropperMode);
       DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
     }
-    else if ( mode.paste ) {
-      var x = ( Math.ceil(e.pageX/pixel.size) * pixel.size ) - pixel.size;
-      var y = ( Math.ceil(e.pageY/pixel.size) * pixel.size ) - pixel.size;
+    // else if ( mode.paste ) {
+    //   var x = ( Math.ceil(e.pageX/pixel.size) * pixel.size ) - pixel.size;
+    //   var y = ( Math.ceil(e.pageY/pixel.size) * pixel.size ) - pixel.size;
 
-      var originalImage = DOM.$canvas[0].toDataURL('image/png');
-      ctx.drawImage(clipboard, x, y);
+    //   var originalImage = DOM.$canvas[0].toDataURL('image/png');
+    //   ctx.drawImage(clipboard, x, y);
 
-      // reset history
-      undoRedoHistory = undoRedoHistory.slice(0, historyPointer+1);
-      DOM.$redo.attr('disabled','disabled');
+    //   // reset history
+    //   undoRedoHistory = undoRedoHistory.slice(0, historyPointer+1);
+    //   DOM.$redo.attr('disabled','disabled');
 
-      // add action to undo/redo
-      var newImage = DOM.$canvas[0].toDataURL('image/png');
-      action.index++;
-      drawPathId = Date();
-      pushToHistory( action.index, action.paste, 0, 0, null, null, null, drawPathId, originalImage, newImage);
+    //   // add action to undo/redo
+    //   var newImage = DOM.$canvas[0].toDataURL('image/png');
+    //   action.index++;
+    //   drawPathId = Date();
+    //   pushToHistory( action.index, action.paste, 0, 0, null, null, null, drawPathId, originalImage, newImage);
 
-      // save to local storage
-      saveToLocalStorage();
+    //   // save to local storage
+    //   saveToLocalStorage();
 
-      DOM.$paste.click();
-    }
+    //   DOM.$paste.click();
+    // }
     else if ( !mode.save && !mode.copy && !mode.cut ) {
       // reset history
       undoRedoHistory = undoRedoHistory.slice(0, historyPointer+1);
@@ -1079,36 +1093,36 @@
       mode.drawing = false;
       drawPathId = null;
 
-      saveToLocalStorage();
+      // saveToLocalStorage();
     }
     else {
-      DOM.$overlay.off('mousemove');
-      ctxOverlay.clearRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
+      // DOM.$overlay.off('mousemove');
+      // ctxOverlay.clearRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
 
-      if ( mode.save ) {
-        generateSelection(e, 'save');
-      }
-      else if ( mode.copy ) {
-        generateSelection(e, 'copy');
-      }
-      else if ( mode.cut ) {
-        generateSelection(e, 'cut');
-      }
+      // if ( mode.save ) {
+      //   generateSelection(e, 'save');
+      // }
+      // else if ( mode.copy ) {
+      //   generateSelection(e, 'copy');
+      // }
+      // else if ( mode.cut ) {
+      //   generateSelection(e, 'cut');
+      // }
     }
   };
 
-  var onRightClick = function(e) {
-    resetModes();
-    var origData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
-    var origRGB = getRGBColor(origData);
+  // var onRightClick = function(e) {
+  //   resetModes();
+  //   var origData = ctx.getImageData( e.pageX, e.pageY, 1, 1).data;
+  //   var origRGB = getRGBColor(origData);
 
-    setDropperColor(origRGB);
+  //   setDropperColor(origRGB);
 
-    DOM.$canvas.removeClass(classes.dropperMode);
-    DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
+  //   DOM.$canvas.removeClass(classes.dropperMode);
+  //   DOM.$dropper.removeClass(classes.currentTool).removeAttr('style');
 
-    return false;
-  };
+  //   return false;
+  // };
 
   /* tools */
 
@@ -1133,10 +1147,10 @@
   });
 
   // reset canvas
-  DOM.$buttonNewCanvas.click(function() {
-    resetCanvas( pixel.color, true );
-    saveToLocalStorage();
-  });
+  // DOM.$buttonNewCanvas.click(function() {
+  //   resetCanvas( pixel.color, true );
+  //   saveToLocalStorage();
+  // });
 
   // ensure elements are enabled before triggering a click event
   var triggerClickForEnabled = function(elem) {
@@ -1151,86 +1165,86 @@
     };
   };
 
-  // undo
-  DOM.$undo.click(function() {
-    undoRedo(historyPointer, true);
-    historyPointer--;
+  // // undo
+  // DOM.$undo.click(function() {
+  //   undoRedo(historyPointer, true);
+  //   historyPointer--;
 
-    DOM.$redo.removeAttr('disabled');
+  //   DOM.$redo.removeAttr('disabled');
 
-    if ( historyPointer < 0 ) {
-      DOM.$undo.attr('disabled', 'disabled');
-    }
-  });
+  //   if ( historyPointer < 0 ) {
+  //     DOM.$undo.attr('disabled', 'disabled');
+  //   }
+  // });
 
-  // redo
-  DOM.$redo.click(function() {
-    historyPointer++;
-    undoRedo(historyPointer, false);
+  // // redo
+  // DOM.$redo.click(function() {
+  //   historyPointer++;
+  //   undoRedo(historyPointer, false);
 
-    DOM.$undo.removeAttr('disabled');
-    if ( historyPointer === undoRedoHistory.length - 1 ) {
-      DOM.$redo.attr('disabled', 'disabled');
-    }
-  });
+  //   DOM.$undo.removeAttr('disabled');
+  //   if ( historyPointer === undoRedoHistory.length - 1 ) {
+  //     DOM.$redo.attr('disabled', 'disabled');
+  //   }
+  // });
 
-  // cut
-  DOM.$cut.click(function() {
-    resetModes();
-    if ( mode.cut ) {
-      mode.cut = false;
-      $(this).removeClass(classes.currentTool);
-      DOM.$overlay.addClass(classes.hidden);
-    }
-    else {
-      mode.cut = true;
-      ctxOverlay.fillRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
-      $(this).addClass(classes.currentTool);
-      DOM.$overlay.removeClass(classes.hidden);
-    }
-  });
+  // // cut
+  // DOM.$cut.click(function() {
+  //   resetModes();
+  //   if ( mode.cut ) {
+  //     mode.cut = false;
+  //     $(this).removeClass(classes.currentTool);
+  //     DOM.$overlay.addClass(classes.hidden);
+  //   }
+  //   else {
+  //     mode.cut = true;
+  //     ctxOverlay.fillRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
+  //     $(this).addClass(classes.currentTool);
+  //     DOM.$overlay.removeClass(classes.hidden);
+  //   }
+  // });
 
-  // copy
-  DOM.$copy.click(function() {
-    resetModes();
-    if ( mode.copy ) {
-      mode.copy = false;
-      $(this).removeClass(classes.currentTool);
-      DOM.$overlay.addClass(classes.hidden);
-    }
-    else {
-      mode.copy = true;
-      ctxOverlay.fillRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
-      $(this).addClass(classes.currentTool);
-      DOM.$overlay.removeClass(classes.hidden);
-    }
-  });
+  // // copy
+  // DOM.$copy.click(function() {
+  //   resetModes();
+  //   if ( mode.copy ) {
+  //     mode.copy = false;
+  //     $(this).removeClass(classes.currentTool);
+  //     DOM.$overlay.addClass(classes.hidden);
+  //   }
+  //   else {
+  //     mode.copy = true;
+  //     ctxOverlay.fillRect(0, 0, DOM.$overlay.width(), DOM.$overlay.height());
+  //     $(this).addClass(classes.currentTool);
+  //     DOM.$overlay.removeClass(classes.hidden);
+  //   }
+  // });
 
-  // paste
-  DOM.$paste.click(function() {
-    if ( !clipboard ) {
-      return;
-    }
-    resetModes();
+  // // paste
+  // DOM.$paste.click(function() {
+  //   if ( !clipboard ) {
+  //     return;
+  //   }
+  //   resetModes();
 
-    if ( !mode.paste ) {
-      mode.paste = true;
-      $(this).addClass(classes.currentTool);
+  //   if ( !mode.paste ) {
+  //     mode.paste = true;
+  //     $(this).addClass(classes.currentTool);
 
-      // show instructions
-      DOM.$pasteInstructions.addClass(classes.hidden);
-    }
+  //     // show instructions
+  //     DOM.$pasteInstructions.addClass(classes.hidden);
+  //   }
 
-  });
+  // });
 
-  // undo alias to ctrl+z, macs aliased to cmd+z
-  key('ctrl+z, ⌘+z', triggerClickForEnabled(DOM.$undo));
+  // // undo alias to ctrl+z, macs aliased to cmd+z
+  // key('ctrl+z, ⌘+z', triggerClickForEnabled(DOM.$undo));
 
-  // redo alias to ctrl+y and mac aliased cmd+shift+z
-  key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
+  // // redo alias to ctrl+y and mac aliased cmd+shift+z
+  // key('ctrl+y, ⌘+shift+z', triggerClickForEnabled(DOM.$redo));
 
-  // close save modal alias to esc
-  key('esc', function(){ DOM.$modalContainers.addClass(classes.hidden); });
+  // // close save modal alias to esc
+  // key('esc', function(){ DOM.$modalContainers.addClass(classes.hidden); });
 
   // pencil tool (matches photoshop)
   key('B', triggerClickForEnabled(DOM.$pencil));
@@ -1337,69 +1351,69 @@
 
   /* importing and exporting */
 
-  // save locally
-  DOM.$buttonSaveLocal.click(function() {
-    saveToLocalStorageArray();
-    renderLocalGallery();
+  // // save locally
+  // DOM.$buttonSaveLocal.click(function() {
+  //   saveToLocalStorageArray();
+  //   renderLocalGallery();
 
-    alert('Your art has been saved locally to your browser. You can see all locally saved art by clicking the "open existing art" button!');
-  });
+  //   alert('Your art has been saved locally to your browser. You can see all locally saved art by clicking the "open existing art" button!');
+  // });
 
-  // save full canvas
-  DOM.$buttonSaveFull.click(function() {
-    var savedPNG = DOM.$canvas[0].toDataURL('image/png');
-    displayFinishedArt(savedPNG);
-  });
+  // // save full canvas
+  // DOM.$buttonSaveFull.click(function() {
+  //   var savedPNG = DOM.$canvas[0].toDataURL('image/png');
+  //   displayFinishedArt(savedPNG);
+  // });
 
-  // save selection of canvas button clicked
-  DOM.$buttonSaveSelection.click(function() {
-    if ( mode.save ) {
-      mode.save = false;
-      DOM.$saveInstruction.slideUp();
-      $(this).val(copy.selectionOn);
-      DOM.$overlay.addClass(classes.hidden);
-    }
-    else {
-      resetModes();
-      mode.save = true;
-      DOM.$saveInstruction.slideDown();
-      $(this).val(copy.selectionOff);
-      ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
-      DOM.$overlay.removeClass(classes.hidden);
-    }
-  });
+  // // save selection of canvas button clicked
+  // DOM.$buttonSaveSelection.click(function() {
+  //   if ( mode.save ) {
+  //     mode.save = false;
+  //     DOM.$saveInstruction.slideUp();
+  //     $(this).val(copy.selectionOn);
+  //     DOM.$overlay.addClass(classes.hidden);
+  //   }
+  //   else {
+  //     resetModes();
+  //     mode.save = true;
+  //     DOM.$saveInstruction.slideDown();
+  //     $(this).val(copy.selectionOff);
+  //     ctxOverlay.fillRect(0,0,DOM.$overlay.width(),DOM.$overlay.height());
+  //     DOM.$overlay.removeClass(classes.hidden);
+  //   }
+  // });
 
-  // open import local modal
-  DOM.$buttonOpenLocal.click(function(){
-    DOM.$openLocalModalContainer.removeClass(classes.hidden);
-    DOM.$openLocalModalContainer.find('.ui-hider').focus();
-  });
+  // // open import local modal
+  // DOM.$buttonOpenLocal.click(function(){
+  //   DOM.$openLocalModalContainer.removeClass(classes.hidden);
+  //   DOM.$openLocalModalContainer.find('.ui-hider').focus();
+  // });
 
   // import pxon
-  DOM.$buttonImportPXON.change(importPXON);
+  // DOM.$buttonImportPXON.change(importPXON);
 
   // export pxon
-  DOM.$buttonExportPXON.click(exportPXON);
+  // DOM.$buttonExportPXON.click(exportPXON);
 
   // hide save modal container if exit button clicked
-  DOM.$modalExit.click(function() {
-    DOM.$modalContainers.addClass(classes.hidden);
-    DOM.$linkImgur.html('');
-    DOM.$buttonSaveImgur.removeClass(classes.hidden);
-  });
+  // DOM.$modalExit.click(function() {
+  //   DOM.$modalContainers.addClass(classes.hidden);
+  //   DOM.$linkImgur.html('');
+  //   DOM.$buttonSaveImgur.removeClass(classes.hidden);
+  // });
 
-  // hide save modal container if clicking outside of modal
-  DOM.$modalContainers.click(function(e) {
-    var target = $(e.target).context;
-    if ( target === DOM.$saveModalContainer[0] || target === DOM.$openLocalModalContainer[0] ) {
-      $(this).addClass(classes.hidden);
-    }
-  });
+  // // hide save modal container if clicking outside of modal
+  // DOM.$modalContainers.click(function(e) {
+  //   var target = $(e.target).context;
+  //   if ( target === DOM.$saveModalContainer[0] || target === DOM.$openLocalModalContainer[0] ) {
+  //     $(this).addClass(classes.hidden);
+  //   }
+  // });
 
-  // save to imgur
-  DOM.$buttonSaveImgur.click(function() {
-    uploadToImgur();
-  });
+  // // save to imgur
+  // DOM.$buttonSaveImgur.click(function() {
+  //   uploadToImgur();
+  // });
 
 
   /* misc */
@@ -1424,29 +1438,29 @@
 
   // canvas window size changes
   DOM.$window.resize(function() {
-    if ( DOM.$window.width() - (DOM.$window.width() % pixel.size) <= windowCanvas.width && DOM.$window.height() - (DOM.$window.height() % pixel.size) <= windowCanvas.height ) {
-      return;
-    }
-    else {
-      // if local storage
-      if ( !canStorage() || mode.save ) {
-        return;
-      }
-      else {
-        var newWidth = DOM.$window.width() - (DOM.$window.width() % pixel.size);
-        var newHeight = DOM.$window.height() - (DOM.$window.height() % pixel.size);
+    // if ( DOM.$window.width() - (DOM.$window.width() % pixel.size) <= windowCanvas.width && DOM.$window.height() - (DOM.$window.height() % pixel.size) <= windowCanvas.height ) {
+    //   return;
+    // }
+    // else {
+    //   // if local storage
+    //   if ( !canStorage() || mode.save ) {
+    //     return;
+    //   }
+    //   else {
+    //     var newWidth = DOM.$window.width() - (DOM.$window.width() % pixel.size);
+    //     var newHeight = DOM.$window.height() - (DOM.$window.height() % pixel.size);
 
-        // save image
-        saveToLocalStorage();
+    //     // save image
+    //     saveToLocalStorage();
 
-        // set canvas size
-        setCanvasSize(newWidth, newHeight);
+    //     // set canvas size
+    //     // setCanvasSize(newWidth, newHeight);
 
-        // draw image
-        drawFromLocalStorage();
-      }
+    //     // draw image
+    //     drawFromLocalStorage();
+    //   }
 
-    }
+    // }
   });
 
   // clear color history, palette and storage
@@ -1457,63 +1471,63 @@
     DOM.$colorHistoryModule.addClass(classes.hidden);
   });
 
-  // export color history
-  DOM.$colorHistoryTools.exportPalette.click(function(){
-    console.log('export coming soon');
-  });
+  // // export color history
+  // DOM.$colorHistoryTools.exportPalette.click(function(){
+  //   console.log('export coming soon');
+  // });
 
   // clear custom colors palette
   DOM.$colorCustomTools.clearPalette.click(function(){
     DOM.$colorCustomPalette.find('li').remove();
   });
 
-  // import custom colors palette
-  DOM.$colorCustomTools.importPalette.on('change', function(e){
+  // // import custom colors palette
+  // DOM.$colorCustomTools.importPalette.on('change', function(e){
 
-    // get the file submitted
-    var file = $(this).prop('files')[0];
+  //   // get the file submitted
+  //   var file = $(this).prop('files')[0];
 
-    // helper function to parse csv data
-    var parseCSVData = function(data) {
+  //   // helper function to parse csv data
+  //   var parseCSVData = function(data) {
 
-      // since we have csv data, clear the current custom palette
-      DOM.$colorCustomPalette.find('li').remove();
+  //     // since we have csv data, clear the current custom palette
+  //     DOM.$colorCustomPalette.find('li').remove();
 
-      // get csv text and parse
-      var csv = data.target.result;
-      var rows = csv.split(/\r\n|\n/);
+  //     // get csv text and parse
+  //     var csv = data.target.result;
+  //     var rows = csv.split(/\r\n|\n/);
 
-      for ( var i = 0; i < rows.length; i++ ) {
-        var dataPair = rows[i].split(',');
+  //     for ( var i = 0; i < rows.length; i++ ) {
+  //       var dataPair = rows[i].split(',');
 
-        // create button, set properties, and add to palette
-        var $newCustomButton = $('<a>');
-        $newCustomButton.attr({
-          'class' : 'button color',
-          'style' : 'background-color:#' + dataPair[1],
-          'title' : dataPair[0],
-          'data-color' : '#' + dataPair[1]
-        });
-        var $newCustomButtonContainer = $('<li>').append($newCustomButton);
-        DOM.$colorCustomPalette.append($newCustomButtonContainer);
-      }
+  //       // create button, set properties, and add to palette
+  //       var $newCustomButton = $('<a>');
+  //       $newCustomButton.attr({
+  //         'class' : 'button color',
+  //         'style' : 'background-color:#' + dataPair[1],
+  //         'title' : dataPair[0],
+  //         'data-color' : '#' + dataPair[1]
+  //       });
+  //       var $newCustomButtonContainer = $('<li>').append($newCustomButton);
+  //       DOM.$colorCustomPalette.append($newCustomButtonContainer);
+  //     }
 
-      // set events to make these colors work
-      DOM.$color = $('.'+classes.color);
-      DOM.$color.click(bindColorClick);
-    };
+  //     // set events to make these colors work
+  //     DOM.$color = $('.'+classes.color);
+  //     DOM.$color.click(bindColorClick);
+  //   };
 
-    // read the file if browser has the FileReader API
-    if ( window.FileReader ) {
-      var fileReader = new FileReader();
-      fileReader.readAsText(file);
-      fileReader.onload = parseCSVData;
-      fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
-    }
-    else {
-      alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
-    }
-  });
+  //   // read the file if browser has the FileReader API
+  //   if ( window.FileReader ) {
+  //     var fileReader = new FileReader();
+  //     fileReader.readAsText(file);
+  //     fileReader.onload = parseCSVData;
+  //     fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
+  //   }
+  //   else {
+  //     alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
+  //   }
+  // });
 
 
 
@@ -1539,28 +1553,28 @@
   DOM.$filebox.draggyBits('minimize');
 
   // only show the following in draggy divs if local storage exists
-  if ( !canStorage() ) {
-    $('.'+classes.local).addClass(classes.hidden);
-  }
-  else {
-    if ( localStorage.make8bitartSavedCanvasArray && localStorage.make8bitartSavedCanvasArray !== '[]' ) {
-      // draw local storage gallery
-      savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
-      renderLocalGallery();
+  // if ( !canStorage() ) {
+  //   $('.'+classes.local).addClass(classes.hidden);
+  // }
+  // else {
+  //   if ( localStorage.make8bitartSavedCanvasArray && localStorage.make8bitartSavedCanvasArray !== '[]' ) {
+  //     // draw local storage gallery
+  //     savedCanvasArray = JSON.parse(localStorage.make8bitartSavedCanvasArray);
+  //     renderLocalGallery();
 
-      // open local storage gallery
-      DOM.$buttonOpenLocal.trigger('click');
-    }
-    else {
-      DOM.$openLocalForm.addClass(classes.hidden);
-    }
-  }
+  //     // open local storage gallery
+  //     DOM.$buttonOpenLocal.trigger('click');
+  //   }
+  //   else {
+  //     DOM.$openLocalForm.addClass(classes.hidden);
+  //   }
+  // }
 
   historyPointer = -1;
 
   DOM.$canvas.mousedown(onMouseDown).mouseup(onMouseUp);
   DOM.$overlay.mousedown(onMouseDown).mouseup(onMouseUp);
-  DOM.$canvas.on('contextmenu', onRightClick);
+  // DOM.$canvas.on('contextmenu', onRightClick);
 
   //touch
   DOM.$canvas[0].addEventListener('touchstart', onMouseDown, false);
@@ -1568,4 +1582,28 @@
   DOM.$overlay[0].addEventListener('touchstart', onMouseDown, false);
   DOM.$overlay[0].addEventListener('touchend', onMouseUp, false);
 
+  // socket 
+  var socket = io();
+
+  socket.on('newPaint', function(event){
+    var color = event.color;
+    var r = (color >> 24) & 0xFF;
+    var g = (color >> 16) & 0xFF;
+    var b = (color >>  8) & 0xFF;
+    var a = (color >>  0) & 0xFF;
+    color = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a/255 + ')';
+    drawPixel(1 + pixel.size * event.i, 1 + pixel.size * event.j, 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a/255 + ')', pixel.size);
+  });
+  
+  socket.on('image', function(image){
+    var width = windowCanvas.width / pixel.size;
+    for(var i=0; i<image.length; i++){
+      var color = image[i];
+      var r = (color >> 24) & 0xFF;
+      var g = (color >> 16) & 0xFF;
+      var b = (color >>  8) & 0xFF;
+      var a = (color >>  0) & 0xFF;
+      drawPixel(1 + pixel.size * (i % width), 1 + pixel.size * Math.floor(i / width), 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a/255 + ')', pixel.size);
+    }
+  });
 }(window.jQuery, window.key, window, document));
