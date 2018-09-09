@@ -481,6 +481,7 @@
   // };
 
   function trim (str) {
+    console.log("color " + str);
     return str.replace(/^\s+|\s+$/gm,'');
   }
 
@@ -498,15 +499,7 @@
     //   originalSrc: srcOriginal,
     //   src: srcNew
     // };
-    var parts = rgbNew.substring(rgbNew.indexOf("(")).split(","),
-        r = parseInt(trim(parts[0].substring(1)), 10),
-        g = parseInt(trim(parts[1]), 10),
-        b = parseInt(trim(parts[2]), 10),
-        a = parseFloat(trim(parts[3].substring(0, parts[3].length - 1))).toFixed(2);
-
-    var rgb = (r << 24) + (g << 16) + (b << 8) + (a * 255);
-    // console.log({x: x, y: y,color:rgb});
-
+    var rgb = parseInt(rgbToHex(rgbNew), 16);
     socket.emit('color', {i: Math.floor(x/pixel.size), j: Math.floor(y/pixel.size), color:rgb});
     // undoRedoHistory.push(pixelDrawn);
     // drawHistory.push(pixelDrawn);
@@ -1586,24 +1579,15 @@
   var socket = io();
 
   socket.on('newPaint', function(event){
-    var color = event.color;
-    var r = (color >> 24) & 0xFF;
-    var g = (color >> 16) & 0xFF;
-    var b = (color >>  8) & 0xFF;
-    var a = (color >>  0) & 0xFF;
-    color = 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a/255 + ')';
-    drawPixel(1 + pixel.size * event.i, 1 + pixel.size * event.j, 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a/255 + ')', pixel.size);
+    var color = '#' + ('00000' + event.color.toString(16)).slice(-6);
+    drawPixel(1 + pixel.size * event.i, 1 + pixel.size * event.j, color, pixel.size);
   });
   
   socket.on('image', function(image){
     var width = windowCanvas.width / pixel.size;
     for(var i=0; i<image.length; i++){
-      var color = image[i];
-      var r = (color >> 24) & 0xFF;
-      var g = (color >> 16) & 0xFF;
-      var b = (color >>  8) & 0xFF;
-      var a = (color >>  0) & 0xFF;
-      drawPixel(1 + pixel.size * (i % width), 1 + pixel.size * Math.floor(i / width), 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a/255 + ')', pixel.size);
+      var color = '#' + ('00000' + image[i].toString(16)).slice(-6);
+      drawPixel(1 + pixel.size * (i % width), 1 + pixel.size * Math.floor(i / width), color, pixel.size);
     }
   });
 }(window.jQuery, window.key, window, document));

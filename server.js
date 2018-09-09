@@ -15,9 +15,9 @@ var savePixels = require('save-pixels')
 const SIZE = 900 / 15 
 
 var image = new Uint32Array(SIZE * SIZE)
-image.fill(0, 0, SIZE * SIZE)
+image.fill(0xffffff, 0, SIZE * SIZE)
 
-redis_client.get('history2', function (err, reply) {
+redis_client.get('history3', function (err, reply) {
   console.log(err)
   if(reply) {
     image = new Uint32Array(JSON.parse(reply))
@@ -49,13 +49,13 @@ app.get('/image', (request, response) => {
 });
 
 app.get('/reset', (request, response) => {
-  image = new Uint32Array(SIZE * SIZE)
+  image.fill(0xffffff, 0, SIZE * SIZE)
   io.emit('image', image)
   response.end();
 })
 
 app.get('/save', (request, response) => {
-  redis_client.set('history2', JSON.stringify(Array.from(image)))
+  redis_client.set('history3', JSON.stringify(Array.from(image)))
   response.end();
 })
 
