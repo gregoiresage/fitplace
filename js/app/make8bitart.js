@@ -499,6 +499,7 @@
     //   originalSrc: srcOriginal,
     //   src: srcNew
     // };
+    console.log(rgbNew);
     var rgb = parseInt(rgbToHex(rgbNew), 16);
     socket.emit('color', {i: Math.floor(x/pixel.size), j: Math.floor(y/pixel.size), color:rgb});
     // undoRedoHistory.push(pixelDrawn);

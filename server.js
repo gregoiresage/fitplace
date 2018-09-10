@@ -42,7 +42,7 @@ app.get('/image', (request, response) => {
     const i = id % SIZE
     const j = Math.floor(id / SIZE)
     for(var c=0; c<3; c++) {
-      arr.set(i, j, c, (element >> 8*(3-2)) & 0xFF)
+      arr.set(i, j, c, (element >> 8*(4-2)) & 0xFF)
     }
   })
   savePixels(arr, 'png').pipe(response);
@@ -65,6 +65,7 @@ io.on('connection', function(socket){
   socket.emit('image', Array.from(image))
 
   socket.on('color', (event) => {
+    console.log(event.color)
     image[event.i + event.j * SIZE] = event.color
     io.emit('newPaint', event)
   })
