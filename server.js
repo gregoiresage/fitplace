@@ -81,7 +81,7 @@ const listener = server.listen(process.env.PORT || 3000, function () {
 
 process.on('SIGTERM', () => {
   console.log('Saving history')
-  redis_client.set('history2', JSON.stringify(Array.from(image)))
+  redis_client.set('history3', JSON.stringify(Array.from(image)))
   console.log('History saved')
   server.close.bind(server)
 })
